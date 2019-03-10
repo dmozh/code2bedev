@@ -1,0 +1,376 @@
+<template>
+  <div class="create-components-form-container">
+    <div class="header">
+      <!--ARTICLES-->
+      <div class="optional-container">
+        <label for="lessonSelect">Выберите урок к задаче</label>
+        <select id="lessonSelect" class="custom-select">
+          <!--тут определяются языки программировпния в селекте-->
+          <option v-for="item in lessons" :key="item.id" :value="item.name">
+            {{item.name}}
+          </option>
+        </select>
+        <div class="quest-mark-icon tooltip">
+          <img src="@/assets/png/question_mark.png" class="icon qm">
+          <span class="tooltiptext">Этот параметр опционален. Если оставить "Без выбора", задача будет считаться общей</span>
+        </div>
+      </div>
+      <div class="back-btn waves-effect waves-dark">
+        <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+      </div>
+    </div>
+    <div class="main-content-container">
+      <form @submit.prevent="sendTask" class="custom-form">
+        <!--Names-->
+        <input type="text" v-model="taskName" placeholder="Введите название задачи" class="custom-input-name-field">
+        <!--Contents-->
+        <div class="contents">
+          <div class="left-block">
+            <div class="optional-container in-contents">
+              <label for="difficultlySelect">Укажите уровень сложность задачи:</label>
+              <select id="difficultlySelect" class="custom-select">
+                <!--тут определяются языки программировпния в селекте-->
+                <option v-for="item in difficultly" :key="item.id" :value="item.diff">
+                  {{item.diff}}
+                </option>
+              </select>
+              <div class="quest-mark-icon tooltip">
+                <img src="@/assets/png/question_mark.png" class="icon qm">
+                <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
+              </div>
+            </div>
+
+            <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
+          </div>
+          <div class="right-block">
+            <div class="splitter">
+
+            </div>
+            <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
+            <button class="button waves-effect waves-dark">Создать</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+    export default {
+        name: "create-tasks-component",
+      data(){
+        return{
+          //название task
+          taskName: '',
+          //описание статьи/новости
+          taskDescription: '',
+          //сама статья/новость
+          taskText: '',
+
+          //for a while (artciles)
+          lessons: [
+            {id: 1, name: "Без выбора"},
+            {id: 2, name: "1"},
+            {id: 3, name: "2"},
+            {id: 4, name: "3"},
+          ],
+
+          //for difficultly (for a while)
+          difficultly: [
+            {id: 1, diff: 1},
+            {id: 2, diff: 2},
+            {id: 3, diff: 3},
+            {id: 4, diff: 4},
+          ],
+        }
+      },
+      methods: {
+        emitReturn() {
+          this.$emit('returns')
+        },
+
+        sendTask() {
+
+        },
+
+        click() {
+          //получение значения селекта
+          const selectedIndex = document.getElementById("sel1").options.selectedIndex;
+          const item = document.getElementById("sel1").options[selectedIndex].value;
+          alert(selectedIndex + item)
+        },
+      }
+    }
+</script>
+
+<style scoped lang="scss">
+  label{
+    font-size: large;
+    margin: 1vh 2px 0 0;
+  }
+
+  .create-components-form-container{
+    @media (max-width: 1200px) {
+      /*width: 1vw;*/
+      height: 60vh;
+    }
+    @media (max-width: 900px) {
+      /*width: 19vw;*/
+      height: 50vh;
+    }
+    position: relative;
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    width: 80vw;
+    height: 80vh;
+    justify-content: center;
+    align-items: center;
+    /*background: aqua;*/
+    /*z-index: 100000;*/
+  }
+
+  .main-content-container{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    height: 70vh;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contents{
+    display: -webkit-flex;
+    /*-webkit-flex-wrap: wrap;*/
+    display: flex;
+    /*flex-wrap: wrap;*/
+
+    width: 100%;
+
+    height: 65vh;
+
+    /*background: blue;*/
+  }
+
+  .left-block{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+
+    height: auto;
+    width: 35vw;
+    align-items: center;
+  }
+
+  .right-block{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+
+    height: auto;
+
+    align-items: center;
+    justify-content: center;
+  }
+
+  .splitter{
+    width: 100%;
+    height: 6.9vh;
+  }
+
+  .back-btn{
+    @media all{
+      height: width/2;
+    }
+    /*margin-left: 50px;*/
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    height: 5vh;
+    width: 2.5vw;
+    border-radius: 50%;
+    background: #82858c;
+  }
+
+  .back-btn:hover{
+    transform: scale(1.15);
+    transition: .3s all;
+    z-index: 10000000;
+    cursor: pointer;
+    background: rgba(126, 215, 118, 0.1);
+    box-shadow: 0 2px 20px 2px rgb(140, 211, 215);
+  }
+
+  .icon{
+    margin: auto;
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 60%;
+    max-height: 60%;
+    transform: scale(-1, 1);
+  }
+
+  .header{
+    width: 100%;
+    height: 5vh;
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .button{
+    width: 10vw;
+    /*height: 100%;*/
+    height: 4vh;
+    background: rgba(22,22,22, 0.1);
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    margin: 2.5vh 0 0 0;
+  }
+
+  .button:hover{
+    transition: .5s all;
+    background: #a6ffb7;
+  }
+
+  .custom-input-name-field{
+    width: 80vw !important;
+    height: auto !important;
+    font-size: 3vw !important;
+  }
+
+  .article-text-textarea{
+    max-width: 45vw;
+    max-height: 30vh;
+    min-width: 45vw;
+    min-height: 30vh;
+  }
+
+  .desc-textarea{
+    max-width: 30vw;
+    max-height: 45vh;
+    min-width: 30vw;
+    min-height: 45vh;
+  }
+
+  /*scrollbar*/
+  ::-webkit-scrollbar {
+    width: 1em;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
+
+  .optional-container{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 77.5vw;
+    height: 100%;
+
+    justify-content: flex-start;
+  }
+  .in-contents{
+    width: auto !important;
+    height: 10vh !important;
+  }
+
+  .custom-select{
+    @media screen and (max-width: 900px){
+      /*width: 20vw;*/
+      height: 3vh !important;
+      font-size: 1.5vh;
+    }
+    display: -webkit-flex !important;
+    -webkit-flex-wrap: wrap !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 20vw !important;
+    height: 5vh;
+
+    font-size: 2vh;
+  }
+
+  .quest-mark-icon{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 1vw;
+    height: 2vh;
+    border-radius: 50%;
+  }
+
+  .quest-mark-icon:hover{
+    background: rgba(0, 0, 0, 0.31);
+    cursor: pointer;
+    /*box-shadow: 0 2px 20px 2px rgb(140, 211, 215);*/
+  }
+
+  .qm{
+    margin: auto;
+    transform: scale(1, 1) !important;
+  }
+
+  .tooltip .tooltiptext {
+    @media screen and (max-width: 1200px){
+      width: 20vw;
+      height: 7vh;
+    }
+    visibility: hidden;
+    width: 30vw;
+    height: 5.4vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 5px 0;
+    font-size: 10px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+  }
+
+  .diff{
+    width: 12vw !important;
+    height: 5.4vh;
+  }
+
+  .tooltiptext::after {
+    @media screen and (max-width: 1200px){
+      left: -20px; bottom: 41px; /* Положение треугольника */
+    }
+    content: '';
+    position: absolute; /* Абсолютное позиционирование */
+    left: -20px; bottom: 31px; /* Положение треугольника */
+    border: 10px solid transparent; /* Прозрачные границы */
+    border-right: 10px solid rgba(0, 0, 0, 0.5); /* Добавляем треугольник */
+  }
+
+  .tooltip:hover .tooltiptext {
+    transition: all .3s ease;
+    opacity: 1;
+    transform: translateX(40px);
+    visibility: visible;
+  }
+
+</style>
