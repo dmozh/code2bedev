@@ -49,7 +49,8 @@
         <div class="container">
           <div class="col s12 m7">
             <div class="signed-in" v-if="this.$root.authUser">
-              <h5>Signed in as {{this.$root.authUser.email}}</h5>
+              <!--<h5>Signed in as {{this.$root.authUser.email}}</h5>-->
+              <h5>Signed in as {{this.activeUserName}}</h5>
             </div>
           </div>
         </div>
@@ -60,6 +61,7 @@
 <script>
   import auth from 'firebase'
   import LoginWindow from '@/components/ModalWindows/WindowLoginComponent'
+  import axios from 'axios'
 
     export default {
       name: "main-component",
@@ -71,7 +73,11 @@
           loggedIn: "logged-in",
           loggedOut: "logged-out",
           modalActive: false,
-          email: ''
+          email: '',
+
+          response: '',
+          activeUserName: '',
+
         }
       },
       methods:{
@@ -90,10 +96,29 @@
             //to do сделать модалку кастомную красивую с вызовом модалки логирования
             alert('Please log in in your account')
           }else{
-            this.$router.push({path: '/mycabinet' })
+            this.$router.push({path: '/mycabinet'})
           }
         }
       },
+
+      mounted: function () {
+        //если пользователь авторизован, получаем из бд его данные
+        if (this.$root.authUser !== null) {
+          const body = {email: this.$root.authUser.email};
+          const jBody = JSON.stringify(body);
+
+          axios.post('http://localhost:8080/getUser', jBody).then((response) => {
+            console.log(response);
+            //получаем имая пользователя из ответа и назначаем переменную
+            this.activeUserName = response.data.user.user_name
+          }).catch((error) => {
+            console.log(error);
+          });
+
+          // const result = JSON.parse(this.response.data);
+          // console.log(result)
+        }
+      }
     }
 </script>
 

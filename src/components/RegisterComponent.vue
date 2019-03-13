@@ -23,6 +23,7 @@
 
 <script>
   import auth from 'firebase'
+  import axi from 'axios'
 
     export default {
       name: "register-component",
@@ -33,6 +34,12 @@
           password: '',
           passwordRepeat: '',
           authUser: null,
+
+          logi: '',
+          postBody: {   // пример данных для отправки(позже они преобразуются в json)
+            name : ' michail ',
+            ade : 22
+          },
         }
       },
       methods:{
@@ -41,6 +48,9 @@
           if (this.password !== this.passwordRepeat){
             alert('Passwords do not match');
           }else{
+            //определяем переменные для запроса
+            const userEmail = this.email, userName = this.name;
+
             auth.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
               // Handle Errors here.
               const errorCode = error.code;
@@ -50,24 +60,48 @@
                 alert(errorMessage);
               } else if (errorCode === 'auth/email-already-in-use'){
                 alert (errorMessage);
-              }else{
-                auth.auth().currentUser.sendEmailVerification().then(function(){
+              } else {
+                // auth.auth().currentUser.sendEmailVerification().then(function(){
+                  // console.log('kdkdk');
+                  // const body = {
+                  //   userEmail: this.email,
+                  //   userName: this.name
+                  // };
+                  // console.log(body);
+                  // const jBody = JSON.stringify(body);
+                  // console.log(jBody);
+                  //
+                  // axi.post('http://localhost:8080/addUser',jBody).then((response) => {
+                  //   console.log(response);
+                  // })
+                  //   .catch((error) => {
+                  //     console.log(error);
+                  //   });
                   // if (auth.auth().currentUser.emailVerified){
-                    auth.auth().signInWithEmailAndPassword(this.email, this.password).then(
-                      ( user ) => {
-                        this.$router.replace('main')
-                      });
+                  //   auth.auth().signInWithEmailAndPassword(this.email, this.password).then(function(){
+                  //     this.$router.replace('/main')
+                  //   });
+                      // ( user ) => {
+                      //   this.$router.replace('main')
+                      // });
                   // }
-                  // this.$router.replace('/main')
+                  //
 
-                });
+                // });
               }
-
               console.log(error);
               // [END_EXCLUDE]
             }).then(function () {
-              // this.authUser = auth.auth().currentUser;
+              const body = {
+                  userEmail: userEmail,
+                  userName: userName
+                };
 
+                const jBody = JSON.stringify(body);
+
+                axi.post('http://localhost:8080/addUser', jBody).then((response) => {
+                  console.log(response);
+                }).catch((error) => {console.log(error);});
             });
           }
         },
@@ -78,6 +112,11 @@
           })
         }
       },
+
+      mounted: function () {
+        // axi.get('http://localhost:8080/').then(response => (this.logi = response.data));
+        // console.log(this.logi)
+      }
 
     }
 </script>
