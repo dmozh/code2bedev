@@ -25,6 +25,7 @@
 
 <script>
   import auth from 'firebase'
+  import axios from 'axios'
 
     export default {
         name: "login-window",
@@ -42,6 +43,7 @@
         },
         methods:{
           emitClose () {
+            this.getUserName();
             this.$emit('close')
           },
           logIn() {
@@ -49,6 +51,20 @@
               this.emitClose()
             })
           },
+
+          getUserName(){
+            //если пользователь авторизован, получаем из бд его данные
+            const body = {email: this.email};
+            const jBody = JSON.stringify(body);
+
+            axios.post('http://localhost:8080/getUser', jBody).then((response) => {
+              console.log(response);
+              //     получаем имая пользователя из ответа и назначаем переменную
+              this.$root.activeUserName = response.data.user.user_name;
+            }).catch((error) => {
+              console.log(error);
+            });
+          }
     }
   }
 </script>

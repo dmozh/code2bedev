@@ -66,7 +66,7 @@
         }
       },
       methods: {
-      // to do сделать по красоте а не костылем, хотя я не знаю как ?????????
+      //TODO сделать по красоте а не костылем, хотя я не знаю как ?????????
         showProfileComponent(){
           this.showPosts = false;
           this.showSeen = false;

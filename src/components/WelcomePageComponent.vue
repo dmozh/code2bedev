@@ -12,7 +12,7 @@
 
         <div class="diwider"></div>
 
-        <div class="column">
+        <div class="column" v-if="!this.$root.authUser">
           <p>ЗАРЕГИСТРИРОВАТЬСЯ</p>
           <div class="splitter"></div>
           <router-link to="/register" class="card">

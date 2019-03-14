@@ -43,6 +43,10 @@
         }
       },
       methods:{
+        goTo(){
+          this.$router.replace('/main')
+        },
+
         signUp () {
           //TO DO сделать проверку на имеющиеся имя в бд, отправку данных бд
           if (this.password !== this.passwordRepeat){
@@ -61,33 +65,6 @@
               } else if (errorCode === 'auth/email-already-in-use'){
                 alert (errorMessage);
               } else {
-                // auth.auth().currentUser.sendEmailVerification().then(function(){
-                  // console.log('kdkdk');
-                  // const body = {
-                  //   userEmail: this.email,
-                  //   userName: this.name
-                  // };
-                  // console.log(body);
-                  // const jBody = JSON.stringify(body);
-                  // console.log(jBody);
-                  //
-                  // axi.post('http://localhost:8080/addUser',jBody).then((response) => {
-                  //   console.log(response);
-                  // })
-                  //   .catch((error) => {
-                  //     console.log(error);
-                  //   });
-                  // if (auth.auth().currentUser.emailVerified){
-                  //   auth.auth().signInWithEmailAndPassword(this.email, this.password).then(function(){
-                  //     this.$router.replace('/main')
-                  //   });
-                      // ( user ) => {
-                      //   this.$router.replace('main')
-                      // });
-                  // }
-                  //
-
-                // });
               }
               console.log(error);
               // [END_EXCLUDE]
@@ -96,28 +73,35 @@
                   userEmail: userEmail,
                   userName: userName
                 };
-
                 const jBody = JSON.stringify(body);
+                //TODO отключил добавление юзеров в вторуб дб, для упрощения разработки
+                //TODO включить потом
+                // axi.post('http://localhost:8080/addUser', jBody).then((response) => {
+                //   console.log(response);
+                // }).catch((error) => {
+                //   console.log(error);});
 
-                axi.post('http://localhost:8080/addUser', jBody).then((response) => {
-                  console.log(response);
-                }).catch((error) => {console.log(error);});
+            }).then(function () {
+              if (auth.auth().currentUser.emailVerified === true){
+
+              }else{
+                auth.auth().currentUser.sendEmailVerification();
+              }
             });
+            this.$router.replace('/main');
           }
         },
 
         created() {
-          auth.auth().onAuthStateChanged(user => { this.authUser = user
-            // this.authUser = currentUser
-          })
+          auth.auth().onAuthStateChanged(user => { this.authUser = user;})
         }
       },
 
       mounted: function () {
-        // axi.get('http://localhost:8080/').then(response => (this.logi = response.data));
-        // console.log(this.logi)
+        if (this.$root.authUser){
+          this.$router.replace('/main');
+        }
       }
-
     }
 </script>
 

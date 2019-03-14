@@ -49,8 +49,7 @@
         <div class="container">
           <div class="col s12 m7">
             <div class="signed-in" v-if="this.$root.authUser">
-              <!--<h5>Signed in as {{this.$root.authUser.email}}</h5>-->
-              <h5>Signed in as {{this.activeUserName}}</h5>
+              <h5>Signed in as {{this.$root.activeUserName}} {{this.$root.authUser.emailVerified}}</h5>
             </div>
           </div>
         </div>
@@ -76,14 +75,17 @@
           email: '',
 
           response: '',
-          activeUserName: '',
+          // activeUserName: '',
 
         }
       },
       methods:{
         logout(){
           auth.auth().signOut();
-          this.$root.authUser = null
+          this.$root.authUser = null;
+          this.$root.activeUserName = null;
+          this.$root.activeUserRole = null;
+          this.$root.activeUserRate =  null;
         },
         closeLoginWindow(){
           this.modalActive = false;
@@ -93,7 +95,7 @@
         },
         toMyCabinet(){
           if (this.$root.authUser === null){
-            //to do сделать модалку кастомную красивую с вызовом модалки логирования
+            //TODO сделать модалку кастомную красивую с вызовом модалки логирования
             alert('Please log in in your account')
           }else{
             this.$router.push({path: '/mycabinet'})
@@ -102,23 +104,16 @@
       },
 
       mounted: function () {
-        //если пользователь авторизован, получаем из бд его данные
-        if (this.$root.authUser !== null) {
-          const body = {email: this.$root.authUser.email};
-          const jBody = JSON.stringify(body);
 
-          axios.post('http://localhost:8080/getUser', jBody).then((response) => {
-            console.log(response);
-            //получаем имая пользователя из ответа и назначаем переменную
-            this.activeUserName = response.data.user.user_name
-          }).catch((error) => {
-            console.log(error);
-          });
+      },
 
-          // const result = JSON.parse(this.response.data);
-          // console.log(result)
-        }
-      }
+      created: function () {
+        //TODO есть баг, при обновлении страницы имя пользователя пропадает, пока будет костыль чтобы не тратить на это время,
+        //TODO но необходимо найти способ решение данной проблемы.
+        this.$root.getUserName()
+      },
+
+
     }
 </script>
 
