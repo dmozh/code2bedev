@@ -3,7 +3,7 @@
       <div class="left-panel-container">
         <div class="btns-container">
           <div class="btn-container">
-            <div class="nav-bar-btns waves-effect waves-dark">
+            <div class="nav-bar-btns waves-effect waves-dark" @click="openWindowChooseLang">
               langs
             </div>
           </div>
@@ -45,9 +45,11 @@
         </div>
       </div>
       <login :modalActive="modalActive" @close="closeLoginWindow" @logut="logout"></login>
+      <choose-lang :windowChooseLangModalActive="windowChooseLangModalActive" @close="closeWindowChooseLang"></choose-lang>
       <div class="content-container ">
         <div class="container">
           <div class="col s12 m7">
+            <div v-if="this.response">{{this.response.data.langs[0].lang_name}}</div>
             <div class="signed-in" v-if="this.$root.authUser">
               <h5>Signed in as {{this.$root.activeUserName}} {{this.$root.authUser.emailVerified}}</h5>
             </div>
@@ -60,18 +62,21 @@
 <script>
   import auth from 'firebase'
   import LoginWindow from '@/components/ModalWindows/WindowLoginComponent'
+  import ChooseLangWindow from '@/components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
 
     export default {
       name: "main-component",
       components: {
         login: LoginWindow,
+        chooseLang: ChooseLangWindow
       },
       data() {
         return {
           loggedIn: "logged-in",
           loggedOut: "logged-out",
           modalActive: false,
+          windowChooseLangModalActive: false,
           email: '',
 
           response: '',
@@ -100,7 +105,15 @@
           }else{
             this.$router.push({path: '/mycabinet'})
           }
-        }
+        },
+
+        openWindowChooseLang(){
+          this.windowChooseLangModalActive = true;
+        },
+        closeWindowChooseLang(){
+          this.windowChooseLangModalActive = false;
+        },
+
       },
 
       mounted: function () {

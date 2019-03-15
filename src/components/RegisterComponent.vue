@@ -2,7 +2,6 @@
   <div class="body">
     <div class="divider"></div>
     <div class="header">
-
       <router-link to="/" class="back-btn waves-effect waves-dark">
         <img src="@/assets/png/back_arrow2.png" class="icon">
       </router-link>

@@ -7,8 +7,9 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option v-for="item in objects" :key="item.id" :value="item.name">
-            {{item.name}}
+          <option>Без выбора</option>
+          <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
+            {{lang.lang_name}}
           </option>
         </select>
         <div class="quest-mark-icon tooltip">
@@ -95,14 +96,6 @@
             postDescription: '',
             //сама статья/новость
             postText: '',
-
-            //for a while (artciles)
-            objects: [
-              {id: 1, name: "без выбора"},
-              {id: 2, name: "питон"},
-              {id: 3, name: "жаваа"},
-              {id: 4, name: "1с"},
-            ],
 
             //for news
             importance: [

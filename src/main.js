@@ -28,6 +28,10 @@ firebase.auth().onAuthStateChanged(()=>{
         activeUserName: null,
         activeUserRole: null,
         activeUserRate: null,
+
+        activeLang: null,
+
+        langsName: null,
       },
 
       methods: {
@@ -51,12 +55,15 @@ firebase.auth().onAuthStateChanged(()=>{
       },
 
       mounted: function() {
-
+        if (this.langsName === null){
+          axios.get('http://localhost:8080/getLangsName').then(response => {
+            this.langsName = response.data.langs_name
+          })
+        }
       },
 
       created: function () {
         firebase.auth().onAuthStateChanged(user => {this.authUser = user});
-
       },
 
 
