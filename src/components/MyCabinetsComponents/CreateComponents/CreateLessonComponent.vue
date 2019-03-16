@@ -6,7 +6,7 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option>Без выбора</option>
+          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="main-content-container">
-      <form @submit.prevent="sendPost" class="custom-form">
+      <form @submit.prevent="sendLesson" class="custom-form">
         <!--Names-->
         <input type="text" v-model="lessonName" placeholder="Введите название урока" class="custom-input-name-field">
 
@@ -48,7 +48,7 @@
         <!--Contents-->
         <div class="limiter">
           <div class="left-content">
-            <textarea v-model="lessonDesc" placeholder="Введите описание урока" class="desc-textarea"></textarea>
+            <textarea v-model="lessonDescription" placeholder="Введите описание урока" class="desc-textarea"></textarea>
             <div class="tasks-container">
               <div class="list-container">
                 <div class="list-header">
@@ -85,19 +85,39 @@
       </form>
     </div>
     <window-create-task-for-lesson :modalActive="modalActive" @close="closeCreateTaskWindow"></window-create-task-for-lesson>
+    <create-error-modal-component
+                                  :namePost="emptyName"
+                                  :descPost="emptyDesc"
+                                  :textPost="emptyText"
+                                  :langPost="emptyLang"
+
+                                  :errorModalActive="errorModalActive"
+                                  @close="closeError">
+    </create-error-modal-component>
   </div>
 </template>
 
 <script>
   import WindowCreateTaskForLesson from '@/components/ModalWindows/WindowCreateTaskForLesson'
-    export default {
+  import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
+  import axios from 'axios'
+
+  export default {
       name: "create-lesson-component",
       components:{
-        WindowCreateTaskForLesson
+        WindowCreateTaskForLesson,
+        CreateErrorModalComponent,
       },
       data(){
         return{
           modalActive: false,
+          errorModalActive: false,
+
+          emptyName: true,
+          emptyDesc: true,
+          emptyText: true,
+          emptyLang: true,
+
 
           //переменные для тэгов
           tag: '',
@@ -105,7 +125,7 @@
           postTags: [],
 
           lessonName: '',
-          lessonDesc: '',
+          lessonDescription: '',
           lessonText: '',
           lessonTasks: [],
 
@@ -120,6 +140,54 @@
         },
         openCreateTaskWindow(){
           this.modalActive = true;
+        },
+
+        closeError(){
+          this.errorModalActive = false;
+          this.emptyName = true;
+          this.emptyDesc = true;
+          this.emptyText = true;
+          this.emptyLang = true;
+        },
+
+        sendLesson(){
+          if (this.lessonName.length === 0 || this.lessonDescription.length === 0 || this.lessonText.length === 0){
+            if (this.lessonName.length !== 0){
+              this.emptyName = false
+            }
+            if (this.lessonDescription.length !== 0){
+              this.emptyDesc = false
+            }
+            if (this.lessonText.length !== 0){
+              this.emptyText = false
+            }
+            if (document.getElementById("sel1").options.selectedIndex !== 0){
+              this.emptyLang = false
+            }
+            //show modal with error
+            this.errorModalActive = true;
+          }else{
+            //определяем значение параметров lang and userName
+            const selectedIndex = document.getElementById("sel1").options.selectedIndex;
+            const lang = document.getElementById("sel1").options[selectedIndex].value;
+            const body = {
+              lang: lang,
+              authorEmail: this.$root.authUser.email,
+              lessonName: this.lessonName,
+              lessonDescription: this.lessonDescription,
+              lessonText: this.lessonText,
+              lessonTags: this.postTags,
+              lessonTasks: this.lessonTasks
+            };
+
+            const jBody = JSON.stringify(body);
+            axios.post('http://localhost:8080/addLesson', jBody).then((response) => {
+              console.log(response);
+            }).catch((error) => {
+              console.log(error);});
+
+            this.emitReturn()
+          }
         },
 
         check(){

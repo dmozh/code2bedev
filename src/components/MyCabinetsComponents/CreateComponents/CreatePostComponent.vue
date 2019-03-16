@@ -7,15 +7,14 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option>Без выбора</option>
+          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
         </select>
         <div class="quest-mark-icon tooltip">
           <img src="@/assets/png/question_mark.png" class="icon qm">
-          <span class="tooltiptext">Этот параметр опционален. Если оставить "без выбора", статья будет считаться
-            универсальной для всех языков программирования</span>
+          <span class="tooltiptext">Этот параметр обязателен.</span>
         </div>
       </div>
 
@@ -74,18 +73,41 @@
         </div>
       </form>
     </div>
+    <create-error-modal-component :isArticle = "isArticle"
+                                  :isNews = "isNews"
+
+                                  :namePost="emptyName"
+                                  :descPost="emptyDesc"
+                                  :textPost="emptyText"
+                                  :langPost="emptyLang"
+
+                                  :errorModalActive="errorModalActive"
+                                  @close="closeError">
+    </create-error-modal-component>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
+  import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
+
     export default {
         name: "create-post-component",
+        components:{
+          CreateErrorModalComponent
+        },
         props: {
           isArticle: Boolean,
           isNews: Boolean,
         },
         data(){
           return{
+            errorModalActive: false,
+            emptyName: true,
+            emptyDesc: true,
+            emptyText: true,
+            emptyLang: true,
+
             //название статьи/новости
             postName: '',
             //переменные для тэгов
@@ -94,7 +116,7 @@
             postTags: [],
             //описание статьи/новости
             postDescription: '',
-            //сама статья/новость
+            //text сама статья/новость
             postText: '',
 
             //for news
@@ -111,19 +133,86 @@
             this.$emit('returns')
           },
 
+          closeError(){
+            this.errorModalActive = false;
+            this.emptyName = true;
+            this.emptyDesc = true;
+            this.emptyText = true;
+            this.emptyLang = true;
+          },
+
           sendPost(){
+            //debug
             if(this.isArticle){
               console.log('article')
             }else if(this.isNews){
               console.log('news')
             }
+            if (this.postName.length === 0 || this.postDescription.length === 0 || this.postText.length === 0){
+              if (this.postName.length !== 0){
+                this.emptyName = false
+              }
+              if (this.postDescription.length !== 0){
+                this.emptyDesc = false
+              }
+              if (this.postText.length !== 0){
+                this.emptyText = false
+              }
+              if (this.isArticle && document.getElementById("sel1").options.selectedIndex !== 0){
+                this.emptyLang = false
+              }
+              //show modal with error
+              this.errorModalActive = true;
+            }else{
+              let body = {};
+              //составляем тело ответа
+              if (this.isArticle){
+                //определяем значение параметров lang and userName
+                const selectedIndex = document.getElementById("sel1").options.selectedIndex;
+                const lang = document.getElementById("sel1").options[selectedIndex].value;
+                body = {
+                  lang: lang,
+                  authorEmail: this.$root.authUser.email,
+                  articleName: this.postName,
+                  articleDescription: this.postDescription,
+                  articleText: this.postText,
+                  articleTags: this.postTags
+                };
+              }else if(this.isNews){
+                const selectedIndex = document.getElementById("sel2").options.selectedIndex;
+                const importance = document.getElementById("sel2").options[selectedIndex].value;
+                body = {
+                  importance: selectedIndex,
+                  authorEmail: this.$root.authUser.email,
+                  newsName: this.postName,
+                  newsDescription: this.postDescription,
+                  newsText: this.postText,
+                  newsTags: this.postTags
+                };
+              }
+              //создаем json
+              const jBody = JSON.stringify(body);
+
+              if (this.isArticle){
+                axios.post('http://localhost:8080/addArticle', jBody).then((response) => {
+                  console.log(response);
+                }).catch((error) => {
+                  console.log(error);});
+              }else if(this.isNews){
+                axios.post('http://localhost:8080/addNews', jBody).then((response) => {
+                  console.log(response);
+                }).catch((error) => {
+                  console.log(error);});
+              }
+              this.emitReturn()
+            }
           },
 
           click(){
             //получение значения селекта
-            const selectedIndex = document.getElementById("sel1").options.selectedIndex;
-            const item = document.getElementById("sel1").options[selectedIndex].value;
-            alert(selectedIndex + item)
+            const selectedIndex = document.getElementById("sel2").options.selectedIndex;
+            const item = document.getElementById("sel2").options[selectedIndex].value;
+            console.log(selectedIndex + item)
           },
 
           addTag(){

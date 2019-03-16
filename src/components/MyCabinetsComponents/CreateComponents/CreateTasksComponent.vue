@@ -6,13 +6,13 @@
         <label for="lessonSelect">Выберите урок к задаче</label>
         <select id="lessonSelect" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option v-for="item in lessons" :key="item.id" :value="item.name">
-            {{item.name}}
+          <option v-for="item in lessons" :key="item.id" :value="item.lesson_name">
+            {{item.lesson_name}}
           </option>
         </select>
         <div class="quest-mark-icon tooltip">
           <img src="@/assets/png/question_mark.png" class="icon qm">
-          <span class="tooltiptext">Этот параметр опционален. Если оставить "Без выбора", задача будет считаться общей</span>
+          <span class="tooltiptext">Этот параметр обязателен</span>
         </div>
       </div>
       <div class="back-btn waves-effect waves-dark">
@@ -52,14 +52,32 @@
         </div>
       </form>
     </div>
+    <create-error-modal-component :namePost="emptyName"
+                                  :descPost="emptyDesc"
+                                  :textPost="emptyText"
+                                  :errorModalActive="errorModalActive"
+                                  @close="closeError">
+    </create-error-modal-component>
   </div>
 </template>
 
 <script>
+  import axios from 'axios'
+  import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
+
     export default {
-        name: "create-tasks-component",
+      name: "create-tasks-component",
+      components:{
+        CreateErrorModalComponent
+      },
       data(){
         return{
+          errorModalActive: false,
+          emptyName: true,
+          emptyDesc: true,
+          emptyText: true,
+          emptyLang: true,
+
           //название task
           taskName: '',
           //описание статьи/новости
@@ -68,12 +86,7 @@
           taskText: '',
 
           //for a while (artciles)
-          lessons: [
-            {id: 1, name: "Без выбора"},
-            {id: 2, name: "1"},
-            {id: 3, name: "2"},
-            {id: 4, name: "3"},
-          ],
+          lessons: [],
 
           //for difficultly (for a while)
           difficultly: [
@@ -89,16 +102,76 @@
           this.$emit('returns')
         },
 
-        sendTask() {
+        closeError(){
+          this.errorModalActive = false;
+          this.emptyName = true;
+          this.emptyDesc = true;
+          this.emptyText = true;
+          this.emptyLang = true;
+        },
 
+        sendTask() {
+          if (this.taskName.length === 0 || this.taskDescription.length === 0 || this.taskText.length === 0){
+            if (this.taskName.length !== 0){
+              this.emptyName = false
+            }
+            if (this.taskDescription.length !== 0){
+              this.emptyDesc = false
+            }
+            if (this.taskText.length !== 0){
+              this.emptyText = false
+            }
+            // if (document.getElementById("lessonSelect").options.selectedIndex !== 0){
+            //   this.emptyLang = false
+            // }
+            //show modal with error
+            this.errorModalActive = true;
+          }else{
+            //определяем значение параметров lesson and difficultly
+            const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
+            const lesson = document.getElementById("lessonSelect").options[selectedIndex].value;
+
+            const selectedIndexDifficultlySelect = document.getElementById("difficultlySelect").options.selectedIndex;
+            const difficultly = document.getElementById("difficultlySelect").options[selectedIndexDifficultlySelect].value;
+
+            const body = {
+              lesson_name: lesson,
+              authorEmail: this.$root.authUser.email,
+              taskName: this.taskName,
+              taskDescription: this.taskDescription,
+              taskText: this.taskText,
+              difficulty: difficultly
+            };
+
+            const jBody = JSON.stringify(body);
+            axios.post('http://localhost:8080/addTask', jBody).then((response) => {
+              console.log(response);
+            }).catch((error) => {
+              console.log(error);});
+
+            this.emitReturn()
+          }
         },
 
         click() {
           //получение значения селекта
-          const selectedIndex = document.getElementById("sel1").options.selectedIndex;
-          const item = document.getElementById("sel1").options[selectedIndex].value;
+          const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
+          const item = document.getElementById("lessonSelect").options[selectedIndex].value;
           alert(selectedIndex + item)
         },
+      },
+
+      mounted: function () {
+        const body = {
+          authorEmail: this.$root.authUser.email
+        };
+        //создаем json
+        const jBody = JSON.stringify(body);
+        axios.post('http://localhost:8080/getUserLessons', jBody).then((response) => {
+          console.log(response.data);
+          this.lessons = response.data.lessons
+        }).catch((error) => {
+          console.log(error);});
       }
     }
 </script>
