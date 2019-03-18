@@ -167,7 +167,7 @@
         };
         //создаем json
         const jBody = JSON.stringify(body);
-        axios.post('http://localhost:8080/getUserLessons', jBody).then((response) => {
+        axios.post('http://localhost:8080/getUserLessonsName', jBody).then((response) => {
           console.log(response.data);
           this.lessons = response.data.lessons
         }).catch((error) => {

@@ -20,7 +20,7 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " >
+              <div class="nav-bar-btns waves-effect waves-dark" @click="getUserArticles">
                 <p>МОИ СТАТЬИ</p>
               </div>
             </div>
@@ -43,7 +43,7 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " >
+              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserLessons">
                 <p>МОИ УРОКИ</p>
               </div>
             </div>
@@ -66,7 +66,7 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " >
+              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserTasks">
                 <p>МОИ ЗАДАЧИ</p>
               </div>
             </div>
@@ -89,7 +89,7 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " >
+              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserNews">
                 <p>МОИ НОВОСТИ</p>
               </div>
             </div>
@@ -130,6 +130,8 @@
   import CreateLessonComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateLessonComponent'
   import CreateTasksComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateTasksComponent'
 
+  import axios from 'axios'
+
     export default {
       name: "create-component",
       components: {
@@ -147,45 +149,97 @@
         }
       },
       methods: {
-        showCreateComponentArticles(){
-          this.onHide         = false;
+        showCreateComponentArticles() {
+          this.onHide = false;
           this.isOpenArticles = true;
-          this.isOpenTasks    = false;
-          this.isOpenNews     = false;
-          this.isOpenLessons  = false;
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
         },
 
-        showCreateComponentTasks(){
-          this.onHide         = false;
+        showCreateComponentTasks() {
+          this.onHide = false;
           this.isOpenArticles = false;
-          this.isOpenTasks    = true;
-          this.isOpenNews     = false;
-          this.isOpenLessons  = false;
+          this.isOpenTasks = true;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
         },
 
-        showCreateComponentNews(){
-          this.onHide         = false;
+        showCreateComponentNews() {
+          this.onHide = false;
           this.isOpenArticles = false;
-          this.isOpenTasks    = false;
-          this.isOpenNews     = true;
-          this.isOpenLessons  = false;
+          this.isOpenTasks = false;
+          this.isOpenNews = true;
+          this.isOpenLessons = false;
         },
 
-        showCreateComponentLessons(){
-          this.onHide         = false;
+        showCreateComponentLessons() {
+          this.onHide = false;
           this.isOpenArticles = false;
-          this.isOpenTasks    = false;
-          this.isOpenNews     = false;
-          this.isOpenLessons  = true;
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = true;
         },
 
-        toReturn(){
-          this.onHide         = true;
+        toReturn() {
+          this.onHide = true;
           this.isOpenArticles = false;
-          this.isOpenTasks    = false;
-          this.isOpenNews     = false;
-          this.isOpenLessons  = false;
-        }
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
+        },
+
+        getUserArticles() {
+          const body = {
+            authorEmail: this.$root.authUser.email
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getUserArticles', jBody).then((response) => {
+            console.log(response.data);
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
+
+        getUserLessons() {
+          const body = {
+            authorEmail: this.$root.authUser.email
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getUserLessons', jBody).then((response) => {
+            console.log(response.data);
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
+
+        getUserTasks(){
+          const body = {
+            authorEmail: this.$root.authUser.email
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getUserTasks', jBody).then((response) => {
+            console.log(response.data);
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
+
+        getUserNews(){
+          const body = {
+            authorEmail: this.$root.authUser.email
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getUserNews', jBody).then((response) => {
+            console.log(response.data);
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
       }
     }
 </script>

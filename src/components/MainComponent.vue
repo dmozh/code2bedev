@@ -125,8 +125,6 @@
       created: function () {
 
       },
-
-
     }
 </script>
 
