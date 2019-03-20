@@ -123,6 +123,7 @@
   }
 
   .left-panel-container{
+    min-width: 100px;
     width: 13vw;
     height: 100vh;
     display: -webkit-flex;
@@ -130,6 +131,10 @@
     display: flex;
     flex-wrap: wrap;
     background: rgba(0,0,0,.05)
+  }
+
+  .left-panel-container > div{
+    min-width: 100px;
   }
 
   .back-btn-container{
@@ -173,7 +178,7 @@
     width: 13vw;
     height: 90vh;
     align-content: baseline;
-
+    justify-content: center;
   }
 
   .menuitem-container{

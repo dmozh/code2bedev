@@ -45,7 +45,7 @@ firebase.auth().onAuthStateChanged(()=>{
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменнst
               this.activeUserName = response.data.user.user_name;
-              this.activeUserRole = response.data.user.user_role;
+              this.activeUserRole = response.data.user.role_id;
               this.activeUserRate = response.data.user.user_rate;
             }).catch((error) => {
               console.log(error);

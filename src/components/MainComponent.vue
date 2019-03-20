@@ -51,7 +51,7 @@
           <div class="col s12 m7">
             <div v-if="this.response">{{this.response.data.langs[0].lang_name}}</div>
             <div class="signed-in" v-if="this.$root.authUser">
-              <h5>Signed in as {{this.$root.activeUserName}} {{this.$root.authUser.emailVerified}}</h5>
+              <h5>Signed in as {{this.$root.activeUserName}} {{this.$root.authUser.emailVerified}} {{this.$root.activeUserRole}}</h5>
             </div>
           </div>
         </div>

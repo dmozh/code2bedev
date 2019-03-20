@@ -72,7 +72,7 @@
             </div>
           </div>
 
-          <div class="column">
+          <div class="column" v-if="this.$root.activeUserRole===666">
             <div class="col-header">
               <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentNews">
               <p>НОВОСТЬ</p>
@@ -120,8 +120,6 @@
                                  v-if="this.isOpenNews" @returns="toReturn">
       </create-post-component>
     </transition>
-
-
   </div>
 </template>
 
@@ -254,12 +252,12 @@
   }
 
   .body{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 100%;
+      display: -webkit-flex;
+      -webkit-flex-wrap: wrap;
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      height: 100%;
 
     justify-content: center;
     align-items: center;

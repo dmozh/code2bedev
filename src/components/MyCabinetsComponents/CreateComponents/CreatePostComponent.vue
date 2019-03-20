@@ -208,13 +208,6 @@
             }
           },
 
-          click(){
-            //получение значения селекта
-            const selectedIndex = document.getElementById("sel2").options.selectedIndex;
-            const item = document.getElementById("sel2").options[selectedIndex].value;
-            console.log(selectedIndex + item)
-          },
-
           addTag(){
             if (this.tag.length === 0){
               alert("Невозможно добавить пустой тэг")
@@ -224,7 +217,6 @@
                   { id: this.nextTag++,
                     name: this.tag
                   });
-
               }
             }
           },
