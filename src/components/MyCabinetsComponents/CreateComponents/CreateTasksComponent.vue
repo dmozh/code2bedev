@@ -14,6 +14,7 @@
           <img src="@/assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен</span>
         </div>
+        <label v-if="isUpdate">Сейчас задача относится к уроку: {{reqLessonName}}</label>
       </div>
       <div class="back-btn waves-effect waves-dark">
         <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
@@ -34,6 +35,7 @@
                   {{item.diff}}
                 </option>
               </select>
+              <label v-if="isUpdate">Сейчас уровень задачи: {{reqTaskDiff}}</label>
               <div class="quest-mark-icon tooltip">
                 <img src="@/assets/png/question_mark.png" class="icon qm">
                 <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
@@ -69,6 +71,34 @@
       name: "create-tasks-component",
       components:{
         CreateErrorModalComponent
+      },
+      props: {
+        isUpdate: {
+          type: Boolean
+        },
+
+        reqTaskId:{
+          type: Number
+        },
+        reqTaskName: {
+          type: String
+        },
+        reqTaskDescription: {
+          type: String
+        },
+        reqTaskText: {
+          type: String
+        },
+        reqTaskDiff:{
+          type: Number
+        },
+        reqLessonId: {
+          type: Number
+        },
+        reqLessonName: {
+          type: String
+        },
+
       },
       data(){
         return{
@@ -128,26 +158,49 @@
             this.errorModalActive = true;
           }else{
             //определяем значение параметров lesson and difficultly
-            const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
-            const lesson = document.getElementById("lessonSelect").options[selectedIndex].value;
+            // const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
+            document.getElementById("lessonSelect").value = this.reqLessonName;
 
+            let lesson = document.getElementById("lessonSelect").value;
+            console.log(lesson);
             const selectedIndexDifficultlySelect = document.getElementById("difficultlySelect").options.selectedIndex;
             const difficultly = document.getElementById("difficultlySelect").options[selectedIndexDifficultlySelect].value;
+            let body = {};
+            if(!this.isUpdate){
+              body = {
+                lesson_name: lesson,
+                authorEmail: this.$root.authUser.email,
+                taskName: this.taskName,
+                taskDescription: this.taskDescription,
+                taskText: this.taskText,
+                difficulty: difficultly
+              };
+            }else{
 
-            const body = {
-              lesson_name: lesson,
-              authorEmail: this.$root.authUser.email,
-              taskName: this.taskName,
-              taskDescription: this.taskDescription,
-              taskText: this.taskText,
-              difficulty: difficultly
-            };
+              body = {
+                lesson_name: lesson,
+                lessonId: this.reqLessonId,
+                authorEmail: this.$root.authUser.email,
+                taskId: this.reqTaskId,
+                taskName: this.taskName,
+                taskDescription: this.taskDescription,
+                taskText: this.taskText,
+                difficulty: difficultly
+              };
+            }
 
             const jBody = JSON.stringify(body);
-            axios.post('http://localhost:8080/addTask', jBody).then((response) => {
-              console.log(response);
-            }).catch((error) => {
-              console.log(error);});
+            if(!this.isUpdate){
+              axios.post('http://localhost:8080/addTask', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);});
+            }else{
+              axios.post('http://localhost:8080/updateUserTask', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);});
+            }
 
             this.emitReturn()
           }
@@ -169,10 +222,19 @@
         const jBody = JSON.stringify(body);
         axios.post('http://localhost:8080/getUserLessonsName', jBody).then((response) => {
           console.log(response.data);
-          this.lessons = response.data.lessons
+          this.lessons = response.data.lessons;
         }).catch((error) => {
-          console.log(error);});
-      }
+          console.log(error);
+        });
+
+
+        if (this.isUpdate) {
+          this.taskName = this.reqTaskName;
+          this.taskDescription = this.reqTaskDescription;
+          this.taskText = this.reqTaskText;
+        }
+      },
+
     }
 </script>
 

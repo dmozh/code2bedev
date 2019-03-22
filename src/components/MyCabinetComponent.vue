@@ -214,7 +214,8 @@
     flex-wrap: wrap;
     align-content: center;
     overflow: auto;
-    background: rgba(0, 0, 0, 0.36);
+    /*background: rgba(0, 0, 0, 0.36);*/
+    background: aliceblue;
     overflow-x: hidden!important;
   }
 </style>

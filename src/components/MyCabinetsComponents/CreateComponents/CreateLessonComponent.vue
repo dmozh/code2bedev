@@ -6,15 +6,14 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
         </select>
+        <label v-if="isUpdate">Текущий язык: {{reqLangName}}</label>
         <div class="quest-mark-icon tooltip">
           <img src="@/assets/png/question_mark.png" class="icon qm">
-          <span class="tooltiptext">Этот параметр опционален. Если оставить "без выбора", укро будет считаться
-            универсальным для всех языков программирования (К примеру в уроке может приводится сравнение двух языков). </span>
+          <span class="tooltiptext">Этот параметр обязателен.</span>
         </div>
 
       </div>
@@ -49,7 +48,7 @@
         <div class="limiter">
           <div class="left-content">
             <textarea v-model="lessonDescription" placeholder="Введите описание урока" class="desc-textarea"></textarea>
-            <div class="tasks-container">
+            <div class="tasks-container" v-if="!isUpdate">
               <div class="list-container">
                 <div class="list-header">
                   <div class="list-header-id-block">  ID</div>
@@ -107,6 +106,37 @@
       components:{
         WindowCreateTaskForLesson,
         CreateErrorModalComponent,
+      },
+      props: {
+        isUpdate: {
+          type: Boolean
+        },
+
+        reqLessonId:{
+          type: Number
+        },
+        reqLessonName: {
+          type: String
+        },
+        reqLessonDescription: {
+          type: String
+        },
+        reqLessonText: {
+          type: String
+        },
+        reqLessonTags: {
+          type: Array
+        },
+        reqNextLessonTag: {
+
+        },
+
+        reqLangId:{
+          type: Number
+        },
+        reqLangName:{
+          type: String
+        }
       },
       data(){
         return{
@@ -170,21 +200,43 @@
             //определяем значение параметров lang and userName
             const selectedIndex = document.getElementById("sel1").options.selectedIndex;
             const lang = document.getElementById("sel1").options[selectedIndex].value;
-            const body = {
-              lang: lang,
-              authorEmail: this.$root.authUser.email,
-              lessonName: this.lessonName,
-              lessonDescription: this.lessonDescription,
-              lessonText: this.lessonText,
-              lessonTags: this.postTags,
-              lessonTasks: this.lessonTasks
-            };
+            let body = {};
+            if(!this.isUpdate){
+              body = {
+                lang: lang,
+                authorEmail: this.$root.authUser.email,
+                lessonName: this.lessonName,
+                lessonDescription: this.lessonDescription,
+                lessonText: this.lessonText,
+                lessonTags: this.postTags,
+                lessonTasks: this.lessonTasks
+              };
+            }else{
+              body = {
+                lang: lang,
+                authorEmail: this.$root.authUser.email,
+                lessonId: this.reqLessonId,
+                lessonName: this.lessonName,
+                lessonDescription: this.lessonDescription,
+                lessonText: this.lessonText,
+                lessonTags: this.postTags,
+              };
+            }
 
             const jBody = JSON.stringify(body);
-            axios.post('http://localhost:8080/addLesson', jBody).then((response) => {
-              console.log(response);
-            }).catch((error) => {
-              console.log(error);});
+
+            if(!this.isUpdate){
+              axios.post('http://localhost:8080/addLesson', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);});
+            }else{
+              axios.post('http://localhost:8080/updateUserLesson', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);});
+            }
+
 
             this.emitReturn()
           }
@@ -220,7 +272,14 @@
       },
 
       mounted: function () {
-
+        if(this.isUpdate){
+          this.lessonName = this.reqLessonName;
+          this.lessonDescription = this.reqLessonDescription;
+          this.lessonText = this.reqLessonText;
+          this.postTags = this.reqLessonTags;
+          this.nextTag = this.reqNextLessonTag+1;
+          document.getElementById("sel1").value = this.reqLangName;
+        }
       }
     }
 </script>
@@ -400,7 +459,7 @@
       height: 7vh;
     }
     visibility: hidden;
-    width: 30vw;
+    width: 15vw;
     height: 5.4vh;
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;

@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    profile
+    Эта вкладка пока не доступна :(
   </div>
 </template>
 
@@ -10,10 +10,17 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .body{
-    width: 100%;
-    height: 50%;
-    background: aqua;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background: aliceblue;
+
+    font-size: 7vw;
+    color: #919191;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 </style>

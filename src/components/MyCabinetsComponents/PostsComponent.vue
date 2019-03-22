@@ -1,124 +1,137 @@
 <template>
   <div class="body">
-    <div class="header">
-      <label for="postsType">Выберите какие посты показать: </label>
-      <select id="postsType" class="custom-select" @change="change($event)">
-        <!--тут определяются языки программировпния в селекте-->
-        <option v-for="type in postsType" :key="type.id" :value="type.type">{{type.type}}</option>
-      </select>
-    </div>
-    <div class="content-container">
-      <div class="post-block" v-if="showArticles">
-        <div class="post-block-header">
-          <h5>СТАТЬИ</h5>
+    <transition name="slide-fade">
+      <div class="inner-container" v-if="onHide">
+        <div class="header">
+          <label for="postsType">Выберите какие посты показать: </label>
+          <select id="postsType" class="custom-select" @change="change($event)">
+            <!--тут определяются языки программировпния в селекте-->
+            <option v-for="type in postsType" :key="type.id" :value="type.type">{{type.type}}</option>
+          </select>
         </div>
-        <div class="post-block-content-container">
-          <div class="post-block-content-types"
-               v-for="(item) in progLanguages"
-               :key="item.id">
-            <div class="post-block-content-types-header">{{item.lang}}</div>
-            <div class="posts-container">
-              <div class="wrapper-container">
-                <div class="post-card"
-                     v-for="elem in response.articles"
-                     :key="elem.article_id"
-                     v-if="elem.lang_name === item.lang">
-                  <div class="left-container-post-card">
-                    Картинки нет
-                  </div>
-                  <div class="right-container-post-card">
-                    <div class="right-container-post-card-header">{{elem.article_name}}</div>
-                    <div class="right-container-post-card-body">{{elem.article_description}}</div>
-                    <div class="right-container-post-card-footer">Рейтинг статьи: {{elem.article_rate}}</div>
+        <div class="content-container">
+          <div class="post-block articles" v-if="showArticles">
+            <div class="post-block-header">
+              <h5>СТАТЬИ</h5>
+            </div>
+            <div class="post-block-content-container">
+              <div class="post-block-content-types"
+                   v-for="(item) in progLanguages"
+                   :key="item.id">
+                <div class="post-block-content-types-header">{{item.lang}}</div>
+                <div class="posts-container">
+                  <div class="wrapper-container">
+                    <div class="post-card"
+                         v-for="elem in response.articles"
+                         :key="elem.article_id"
+                         @click="showCreateComponentArticles(elem.article_id, elem.article_name, elem.article_description,
+                         elem.article_text, elem.article_tags, elem.lang_id, elem.lang_name)"
+                         v-if="elem.lang_name === item.lang">
+                      <div class="left-container-post-card">
+                        Картинки нет
+                      </div>
+                      <div class="right-container-post-card">
+                        <div class="right-container-post-card-header">{{elem.article_name}}</div>
+                        <div class="right-container-post-card-body">{{elem.article_description}}</div>
+                        <div class="right-container-post-card-footer">Рейтинг статьи: {{elem.article_rate}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="post-block" v-if="showLessons">
-        <div class="post-block-header">
-          <h5>УРОКИ</h5>
-        </div>
-        <div class="post-block-content-container">
-          <div class="post-block-content-types"
-               v-for="(item) in progLanguages"
-               :key="item.id">
-            <div class="post-block-content-types-header">{{item.lang}}</div>
-            <div class="posts-container">
-              <div class="wrapper-container">
-                <div class="post-card"
-                     v-for="elem in response.lessons"
-                     :key="elem.lesson_id"
-                     v-if="elem.lang_name === item.lang">
-                  <div class="left-container-post-card">
-                    Картинки нет
-                  </div>
-                  <div class="right-container-post-card">
-                    <div class="right-container-post-card-header">{{elem.lesson_name}}</div>
-                    <div class="right-container-post-card-body">{{elem.lesson_description}}</div>
-                    <div class="right-container-post-card-footer">Рейтинг урока: {{elem.lesson_rate}}</div>
+          <div class="post-block lessons" v-if="showLessons">
+            <div class="post-block-header">
+              <h5>УРОКИ</h5>
+            </div>
+            <div class="post-block-content-container">
+              <div class="post-block-content-types"
+                   v-for="(item) in progLanguages"
+                   :key="item.id">
+                <div class="post-block-content-types-header">{{item.lang}}</div>
+                <div class="posts-container">
+                  <div class="wrapper-container">
+                    <div class="post-card"
+                         v-for="elem in response.lessons"
+                         :key="elem.lesson_id"
+                         @click="showCreateComponentLessons(elem.lesson_id, elem.lesson_name, elem.lesson_description,
+                         elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name)"
+                         v-if="elem.lang_name === item.lang">
+                      <div class="left-container-post-card">
+                        Картинки нет
+                      </div>
+                      <div class="right-container-post-card">
+                        <div class="right-container-post-card-header">{{elem.lesson_name}}</div>
+                        <div class="right-container-post-card-body">{{elem.lesson_description}}</div>
+                        <div class="right-container-post-card-footer">Рейтинг урока: {{elem.lesson_rate}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="post-block" v-if="showTasks">
-        <div class="post-block-header">
-          <h5>ЗАДАЧИ</h5>
-        </div>
-        <div class="post-block-content-container">
-          <div class="post-block-content-types"
-               v-for="(item) in lessonsForTasks"
-               :key="item.id">
-            <div class="post-block-content-types-header">{{item.lesson_name}}</div>
-            <div class="posts-container">
-              <div class="wrapper-container">
-                <div class="post-card"
-                     v-for="elem in response.tasks"
-                     :key="elem.task_id"
-                     v-if="elem.lesson_name === item.lesson_name">
-                  <div class="left-container-post-card">
-                    Картинки нет
-                  </div>
-                  <div class="right-container-post-card">
-                    <div class="right-container-post-card-header">{{elem.task_name}}</div>
-                    <div class="right-container-post-card-body">{{elem.task_description}}</div>
-                    <div class="right-container-post-card-footer">Рейтинг задачи: {{elem.task_rate}}</div>
+          <div class="post-block tasks" v-if="showTasks">
+            <div class="post-block-header">
+              <h5>ЗАДАЧИ</h5>
+            </div>
+            <div class="post-block-content-container">
+              <div class="post-block-content-types"
+                   v-for="(item) in lessonsForTasks"
+                   :key="item.id">
+                <div class="post-block-content-types-header">{{item.lesson_name}}</div>
+                <div class="posts-container">
+                  <div class="wrapper-container">
+                    <div class="post-card"
+                         v-for="elem in response.tasks"
+                         :key="elem.task_id"
+                         @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
+                         elem.task_text, elem.lesson_id, elem.lesson_name, elem.task_difficulty)"
+
+                         v-if="elem.lesson_name === item.lesson_name">
+                      <div class="left-container-post-card">
+                        Картинки нет
+                      </div>
+                      <div class="right-container-post-card">
+                        <div class="right-container-post-card-header">{{elem.task_name}}</div>
+                        <div class="right-container-post-card-body">{{elem.task_description}}</div>
+                        <div class="right-container-post-card-footer">Рейтинг задачи: {{elem.task_rate}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="post-block" v-if="showNews && this.$root.activeUserRole === 666">
-        <div class="post-block-header">
-          <h5>НОВОСТИ</h5>
-        </div>
-        <div class="post-block-content-container">
-          <div class="post-block-content-types">
-            <div class="posts-container">
-              <div class="wrapper-container">
-                <div class="post-card"
-                     v-for="elem in response.news"
-                     :key="elem.news_id">
-                  <div class="left-container-post-card">
-                    Картинки нет
-                  </div>
-                  <div class="right-container-post-card">
-                    <div class="right-container-post-card-header">{{elem.news_name}}</div>
-                    <div class="right-container-post-card-body">{{elem.news_description}}</div>
-                    <div class="right-container-post-card-footer">
-                      <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
-                      <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
-                      <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
-                      <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
-                      <div class="splitter-footer-card"></div>
-                      <div>Рейтинг новости: {{elem.news_rate}}</div>
+          <div class="post-block news" v-if="showNews && this.$root.activeUserRole === 666">
+            <div class="post-block-header">
+              <h5>НОВОСТИ</h5>
+            </div>
+            <div class="post-block-content-container">
+              <div class="post-block-content-types">
+                <div class="posts-container">
+                  <div class="wrapper-container">
+                    <div class="post-card"
+                         v-for="elem in response.news"
+                         @click="showCreateComponentNews(elem.news_id, elem.news_name, elem.news_description,
+                                                     elem.news_text, elem.news_tags)"
+                         :key="elem.news_id">
+                      <div class="left-container-post-card">
+                        Картинки нет
+                      </div>
+                      <div class="right-container-post-card">
+                        <div class="right-container-post-card-header">{{elem.news_name}}</div>
+                        <div class="right-container-post-card-body">{{elem.news_description}}</div>
+                        <div class="right-container-post-card-footer">
+                          <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
+                          <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
+                          <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
+                          <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
+                          <div class="splitter-footer-card"></div>
+                          <div>Рейтинг новости: {{elem.news_rate}}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -127,15 +140,85 @@
           </div>
         </div>
       </div>
-    </div>
+    </transition>
+    <transition name="slide-fade">
+      <create-post-component v-bind:is-article="this.isOpenArticles"
+                             v-bind:is-news="this.isOpenNews"
+                             :isUpdate="isUpdate"
+                             :reqPostId="this.postId"
+                             :reqPostName="this.postName"
+                             :reqPostDescription="this.postDescription"
+                             :reqPostText="this.postText"
+                             :reqPostTags="this.postTags"
+                             :reqNextPostTag="this.nextPostTag"
+                             :reqLangId = "this.postLangId"
+                             :reqLangName = "this.postLangName"
+                             v-if="this.isOpenArticles" @returns="toReturn">
+
+      </create-post-component>
+    </transition>
+
+    <transition name="slide-fade">
+      <create-post-component v-bind:is-article="this.isOpenArticles"
+                             v-bind:is-news="this.isOpenNews"
+                             :isUpdate="isUpdate"
+                             :reqPostId="this.postId"
+                             :reqPostName="this.postName"
+                             :reqPostDescription="this.postDescription"
+                             :reqPostText="this.postText"
+                             :reqPostTags="this.postTags"
+                             :reqNextPostTag="this.nextPostTag"
+                             v-if="this.isOpenNews"
+                             @returns="toReturn">
+      </create-post-component>
+    </transition>
+
+    <transition name="slide-fade">
+      <create-tasks-component v-if="this.isOpenTasks"
+                              :isUpdate = "this.isUpdate"
+                              :reqTaskId = "this.postId"
+                              :reqTaskName = "this.postName"
+                              :reqTaskDescription = "this.postDescription"
+                              :reqTaskText = "this.postText"
+                              :reqTaskDiff = "this.taskDiff"
+                              :reqLessonId = "this.lessonId"
+                              :reqLessonName = "this.lessonName"
+                              @returns="toReturn">
+
+      </create-tasks-component>
+    </transition>
+
+    <transition name="slide-fade">
+      <create-lesson-component v-if="this.isOpenLessons"
+                               :isUpdate="isUpdate"
+                               :reqLessonId="this.postId"
+                               :reqLessonName="this.postName"
+                               :reqLessonDescription="this.postDescription"
+                               :reqLessonText="this.postText"
+                               :reqLessonTags="this.postTags"
+                               :reqNextLessonTag="this.nextPostTag"
+                               :reqLangId = "this.postLangId"
+                               :reqLangName = "this.postLangName"
+                               @returns="toReturn">
+      </create-lesson-component>
+    </transition>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
 
+  import CreatePostComponent from '@/components/MyCabinetsComponents/CreateComponents/CreatePostComponent'
+  import CreateLessonComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateLessonComponent'
+  import CreateTasksComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateTasksComponent'
+
     export default {
       name: "posts-component",
+      components: {
+        CreatePostComponent,
+        CreateLessonComponent,
+        CreateTasksComponent,
+      },
       data(){
         return{
           postsType: [
@@ -155,7 +238,32 @@
 
           progLanguages: [],
           lessonsForTasks: [],
-          tasks: []
+          tasks: [],
+
+          //for update
+          isUpdate: false,
+
+          //переменные передаваеммые в пропсы post component
+          postId: null,
+          postName: null,
+          postDescription: null,
+          postText: null,
+          postTags: [],
+          nextPostTag: '',
+          postLangId: null,
+          postLangName: null,
+
+
+          //переменные передаваеммые в пропсы task component
+          lessonName: null,
+          lessonId: null,
+          taskDiff: null,
+
+          onHide: true,
+          isOpenArticles: false,
+          isOpenTasks: false,
+          isOpenNews: false,
+          isOpenLessons: false,
         }
       },
       methods: {
@@ -209,7 +317,96 @@
           }
 
           return false
-        }
+        },
+
+        pushParamsForPosts(id, name, desc, text, tags){
+          //определение передаваеммых переменых в модалку
+          this.isUpdate = true;
+          this.postId = id;
+          this.postName = name;
+          this.postDescription = desc;
+          this.postText = text;
+          for(let i=0; i < tags.length; i++){
+            this.nextPostTag++;
+            this.postTags.push(
+              { id: this.nextPostTag,
+                name: tags[i]
+              });
+          }
+        },
+
+        pushLangParams(langId, langName){
+          this.postLangId = langId;
+          this.postLangName = langName;
+        },
+
+        pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff){
+          //определение передаваеммых переменых в модалку
+          this.isUpdate = true;
+          this.postId = taskId;
+          this.postName = name;
+          this.postDescription = desc;
+          this.postText = text;
+          this.lessonId = lessonId;
+          this.lessonName=lessonName;
+          this.taskDiff = taskDiff
+        },
+
+        showCreateComponentArticles(id, name, desc, text, tags, langId, langName) {
+          this.pushParamsForPosts(id, name, desc, text, tags);
+          this.pushLangParams(langId, langName);
+
+          this.onHide = false;
+          this.isOpenArticles = true;
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
+        },
+
+        showCreateComponentNews(id, name, desc, text, tags) {
+
+          this.pushParamsForPosts(id, name, desc, text, tags);
+
+          this.onHide = false;
+          this.isOpenArticles = false;
+          this.isOpenTasks = false;
+          this.isOpenNews = true;
+          this.isOpenLessons = false;
+        },
+
+        showCreateComponentTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff) {
+
+          this.pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff);
+
+          this.onHide = false;
+          this.isOpenArticles = false;
+          this.isOpenTasks = true;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
+        },
+
+        showCreateComponentLessons(id, name, desc, text, tags, langId, langName) {
+          this.pushParamsForPosts(id, name, desc, text, tags);
+          this.pushLangParams(langId, langName);
+
+          this.onHide = false;
+          this.isOpenArticles = false;
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = true;
+        },
+
+        toReturn() {
+          //обнуление переменных
+          this.postTags = [];
+          this.nextPostTag = '';
+
+          this.onHide = true;
+          this.isOpenArticles = false;
+          this.isOpenTasks = false;
+          this.isOpenNews = false;
+          this.isOpenLessons = false;
+        },
       },
 
       mounted(){
@@ -222,19 +419,22 @@
           this.response = response.data.posts;
           this.tasks = this.response.tasks;
           // console.log(response.data.posts.articles);
-          console.log(response.data.posts.tasks);
+          // console.log(response.data.posts.tasks);
+
           for(let i=0; i < response.data.posts.lessons.length; i++){
             if (this.contains(this.progLanguages, response.data.posts.lessons[i].lang_name, "lang") === true){
             }else {
               this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.lessons[i].lang_name})
             }
           }
+
           for(let i=0; i < response.data.posts.articles.length; i++){
             if (this.contains(this.progLanguages, response.data.posts.articles[i].lang_name, "lang") === true){
             }else {
               this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.articles[i].lang_name})
             }
           }
+
           for(let i=0; i < response.data.posts.tasks.length; i++){
             if (this.contains(this.lessonsForTasks, response.data.posts.tasks[i].lesson_name, "lesson_name") === true){
             }else {
@@ -249,6 +449,37 @@
 </script>
 
 <style scoped lang="scss">
+
+  .articles{
+    background: rgba(255, 171, 172, 0.2);
+  }
+  .lessons{
+    background: rgba(85, 202, 215, 0.18);
+  }
+  .tasks{
+    background: rgba(155, 255, 155, 0.2);
+  }
+  .news{
+    background: rgba(255, 248, 145, 0.23);
+  }
+  /*css animate*/
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+    z-index: 10000;
+    position: fixed;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    z-index: 1000;
+    position: fixed;
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+    /* .slide-fade-leave-active до версии 2.1.8 */ {
+    transform: translateX(1005px);
+    opacity: 0;
+  }
+
+
   .post-block-content-types-header{
     width: 60vw;
     border-bottom: 5px solid #bfbfbf;
@@ -280,14 +511,14 @@
   .body, .header, .custom-select, .content-container, .post-block,
   .post-block-content-container, .post-block-content-types, .post-block-header, .posts-container, .post-card,
   .left-container-post-card, .right-container-post-card,
-  .right-container-post-card-body, .right-container-post-card-footer, .right-container-post-card-header{
+  .right-container-post-card-body, .right-container-post-card-footer, .right-container-post-card-header, .inner-container{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
   }
 
-  .body{
+  .body, .inner-container{
 
     width: 100%;
     height: 100%;
@@ -326,19 +557,21 @@
   }
 
   .post-block{
-    background: aliceblue;
+    /*background: aliceblue;*/
     width: 100vw;
     height: 90vh;
 
     overflow-y: auto;
     overflow-x: hidden;
+
+    margin-top: 10vh;
   }
   .post-block-header{
 
     width: 100vw;
     height: 10vh;
-
     align-items: center;
+    /*margin-bottom: vh;*/
   }
   .post-block-content-container{
 
@@ -347,7 +580,6 @@
   }
 
   .post-block-content-types{
-
     width: 100vw;
     height: 40vh;
     font-size: 2.5vw;
@@ -395,7 +627,7 @@
     transition: .2s all;
     z-index: 10000000;
     cursor: pointer;
-    box-shadow: 0 2px 20px 2px rgb(140, 215, 189);
+    box-shadow: 0 2px 20px 2px rgba(0, 0, 0, 0.2);
   }
 
   .left-container-post-card{
@@ -434,6 +666,7 @@
     width: 100%;
     height: 5vh;
     justify-content: flex-end;
+    margin-right: 15px;
     font-size: 0.3em;
     color: #eff8ff;
     word-break: break-all;

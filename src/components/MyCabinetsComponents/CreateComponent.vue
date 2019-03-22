@@ -20,9 +20,9 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark" @click="getUserArticles">
-                <p>МОИ СТАТЬИ</p>
-              </div>
+              <!--<div class="nav-bar-btns waves-effect waves-dark" @click="getUserArticles">-->
+                <!--<p>МОИ СТАТЬИ</p>-->
+              <!--</div>-->
             </div>
           </div>
 
@@ -43,9 +43,9 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserLessons">
-                <p>МОИ УРОКИ</p>
-              </div>
+              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserLessons">-->
+                <!--<p>МОИ УРОКИ</p>-->
+              <!--</div>-->
             </div>
           </div>
 
@@ -66,9 +66,9 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserTasks">
-                <p>МОИ ЗАДАЧИ</p>
-              </div>
+              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserTasks">-->
+                <!--<p>МОИ ЗАДАЧИ</p>-->
+              <!--</div>-->
             </div>
           </div>
 
@@ -89,9 +89,9 @@
               </p>
             </div>
             <div class="col-footer">
-              <div class="nav-bar-btns waves-effect waves-dark " @click="getUserNews">
-                <p>МОИ НОВОСТИ</p>
-              </div>
+              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserNews">-->
+                <!--<p>МОИ НОВОСТИ</p>-->
+              <!--</div>-->
             </div>
           </div>
 

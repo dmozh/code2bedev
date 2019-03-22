@@ -7,11 +7,11 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
         </select>
+        <label v-if="isUpdate">Текущий язык: {{reqLangName}}</label>
         <div class="quest-mark-icon tooltip">
           <img src="@/assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен.</span>
@@ -99,139 +99,222 @@
         props: {
           isArticle: Boolean,
           isNews: Boolean,
+
+          isUpdate: {
+            type: Boolean
+          },
+
+          reqPostId:{
+            type: Number
+          },
+          reqPostName: {
+            type: String
+          },
+          reqPostDescription: {
+            type: String
+          },
+          reqPostText: {
+            type: String
+          },
+          reqPostTags: {
+            type: Array
+          },
+          reqNextPostTag: {
+
+          },
+
+          reqLangId:{
+            type: Number
+          },
+          reqLangName:{
+            type: String
+          },
+
+          reqNewsImportance: {
+            type: Number
+          },
         },
-        data(){
-          return{
-            errorModalActive: false,
-            emptyName: true,
-            emptyDesc: true,
-            emptyText: true,
-            emptyLang: true,
+      data() {
+        return {
+          errorModalActive: false,
+          emptyName: true,
+          emptyDesc: true,
+          emptyText: true,
+          emptyLang: true,
 
-            //название статьи/новости
-            postName: '',
-            //переменные для тэгов
-            tag: '',
-            nextTag: '',
-            postTags: [],
-            //описание статьи/новости
-            postDescription: '',
-            //text сама статья/новость
-            postText: '',
+          //название статьи/новости
+          postName: '',
+          //переменные для тэгов
+          tag: '',
+          nextTag: '',
+          postTags: [],
+          //описание статьи/новости
+          postDescription: '',
+          //text сама статья/новость
+          postText: '',
 
-            //for news
-            importance: [
-              {id: 1, name: "Не важно"},
-              {id: 2, name: "Важно"},
-              {id: 3, name: "Очень важно"},
-              {id: 4, name: "Критически важно"},
-            ],
+          //for news
+          importance: [
+            {id: 1, name: "Не важно"},
+            {id: 2, name: "Важно"},
+            {id: 3, name: "Очень важно"},
+            {id: 4, name: "Критически важно"},
+          ],
+        }
+          },
+      methods: {
+        emitReturn() {
+          this.$emit('returns')
+        },
+
+        closeError() {
+          this.errorModalActive = false;
+          this.emptyName = true;
+          this.emptyDesc = true;
+          this.emptyText = true;
+          this.emptyLang = true;
+        },
+
+        sendPost() {
+          //debug
+          if (this.isArticle) {
+            console.log('article')
+          } else if (this.isNews) {
+            console.log('news')
+          }
+          if (this.postName.length === 0 || this.postDescription.length === 0 || this.postText.length === 0) {
+            if (this.postName.length !== 0) {
+              this.emptyName = false
+            }
+            if (this.postDescription.length !== 0) {
+              this.emptyDesc = false
+            }
+            if (this.postText.length !== 0) {
+              this.emptyText = false
+            }
+            if (this.isArticle && document.getElementById("sel1").options.selectedIndex !== 0) {
+              this.emptyLang = false
+            }
+            //show modal with error
+            this.errorModalActive = true;
+          } else {
+            let body = {};
+            //составляем тело ответа
+            //определяем значение параметров lang and userName
+            // let selectedIndexSel1 = document.getElementById("sel1").options.selectedIndex;
+            let lang = document.getElementById("sel1").value;
+
+            const selectedIndex = document.getElementById("sel2").options.selectedIndex;
+            // const importance = document.getElementById("sel2").options[selectedIndex].value;
+            if (this.isArticle && !this.isUpdate) {
+              body = {
+                lang: lang,
+                authorEmail: this.$root.authUser.email,
+                articleName: this.postName,
+                articleDescription: this.postDescription,
+                articleText: this.postText,
+                articleTags: this.postTags
+              };
+            } else if(this.isNews && !this.isUpdate) {
+              body = {
+                importance: selectedIndex,
+                authorEmail: this.$root.authUser.email,
+                newsName: this.postName,
+                newsDescription: this.postDescription,
+                newsText: this.postText,
+                newsTags: this.postTags
+              };
+            } else if (this.isArticle && this.isUpdate){
+              body = {
+                lang: lang,
+                authorEmail: this.$root.authUser.email,
+                articleId: this.reqPostId,
+                articleName: this.postName,
+                articleDescription: this.postDescription,
+                articleText: this.postText,
+                articleTags: this.postTags
+              };
+            }else if(this.isNews && this.isUpdate){
+              body = {
+                importance: selectedIndex,
+                authorEmail: this.$root.authUser.email,
+                newsId: this.reqPostId,
+                newsName: this.postName,
+                newsDescription: this.postDescription,
+                newsText: this.postText,
+                newsTags: this.postTags
+              };
+            }
+            //создаем json
+            const jBody = JSON.stringify(body);
+
+            if (this.isArticle && !this.isUpdate) {
+              axios.post('http://localhost:8080/addArticle', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);
+              });
+            } else if (this.isNews && !this.isUpdate) {
+              axios.post('http://localhost:8080/addNews', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);
+              });
+            } else if (this.isArticle && this.isUpdate){
+              axios.post('http://localhost:8080/updateUserArticle', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);
+              });
+            }else if(this.isNews && this.isUpdate){
+              axios.post('http://localhost:8080/updateUserNews', jBody).then((response) => {
+                console.log(response);
+              }).catch((error) => {
+                console.log(error);
+              });
+            }
+            this.emitReturn()
           }
         },
-        methods: {
-          emitReturn () {
-            this.$emit('returns')
-          },
 
-          closeError(){
-            this.errorModalActive = false;
-            this.emptyName = true;
-            this.emptyDesc = true;
-            this.emptyText = true;
-            this.emptyLang = true;
-          },
-
-          sendPost(){
-            //debug
-            if(this.isArticle){
-              console.log('article')
-            }else if(this.isNews){
-              console.log('news')
+        addTag() {
+          if (this.tag.length === 0) {
+            alert("Невозможно добавить пустой тэг")
+          } else {
+            if (this.checkTags()) {
+              this.postTags.push(
+                {
+                  id: this.nextTag++,
+                  name: this.tag
+                });
             }
-            if (this.postName.length === 0 || this.postDescription.length === 0 || this.postText.length === 0){
-              if (this.postName.length !== 0){
-                this.emptyName = false
-              }
-              if (this.postDescription.length !== 0){
-                this.emptyDesc = false
-              }
-              if (this.postText.length !== 0){
-                this.emptyText = false
-              }
-              if (this.isArticle && document.getElementById("sel1").options.selectedIndex !== 0){
-                this.emptyLang = false
-              }
-              //show modal with error
-              this.errorModalActive = true;
-            }else{
-              let body = {};
-              //составляем тело ответа
-              if (this.isArticle){
-                //определяем значение параметров lang and userName
-                const selectedIndex = document.getElementById("sel1").options.selectedIndex;
-                const lang = document.getElementById("sel1").options[selectedIndex].value;
-                body = {
-                  lang: lang,
-                  authorEmail: this.$root.authUser.email,
-                  articleName: this.postName,
-                  articleDescription: this.postDescription,
-                  articleText: this.postText,
-                  articleTags: this.postTags
-                };
-              }else if(this.isNews){
-                const selectedIndex = document.getElementById("sel2").options.selectedIndex;
-                const importance = document.getElementById("sel2").options[selectedIndex].value;
-                body = {
-                  importance: selectedIndex,
-                  authorEmail: this.$root.authUser.email,
-                  newsName: this.postName,
-                  newsDescription: this.postDescription,
-                  newsText: this.postText,
-                  newsTags: this.postTags
-                };
-              }
-              //создаем json
-              const jBody = JSON.stringify(body);
+          }
+        },
 
-              if (this.isArticle){
-                axios.post('http://localhost:8080/addArticle', jBody).then((response) => {
-                  console.log(response);
-                }).catch((error) => {
-                  console.log(error);});
-              }else if(this.isNews){
-                axios.post('http://localhost:8080/addNews', jBody).then((response) => {
-                  console.log(response);
-                }).catch((error) => {
-                  console.log(error);});
-              }
-              this.emitReturn()
+        checkTags() {
+          let check = true;
+          for (let curTag in this.postTags) {
+            if (this.postTags[curTag].name === this.tag) {
+              check = false;
+              break;
             }
-          },
+          }
+          return check;
+        },
+      },
 
-          addTag(){
-            if (this.tag.length === 0){
-              alert("Невозможно добавить пустой тэг")
-            }else{
-              if(this.checkTags()){
-                this.postTags.push(
-                  { id: this.nextTag++,
-                    name: this.tag
-                  });
-              }
-            }
-          },
-
-          checkTags(){
-            let check = true;
-            for (let curTag in this.postTags){
-              if(this.postTags[curTag].name === this.tag){
-                check = false;
-                break;
-              }
-            }
-            return check;
-          },
+      mounted(){
+        if(this.isUpdate){
+          this.postName = this.reqPostName;
+          this.postDescription = this.reqPostDescription;
+          this.postText = this.reqPostText;
+          this.postTags = this.reqPostTags;
+          this.nextTag = this.reqNextPostTag+1;
         }
+        if(this.isArticle && this.isUpdate){
+          document.getElementById("sel1").value = this.reqLangName;
+        }
+      }
     }
 </script>
 
