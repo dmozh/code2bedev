@@ -32,6 +32,8 @@ firebase.auth().onAuthStateChanged(()=>{
         activeLang: null,
 
         langsName: null,
+
+        userLessons: null,
       },
 
       methods: {
@@ -47,6 +49,21 @@ firebase.auth().onAuthStateChanged(()=>{
               this.activeUserName = response.data.user.user_name;
               this.activeUserRole = response.data.user.role_id;
               this.activeUserRate = response.data.user.user_rate;
+            }).catch((error) => {
+              console.log(error);
+            });
+          }
+        },
+        getUserLessons(){
+          if (this.authUser !== null) {
+            const body = {
+              authorEmail: this.$root.authUser.email
+            };
+            //создаем json
+            const jBody = JSON.stringify(body);
+            axios.post('http://localhost:8080/getUserLessonsName', jBody).then((response) => {
+              console.log(response.data);
+              this.userLessons = response.data.lessons;
             }).catch((error) => {
               console.log(error);
             });

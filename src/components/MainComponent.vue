@@ -119,7 +119,9 @@
       mounted: function () {
         //TODO есть баг, при обновлении страницы имя пользователя пропадает, пока будет костыль чтобы не тратить на это время,
         //TODO но необходимо найти способ решение данной проблемы.
-        this.$root.getUserName()
+        if (this.$root.activeUserName === null) {
+          this.$root.getUserName()
+        }
       },
 
       created: function () {

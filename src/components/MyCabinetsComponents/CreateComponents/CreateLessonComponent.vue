@@ -214,7 +214,7 @@
             }else{
               body = {
                 lang: lang,
-                authorEmail: this.$root.authUser.email,
+                // authorEmail: this.$root.authUser.email,
                 lessonId: this.reqLessonId,
                 lessonName: this.lessonName,
                 lessonDescription: this.lessonDescription,
@@ -234,7 +234,7 @@
               axios.post('http://localhost:8080/updateUserLesson', jBody).then((response) => {
                 console.log(response);
               }).catch((error) => {
-                console.log(error);});
+                console.log(error);})
             }
 
 
@@ -255,6 +255,7 @@
                 { id: this.nextTag++,
                   name: this.tag
                 });
+              this.tag = ''
             }
           }
         },

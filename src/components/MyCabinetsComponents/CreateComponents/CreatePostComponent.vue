@@ -7,6 +7,7 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
+          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
@@ -26,6 +27,7 @@
             {{item.name}}
           </option>
         </select>
+        <label v-if="isUpdate">Текущая важность новости: {{this.importance[reqNewsImportance].name}}</label>
         <div class="quest-mark-icon tooltip">
           <img src="@/assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр опционален. В зависимости от выбора важности, новость будет по разному отображаться.
@@ -202,9 +204,15 @@
             //составляем тело ответа
             //определяем значение параметров lang and userName
             // let selectedIndexSel1 = document.getElementById("sel1").options.selectedIndex;
-            let lang = document.getElementById("sel1").value;
+            let lang = '';
+            let selectedIndex ='';
 
-            const selectedIndex = document.getElementById("sel2").options.selectedIndex;
+            if (this.isArticle){
+              lang = document.getElementById("sel1").value;
+            }
+            if (this.isNews){
+              selectedIndex = document.getElementById("sel2").options.selectedIndex;
+            }
             // const importance = document.getElementById("sel2").options[selectedIndex].value;
             if (this.isArticle && !this.isUpdate) {
               body = {
@@ -227,7 +235,7 @@
             } else if (this.isArticle && this.isUpdate){
               body = {
                 lang: lang,
-                authorEmail: this.$root.authUser.email,
+                // authorEmail: this.$root.authUser.email,
                 articleId: this.reqPostId,
                 articleName: this.postName,
                 articleDescription: this.postDescription,
@@ -237,7 +245,7 @@
             }else if(this.isNews && this.isUpdate){
               body = {
                 importance: selectedIndex,
-                authorEmail: this.$root.authUser.email,
+                // authorEmail: this.$root.authUser.email,
                 newsId: this.reqPostId,
                 newsName: this.postName,
                 newsDescription: this.postDescription,
@@ -287,6 +295,7 @@
                   id: this.nextTag++,
                   name: this.tag
                 });
+              this.tag = ''
             }
           }
         },
@@ -313,6 +322,9 @@
         }
         if(this.isArticle && this.isUpdate){
           document.getElementById("sel1").value = this.reqLangName;
+        }
+        if(this.isNews && this.isUpdate){
+          document.getElementById("sel2").value = this.importance[this.reqNewsImportance].name;
         }
       }
     }

@@ -6,7 +6,7 @@
         <label for="lessonSelect">Выберите урок к задаче</label>
         <select id="lessonSelect" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option v-for="item in lessons" :key="item.id" :value="item.lesson_name">
+          <option v-for="item in this.$root.userLessons" :key="item.id" :value="item.lesson_name">
             {{item.lesson_name}}
           </option>
         </select>
@@ -159,8 +159,9 @@
           }else{
             //определяем значение параметров lesson and difficultly
             // const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
-            document.getElementById("lessonSelect").value = this.reqLessonName;
-
+            // if(this.isUpdate && document.getElementById("lessonSelect").options.selectedIndex === 0){
+            //   document.getElementById("lessonSelect").value = this.reqLessonName;
+            // }
             let lesson = document.getElementById("lessonSelect").value;
             console.log(lesson);
             const selectedIndexDifficultlySelect = document.getElementById("difficultlySelect").options.selectedIndex;
@@ -179,8 +180,8 @@
 
               body = {
                 lesson_name: lesson,
-                lessonId: this.reqLessonId,
-                authorEmail: this.$root.authUser.email,
+                // lessonId: this.reqLessonId,
+                // authorEmail: this.$root.authUser.email,
                 taskId: this.reqTaskId,
                 taskName: this.taskName,
                 taskDescription: this.taskDescription,
@@ -215,23 +216,12 @@
       },
 
       mounted: function () {
-        const body = {
-          authorEmail: this.$root.authUser.email
-        };
-        //создаем json
-        const jBody = JSON.stringify(body);
-        axios.post('http://localhost:8080/getUserLessonsName', jBody).then((response) => {
-          console.log(response.data);
-          this.lessons = response.data.lessons;
-        }).catch((error) => {
-          console.log(error);
-        });
-
-
         if (this.isUpdate) {
           this.taskName = this.reqTaskName;
           this.taskDescription = this.reqTaskDescription;
           this.taskText = this.reqTaskText;
+          document.getElementById("lessonSelect").value = this.reqLessonName;
+          document.getElementById("difficultlySelect").value = this.reqTaskDiff;
         }
       },
 

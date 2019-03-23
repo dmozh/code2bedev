@@ -98,6 +98,12 @@
         if (this.$root.authUser === null){
           this.$router.replace('/main')
         }
+
+        //TODO при добавление нового урока нужно чтобы массив обновлялся,
+        //TODO можно делать каждый раз запрос на сервер, но если будет много пользователей, сервер умрет от такого
+        if(this.$root.userLessons === null){
+          this.$root.getUserLessons();
+        }
       },
 
     }

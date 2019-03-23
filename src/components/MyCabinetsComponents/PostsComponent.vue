@@ -115,7 +115,7 @@
                     <div class="post-card"
                          v-for="elem in response.news"
                          @click="showCreateComponentNews(elem.news_id, elem.news_name, elem.news_description,
-                                                     elem.news_text, elem.news_tags)"
+                                                     elem.news_text, elem.news_tags, elem.news_importance)"
                          :key="elem.news_id">
                       <div class="left-container-post-card">
                         Картинки нет
@@ -168,6 +168,7 @@
                              :reqPostText="this.postText"
                              :reqPostTags="this.postTags"
                              :reqNextPostTag="this.nextPostTag"
+                             :reqNewsImportance = "this.newsImportance"
                              v-if="this.isOpenNews"
                              @returns="toReturn">
       </create-post-component>
@@ -252,6 +253,8 @@
           nextPostTag: '',
           postLangId: null,
           postLangName: null,
+
+          newsImportance: null,
 
 
           //переменные передаваеммые в пропсы task component
@@ -363,10 +366,10 @@
           this.isOpenLessons = false;
         },
 
-        showCreateComponentNews(id, name, desc, text, tags) {
+        showCreateComponentNews(id, name, desc, text, tags, newsImportance) {
 
           this.pushParamsForPosts(id, name, desc, text, tags);
-
+          this.newsImportance = newsImportance;
           this.onHide = false;
           this.isOpenArticles = false;
           this.isOpenTasks = false;
@@ -396,10 +399,52 @@
           this.isOpenLessons = true;
         },
 
+        getUserAllPosts(){
+          const body = {
+            authorEmail: this.$root.authUser.email
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getUserAllPosts', jBody).then((response) => {
+            this.response = response.data.posts;
+            this.tasks = this.response.tasks;
+            // console.log(response.data.posts.articles);
+            // console.log(response.data.posts.tasks);
+
+            for(let i=0; i < response.data.posts.lessons.length; i++){
+              if (this.contains(this.progLanguages, response.data.posts.lessons[i].lang_name, "lang") === true){
+              }else {
+                this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.lessons[i].lang_name})
+              }
+            }
+
+            for(let i=0; i < response.data.posts.articles.length; i++){
+              if (this.contains(this.progLanguages, response.data.posts.articles[i].lang_name, "lang") === true){
+              }else {
+                this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.articles[i].lang_name})
+              }
+            }
+
+            for(let i=0; i < response.data.posts.tasks.length; i++){
+              if (this.contains(this.lessonsForTasks, response.data.posts.tasks[i].lesson_name, "lesson_name") === true){
+              }else {
+                this.lessonsForTasks.push({id: this.lessonsForTasks.length, lesson_name: response.data.posts.tasks[i].lesson_name})
+              }
+            }
+          }).catch((error) => {
+            console.log(error);
+          });
+        },
+
         toReturn() {
           //обнуление переменных
           this.postTags = [];
           this.nextPostTag = '';
+
+          //TODO при добавление нового урока нужно чтобы массив обновлялся,
+          //TODO можно делать каждый раз запрос на сервер, но если будет много пользователей, сервер умрет от такого
+          this.$root.getUserLessons();
+          this.getUserAllPosts();
 
           this.onHide = true;
           this.isOpenArticles = false;
@@ -410,40 +455,7 @@
       },
 
       mounted(){
-        const body = {
-          authorEmail: this.$root.authUser.email
-        };
-        //создаем json
-        const jBody = JSON.stringify(body);
-        axios.post('http://localhost:8080/getUserAllPosts', jBody).then((response) => {
-          this.response = response.data.posts;
-          this.tasks = this.response.tasks;
-          // console.log(response.data.posts.articles);
-          // console.log(response.data.posts.tasks);
-
-          for(let i=0; i < response.data.posts.lessons.length; i++){
-            if (this.contains(this.progLanguages, response.data.posts.lessons[i].lang_name, "lang") === true){
-            }else {
-              this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.lessons[i].lang_name})
-            }
-          }
-
-          for(let i=0; i < response.data.posts.articles.length; i++){
-            if (this.contains(this.progLanguages, response.data.posts.articles[i].lang_name, "lang") === true){
-            }else {
-              this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.articles[i].lang_name})
-            }
-          }
-
-          for(let i=0; i < response.data.posts.tasks.length; i++){
-            if (this.contains(this.lessonsForTasks, response.data.posts.tasks[i].lesson_name, "lesson_name") === true){
-            }else {
-              this.lessonsForTasks.push({id: this.lessonsForTasks.length, lesson_name: response.data.posts.tasks[i].lesson_name})
-            }
-          }
-        }).catch((error) => {
-          console.log(error);
-        });
+        this.getUserAllPosts()
       }
     }
 </script>
