@@ -78,7 +78,8 @@
           </div>
           <div class="right-content">
             <textarea v-model="lessonText" placeholder="Введите текст вашей урока" class="article-text-textarea"></textarea>
-            <button class="button waves-effect waves-dark">Создать</button>
+            <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
+            <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
           </div>
         </div>
       </form>

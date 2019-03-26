@@ -71,7 +71,8 @@
           <textarea v-if="isArticle" v-model="postText" placeholder="Введите текст вашей статьи" class="article-text-textarea"></textarea>
           <textarea v-else v-model="postText" placeholder="Введите текст вашей новости" class="article-text-textarea"></textarea>
 
-          <button class="button waves-effect waves-dark">Создать</button>
+          <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
+          <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
         </div>
       </form>
     </div>
