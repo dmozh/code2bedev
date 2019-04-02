@@ -28,7 +28,7 @@
             </div>
           </div>
           <div class="menuitem-container ">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getArticles">
               articles
             </div>
           </div>
@@ -51,7 +51,7 @@
           <div class="col s12 m7">
             <div v-if="this.response">{{this.response.data.langs[0].lang_name}}</div>
             <div class="signed-in" v-if="this.$root.authUser">
-              <h5>Signed in as {{this.$root.activeUserName}} {{this.$root.authUser.emailVerified}} {{this.$root.activeUserRole}}</h5>
+              <h5>Signed in as {{this.userName}} {{this.$root.authUser.emailVerified}} {{this.userRole}}</h5>
             </div>
           </div>
         </div>
@@ -73,6 +73,10 @@
       },
       data() {
         return {
+          userName: '',
+          userRole: '',
+          userRate: '',
+
           loggedIn: "logged-in",
           loggedOut: "logged-out",
           modalActive: false,
@@ -91,6 +95,14 @@
           this.$root.activeUserName = null;
           this.$root.activeUserRole = null;
           this.$root.activeUserRate =  null;
+
+          this.userName = '';
+          this.userRole = '';
+          this.userRate = '';
+
+          delete localStorage["userName"];
+          delete localStorage["userRole"];
+          delete localStorage["userRate"];
         },
         closeLoginWindow(){
           this.modalActive = false;
@@ -114,12 +126,38 @@
           this.windowChooseLangModalActive = false;
         },
 
+
+        getArticles(){
+          let body = {
+            lang: this.$root.activeLang,
+          };
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getArticles', jBody).then((response) => {
+            console.log(response);
+          }).catch((error) => {
+            console.log(error);});
+        },
+
+        getLessons(){
+
+        },
+
+        getTasks(){
+
+        },
+
+        getNews(){
+
+        }
       },
 
       mounted: function () {
         //TODO есть баг, при обновлении страницы имя пользователя пропадает, пока будет костыль чтобы не тратить на это время,
         //TODO но необходимо найти способ решение данной проблемы.
-        if (this.$root.activeUserName === null) {
+        // TODO upd решил пока использовать локальное хранилище хотя это тоже нихуя не безопасно
+        this.userName = localStorage.getItem('userName');
+        this.userRole = localStorage.getItem('userRole');
+        if (this.userName && this.userRole === null) {
           this.$root.getUserName()
         }
       },

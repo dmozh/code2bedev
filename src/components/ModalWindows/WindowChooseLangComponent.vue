@@ -38,6 +38,8 @@
 
       data() {
         return {
+          activeLangId: null,
+
           langs: null,
           activeDesc: '',
         }
@@ -49,7 +51,7 @@
       },
       methods: {
         emitClose() {
-          this.$root.activeLang = null;
+          // this.$root.activeLang = null;
           this.$emit('close')
         },
         getLangsInfo(){
@@ -59,12 +61,13 @@
         },
 
         showInfo(id){
-          this.$root.activeLang = this.langs[id-1].lang_name;
-          console.log(this.$root.activeLang);
+          this.activeLangId = id;
           this.activeDesc = this.langs[id-1].lang_description;
         },
 
         chooseLang(){
+          this.$root.activeLang = this.langs[this.activeLangId-1].lang_name;
+          console.log(this.$root.activeLang);
           this.$emit('close')
         }
       },

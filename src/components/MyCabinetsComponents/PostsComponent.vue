@@ -130,7 +130,7 @@
               </div>
             </div>
           </div>
-          <div class="post-block news" v-if="showNews && this.$root.activeUserRole === 666">
+          <div class="post-block news" v-if="showNews && this.userRole === 666">
             <div class="post-block-header">
               <h5>НОВОСТИ</h5>
             </div>
@@ -302,6 +302,9 @@
           isOpenTasks: false,
           isOpenNews: false,
           isOpenLessons: false,
+
+
+          userRole: '',
         }
       },
       methods: {
@@ -489,9 +492,12 @@
         },
 
         deleteArticle: function(articleId, event){
+          // получаем элемент для удаления
           let elem = event.target.parentElement.parentElement.parentElement.parentElement;
+          // если элемент совпадает с классом удаляем
           if (elem.className==="post-card"){
             elem.parentNode.removeChild(elem);
+            //если клик пользователь был не рядом с нужным элементом, берем на класс ниже
           }else if (elem.className === "wrapper-container"){
             elem = event.target.parentElement.parentElement.parentElement;
             elem.parentNode.removeChild(elem);
@@ -568,6 +574,7 @@
       },
 
       mounted(){
+        this.userRole = Number(localStorage.getItem('userRole'));
         this.getUserAllPosts()
       }
     }

@@ -61,6 +61,16 @@
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменную
               this.$root.activeUserName = response.data.user.user_name;
+              this.$root.activeUserRole = response.data.user.role_id;
+              this.$root.activeUserRate = response.data.user.user_rate;
+
+              this.$parent.userName = response.data.user.user_name;
+              this.$parent.userRole = response.data.user.role_id;
+              this.$parent.userRate = response.data.user.user_rate;
+
+              localStorage.setItem('userName', this.$parent.userName);
+              localStorage.setItem('userRole', String(this.$parent.userRole));
+              localStorage.setItem('userRate', String(this.$parent.userRate));
             }).catch((error) => {
               console.log(error);
             });

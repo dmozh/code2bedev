@@ -20,9 +20,6 @@
               </p>
             </div>
             <div class="col-footer">
-              <!--<div class="nav-bar-btns waves-effect waves-dark" @click="getUserArticles">-->
-                <!--<p>МОИ СТАТЬИ</p>-->
-              <!--</div>-->
             </div>
           </div>
 
@@ -43,9 +40,6 @@
               </p>
             </div>
             <div class="col-footer">
-              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserLessons">-->
-                <!--<p>МОИ УРОКИ</p>-->
-              <!--</div>-->
             </div>
           </div>
 
@@ -66,13 +60,10 @@
               </p>
             </div>
             <div class="col-footer">
-              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserTasks">-->
-                <!--<p>МОИ ЗАДАЧИ</p>-->
-              <!--</div>-->
             </div>
           </div>
 
-          <div class="column" v-if="this.$root.activeUserRole===666">
+          <div class="column" v-if="this.userRole===666">
             <div class="col-header">
               <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentNews">
               <p>НОВОСТЬ</p>
@@ -89,9 +80,6 @@
               </p>
             </div>
             <div class="col-footer">
-              <!--<div class="nav-bar-btns waves-effect waves-dark " @click="getUserNews">-->
-                <!--<p>МОИ НОВОСТИ</p>-->
-              <!--</div>-->
             </div>
           </div>
 
@@ -100,8 +88,10 @@
 
     <transition name="slide-fade">
       <create-post-component v-bind:is-article="this.isOpenArticles"
-                                 v-bind:is-news="this.isOpenNews"
-                                 v-if="this.isOpenArticles" @returns="toReturn">
+                             v-bind:is-news="this.isOpenNews"
+                             v-if="this.isOpenArticles"
+                             @returns="toReturn">
+                             <!--v-on:returns:returnMsg="this.returnMsg = toReturn"-->
 
       </create-post-component>
     </transition>
@@ -139,11 +129,15 @@
       },
       data() {
         return {
+          // returnMsg: '',
+
           onHide: true,
           isOpenArticles: false,
           isOpenTasks: false,
           isOpenNews: false,
           isOpenLessons: false,
+
+          userRole: '',
         }
       },
       methods: {
@@ -179,65 +173,18 @@
           this.isOpenLessons = true;
         },
 
-        toReturn() {
+        toReturn(msg) {
           this.onHide = true;
           this.isOpenArticles = false;
           this.isOpenTasks = false;
           this.isOpenNews = false;
           this.isOpenLessons = false;
+          console.log('11 '+this.returnMsg)
         },
+      },
 
-        getUserArticles() {
-          const body = {
-            authorEmail: this.$root.authUser.email
-          };
-          //создаем json
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getUserArticles', jBody).then((response) => {
-            console.log(response.data);
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
-
-        getUserLessons() {
-          const body = {
-            authorEmail: this.$root.authUser.email
-          };
-          //создаем json
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getUserLessons', jBody).then((response) => {
-            console.log(response.data);
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
-
-        getUserTasks(){
-          const body = {
-            authorEmail: this.$root.authUser.email
-          };
-          //создаем json
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getUserTasks', jBody).then((response) => {
-            console.log(response.data);
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
-
-        getUserNews(){
-          const body = {
-            authorEmail: this.$root.authUser.email
-          };
-          //создаем json
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getUserNews', jBody).then((response) => {
-            console.log(response.data);
-          }).catch((error) => {
-            console.log(error);
-          });
-        },
+      mounted: function () {
+        this.userRole = Number(localStorage.getItem('userRole'));
       }
     }
 </script>

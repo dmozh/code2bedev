@@ -40,6 +40,7 @@ firebase.auth().onAuthStateChanged(()=>{
         getUserName(){
           //если пользователь авторизован, получаем из бд его данные
           if (this.authUser !== null) {
+            // console.log(1111111);
             const body = {email: this.authUser.email};
             const jBody = JSON.stringify(body);
 
@@ -47,8 +48,12 @@ firebase.auth().onAuthStateChanged(()=>{
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменнst
               this.activeUserName = response.data.user.user_name;
-              this.activeUserRole = response.data.user.role_id;
-              this.activeUserRate = response.data.user.user_rate;
+              this.activeUserRole = response.data.user.role_id.toString();
+              this.activeUserRate = response.data.user.user_rate.toString();
+
+              localStorage.setItem('userName', this.activeUserName);
+              localStorage.setItem('userRole', this.activeUserRole);
+              localStorage.setItem('userRate', this.activeUserRate);
             }).catch((error) => {
               console.log(error);
             });

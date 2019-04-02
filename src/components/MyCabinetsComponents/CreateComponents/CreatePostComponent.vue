@@ -139,6 +139,9 @@
         },
       data() {
         return {
+          //response
+          resp: '1',
+
           errorModalActive: false,
           emptyName: true,
           emptyDesc: true,
@@ -167,7 +170,7 @@
           },
       methods: {
         emitReturn() {
-          this.$emit('returns')
+          this.$emit()
         },
 
         closeError() {
@@ -185,7 +188,8 @@
           } else if (this.isNews) {
             console.log('news')
           }
-          if (this.postName.length === 0 || this.postDescription.length === 0 || this.postText.length === 0) {
+          if (this.postName.length === 0 || this.postDescription.length === 0 ||
+            this.postText.length === 0 || document.getElementById("sel1").options.selectedIndex === 0) {
             if (this.postName.length !== 0) {
               this.emptyName = false
             }
@@ -256,33 +260,49 @@
             }
             //создаем json
             const jBody = JSON.stringify(body);
-
+            //переменная для тоаста
+            let toastHtml = '';
+            //TODO сделать оповещание о том успешно/неуспешно создана/обновлена/удалена пост
             if (this.isArticle && !this.isUpdate) {
               axios.post('http://localhost:8080/addArticle', jBody).then((response) => {
                 console.log(response);
+                this.resp = response.data.msg;
+                // console.log(this.resp);
+                // console.log(toastHtml)
               }).catch((error) => {
                 console.log(error);
               });
             } else if (this.isNews && !this.isUpdate) {
               axios.post('http://localhost:8080/addNews', jBody).then((response) => {
-                console.log(response);
+                // console.log(response);
               }).catch((error) => {
                 console.log(error);
               });
             } else if (this.isArticle && this.isUpdate){
               axios.post('http://localhost:8080/updateUserArticle', jBody).then((response) => {
-                console.log(response);
+                // console.log(response);
               }).catch((error) => {
                 console.log(error);
               });
             }else if(this.isNews && this.isUpdate){
               axios.post('http://localhost:8080/updateUserNews', jBody).then((response) => {
-                console.log(response);
+                // console.log(response);
               }).catch((error) => {
                 console.log(error);
               });
             }
-            this.emitReturn()
+
+            // console.log(this.resp.err_code);
+            // if (this.resp === 'article updated'){
+            //   toastHtml = '<span>Статья успешно обновлена</span>';
+            // } else if (this.resp === 'news added'){
+            //   toastHtml = '<span>Новость успешно добавлена</span>';
+            // } else if (this.resp === 'news updated'){
+            //   toastHtml = '<span>Новость успешно обновлена</span>';
+            // }
+            // await console.log(this.resp);
+            // M.toast({html: toastHtml, classes: 'rounded'});
+            this.emitReturn(this.resp)
           }
         },
 
@@ -314,6 +334,7 @@
       },
 
       mounted(){
+        //  если это обновление поста, то получаю данные из переданных переменных
         if(this.isUpdate){
           this.postName = this.reqPostName;
           this.postDescription = this.reqPostDescription;
@@ -332,6 +353,7 @@
 </script>
 
 <style scoped lang="scss">
+
   label{
     font-size: large;
     margin: 1vh 2px 0 0;
@@ -633,5 +655,4 @@
   .tag:hover{
     cursor: pointer;
   }
-
 </style>
