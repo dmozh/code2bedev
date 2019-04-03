@@ -23,7 +23,7 @@
         </div>
         <div class="menu">
           <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getLessons">
               lessons
             </div>
           </div>
@@ -33,12 +33,12 @@
             </div>
           </div>
           <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getTasks">
               tasks
             </div>
           </div>
           <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getNews">
               news
             </div>
           </div>
@@ -139,15 +139,32 @@
         },
 
         getLessons(){
-
+          let body = {
+            lang: this.$root.activeLang,
+          };
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getLessons', jBody).then((response) => {
+            console.log(response);
+          }).catch((error) => {
+            console.log(error);});
         },
 
         getTasks(){
-
+          let body = {
+            lang: this.$root.activeLang,
+          };
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/getTasks', jBody).then((response) => {
+            console.log(response);
+          }).catch((error) => {
+            console.log(error);});
         },
 
         getNews(){
-
+          axios.get('http://localhost:8080/getNews').then((response) => {
+            console.log(response);
+          }).catch((error) => {
+            console.log(error);});
         }
       },
 
