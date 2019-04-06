@@ -27,14 +27,14 @@
               lessons
             </div>
           </div>
-          <div class="menuitem-container ">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getArticles">
-              articles
-            </div>
-          </div>
           <div class="menuitem-container">
             <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getTasks">
               tasks
+            </div>
+          </div>
+          <div class="menuitem-container ">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getArticles">
+              articles
             </div>
           </div>
           <div class="menuitem-container">
@@ -47,11 +47,92 @@
       <login :modalActive="modalActive" @close="closeLoginWindow" @logut="logout"></login>
       <choose-lang :windowChooseLangModalActive="windowChooseLangModalActive" @close="closeWindowChooseLang"></choose-lang>
       <div class="content-container ">
-        <div class="container">
-          <div class="col s12 m7">
-            <div v-if="this.response">{{this.response.data.langs[0].lang_name}}</div>
+        <div class="content-header">
+          <div class="top-panel" >
             <div class="signed-in" v-if="this.$root.authUser">
-              <h5>Signed in as {{this.userName}} {{this.$root.authUser.emailVerified}} {{this.userRole}}</h5>
+              <div>Signed in as {{this.userName}}</div>
+              <div v-if="!this.$root.authUser.emailVerified" class="warning">Email verified is {{this.$root.authUser.emailVerified}}</div>
+            </div>
+            <div class="bottom-panel">
+
+            </div>
+          </div>
+        </div>
+        <div class="content-body">
+          <div class="cards-container">
+            <div class="card-basic"
+                 v-if="activeArticles"
+                 v-for="elem in response"
+                 :key="elem.article_id">
+              <div class="card-basic-content">
+                <div class="card-basic-header">
+                  {{elem.article_name}}
+                </div>
+                <div class="card-basic-body">
+                  {{elem.article_description}}
+                </div>
+                <div class="card-basic-footer">
+                  <button class="button">Открыть статью</button>
+                  <div>Рейтинг урока: {{elem.article_rate}}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-basic"
+                 v-if="activeLessons"
+                 v-for="elem in response"
+                 :key="elem.lesson_id">
+              <div class="card-basic-content">
+                <div class="card-basic-header">
+                  <div>{{elem.lesson_name}}</div>
+                </div>
+                <div class="card-basic-body">
+                  <div>{{elem.lesson_description}}</div>
+                </div>
+                <div class="card-basic-footer">
+                  <button class="button">Открыть урок</button>
+                  <div>Рейтинг урока: {{elem.lesson_rate}}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-basic"
+                 v-if="activeTasks"
+                 v-for="elem in response"
+                 :key="elem.task_id">
+              <div class="card-basic-content">
+                <div class="card-basic-header">
+                  <div>{{elem.task_name}}</div>
+                </div>
+                <div class="card-basic-body">
+                  <div>{{elem.task_description}}</div>
+                </div>
+                <div class="card-basic-footer">
+                  <button class="button">Открыть задачу</button>
+                  <div>Рейтинг задачи: {{elem.task_rate}}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-basic"
+                 v-if="activeNews"
+                 v-for="elem in response"
+                 :key="elem.news_id">
+              <div class="card-basic-content">
+                <div class="card-basic-header">
+                  <div>{{elem.news_name}}</div>
+                </div>
+                <div class="card-basic-body">
+                  <div>{{elem.news_description}}</div>
+                </div>
+                <div class="card-basic-footer">
+                  <button class="button">Открыть новость</button>
+                  <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
+                  <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
+                  <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
+                  <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -86,6 +167,10 @@
           response: '',
           // activeUserName: '',
 
+          activeArticles: false,
+          activeNews: false,
+          activeLessons: false,
+          activeTasks: false,
         }
       },
       methods:{
@@ -128,41 +213,65 @@
 
 
         getArticles(){
+          this.activeArticles = true;
+          this.activeLessons  = false;
+          this.activeNews     = false;
+          this.activeTasks    = false;
+
           let body = {
             lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getArticles', jBody).then((response) => {
-            console.log(response);
+            this.response = response.data.articles;
+            // console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
 
         getLessons(){
+          this.activeArticles = false;
+          this.activeLessons  = true;
+          this.activeNews     = false;
+          this.activeTasks    = false;
+
           let body = {
             lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getLessons', jBody).then((response) => {
-            console.log(response);
+            this.response = response.data.lessons;
+            // console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
 
         getTasks(){
+          this.activeArticles = false;
+          this.activeLessons  = false;
+          this.activeNews     = false;
+          this.activeTasks    = true;
+
           let body = {
             lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getTasks', jBody).then((response) => {
-            console.log(response);
+            this.response = response.data.tasks;
+            // console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
 
         getNews(){
+          this.activeArticles = false;
+          this.activeLessons  = false;
+          this.activeNews     = true;
+          this.activeTasks    = false;
+
           axios.get('http://localhost:8080/getNews').then((response) => {
-            console.log(response);
+            this.response = response.data.news;
+            // console.log(response);
           }).catch((error) => {
             console.log(error);});
         }
@@ -186,22 +295,38 @@
 </script>
 
 <style scoped lang="scss">
-  .body{
-    /*position: fixed;*/
-    width: 100vw;
-    height: 100vh;
-    background: aliceblue;
+  /*scrollbar*/
+  ::-webkit-scrollbar {
+    width: 0.5em;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
+
+
+  .content-container, .content-header, .content-body, .body, .menu,
+  .logo, .menuitem-container, .nav-bar-btns, .left-panel-container, .btns-container,
+  .btn-container, .icon, .top-panel, .cards-container, .card-basic, .card-basic-content, .card-basic-header, .card-basic-body{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
   }
 
+  .body{
+    /*position: fixed;*/
+    width: 100vw;
+    height: 100vh;
+    background: aliceblue;
+  }
+
   .menu{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     width: 100%;
     height: 90vh;
     align-content: baseline;
@@ -210,19 +335,11 @@
 
   .logo{
     margin: auto;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     max-width: 100%;
     max-height: 100%;
   }
 
   .menuitem-container{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     width: 13vw;
     height: 6vh;
     align-items: center;
@@ -230,10 +347,6 @@
   }
 
   .nav-bar-btns{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     margin: 0 auto;
     width: 3vw;
     height: 6vh;
@@ -265,27 +378,16 @@
   .left-panel-container{
     width: 13vw;
     height: 100vh;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     background: rgba(0,0,0,.05)
   }
 
   .btns-container{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     width: 13vw;
     height: 10vh;
     justify-content: center;
   }
   .btn-container{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
+
     width: 4.1vw;
     height: 10vh;
     align-items: center;
@@ -310,12 +412,12 @@
 
   .icon{
     margin: auto;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
     max-width: 100%;
     max-height: 100%;
+  }
+
+  .warning{
+    color: red;
   }
 
 
@@ -323,13 +425,111 @@
     width: 85vw;
     margin: 0 auto;
     height: 100%;
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
+
     align-content: center;
     overflow: auto;
     overflow-x: hidden!important;
   }
+
+  .content-header{
+    width: 87vw;
+    height: 10vh;
+  }
+
+  .content-body{
+    height: 90vh;
+    width: 87vw;
+    justify-content: center;
+  }
+
+  .bottom-panel, .card-basic-footer{
+    display: -webkit-flex;
+    -webkit-flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .top-panel{
+    justify-content: flex-start;
+  }
+
+  .top-panel, .bottom-panel{
+    width: 87vw;
+    height: 5vh;
+  }
+
+  .cards-container{
+    width: 70vw;
+    height: 90vh;
+    align-content: baseline;
+    /*justify-content: space-evenly;*/
+
+    overflow-y: auto;
+  }
+
+  .card-basic{
+    width: 22vw;
+    height: 22vh;
+
+    margin: 1vh 0.5vw 1vh 0.5vw;
+    background: rgba(193, 196, 202, 0.63);
+    border-radius: 2px;
+
+    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.49);
+  }
+
+  .card-basic-content{
+    width: 100%;
+  }
+
+  .card-basic-header{
+    width: 100%;
+    height: 6vh;
+
+    font-size: 1.5vw;
+    padding-left: 5px;
+    /*TODO если текст не помещается в заданную область необходимо обрезать и добавлять многоточие доделать
+      TODO
+    */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*word-break: break-all;*/
+  }
+
+  .card-basic-body{
+    width: 100%;
+    height: 10vh;
+    font-size: 1vw;
+    /*margin: 0 auto;*/
+    padding-left: 5px;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+
+  .card-basic-footer{
+    width: 100%;
+    height: 6vh;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 0.6vw;
+  }
+
+  .button{
+    font-size: 15px !important;
+    width: 40%;
+    /*height: 100%;*/
+    height: 3vh;
+    background: rgba(22,22,22, 0.1);
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+  }
+
+  .button:hover{
+    transition: .5s all;
+    background: #a6ffb7;
+  }
+
 
 </style>
