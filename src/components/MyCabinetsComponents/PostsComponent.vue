@@ -188,7 +188,8 @@
                              :reqNextPostTag="this.nextPostTag"
                              :reqLangId = "this.postLangId"
                              :reqLangName = "this.postLangName"
-                             v-if="this.isOpenArticles" @returns="toReturn">
+                             v-if="this.isOpenArticles"
+                             @returns="toReturn">
 
       </create-post-component>
     </transition>
@@ -505,7 +506,7 @@
 
           let body = {
             articleId: articleId,
-            authorName: this.$root.activeUserName
+            authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/deleteUserArticle', jBody).then((response) => {
@@ -525,7 +526,7 @@
 
           let body = {
             newsId: newsId,
-            authorName: this.$root.activeUserName
+            authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/deleteUserNews', jBody).then((response) => {
@@ -544,7 +545,7 @@
 
           let body = {
             taskId: taskId,
-            authorName: this.$root.activeUserName
+            authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/deleteUserTask', jBody).then((response) => {
@@ -563,7 +564,7 @@
 
           let body = {
             lessonId: lessonId,
-            authorName: this.$root.activeUserName
+            authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/deleteUserLesson', jBody).then((response) => {
@@ -851,7 +852,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   .right-container-post-card-footer{

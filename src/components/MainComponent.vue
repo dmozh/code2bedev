@@ -58,83 +58,110 @@
             </div>
           </div>
         </div>
-        <div class="content-body">
-          <div class="cards-container">
-            <div class="card-basic"
-                 v-if="activeArticles"
-                 v-for="elem in response"
-                 :key="elem.article_id">
-              <div class="card-basic-content">
-                <div class="card-basic-header">
-                  {{elem.article_name}}
-                </div>
-                <div class="card-basic-body">
-                  {{elem.article_description}}
-                </div>
-                <div class="card-basic-footer">
-                  <button class="button">Открыть статью</button>
-                  <div>Рейтинг урока: {{elem.article_rate}}</div>
-                </div>
-              </div>
-            </div>
 
-            <div class="card-basic"
-                 v-if="activeLessons"
-                 v-for="elem in response"
-                 :key="elem.lesson_id">
-              <div class="card-basic-content">
-                <div class="card-basic-header">
-                  <div>{{elem.lesson_name}}</div>
-                </div>
-                <div class="card-basic-body">
-                  <div>{{elem.lesson_description}}</div>
-                </div>
-                <div class="card-basic-footer">
-                  <button class="button">Открыть урок</button>
-                  <div>Рейтинг урока: {{elem.lesson_rate}}</div>
+        <div class="content-body" >
+          <transition name="slide-fade">
+            <div class="cards-container" v-if="!this.isOpenPost">
+              <div class="card-basic"
+                   v-if="activeArticles"
+                   v-for="elem in response"
+                   :key="elem.article_id">
+                <div class="card-basic-content">
+                  <div class="card-basic-header">
+                    {{elem.article_name}}
+                  </div>
+                  <div class="card-basic-body">
+                    {{elem.article_description}}
+                  </div>
+                  <div class="card-basic-footer">
+                    <button class="button"
+                            @click="openPost('article', elem.article_id, elem.article_name, elem.article_description,
+                            elem.article_text, elem.article_rate)">
+                      Открыть статью</button>
+                    <div>Рейтинг статьи: {{elem.article_rate}}</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="card-basic"
-                 v-if="activeTasks"
-                 v-for="elem in response"
-                 :key="elem.task_id">
-              <div class="card-basic-content">
-                <div class="card-basic-header">
-                  <div>{{elem.task_name}}</div>
-                </div>
-                <div class="card-basic-body">
-                  <div>{{elem.task_description}}</div>
-                </div>
-                <div class="card-basic-footer">
-                  <button class="button">Открыть задачу</button>
-                  <div>Рейтинг задачи: {{elem.task_rate}}</div>
+              <div class="card-basic"
+                   v-if="activeLessons"
+                   v-for="elem in response"
+                   :key="elem.lesson_id">
+                <div class="card-basic-content">
+                  <div class="card-basic-header">
+                    <div>{{elem.lesson_name}}</div>
+                  </div>
+                  <div class="card-basic-body">
+                    <div>{{elem.lesson_description}}</div>
+                  </div>
+                  <div class="card-basic-footer">
+                    <button class="button"
+                            @click="openPost('lesson', elem.lesson_id, elem.lesson_name, elem.lesson_description,
+                            elem.lesson_text, elem.lesson_rate)">
+                      Открыть урок</button>
+                    <div>Рейтинг урока: {{elem.lesson_rate}}</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="card-basic"
-                 v-if="activeNews"
-                 v-for="elem in response"
-                 :key="elem.news_id">
-              <div class="card-basic-content">
-                <div class="card-basic-header">
-                  <div>{{elem.news_name}}</div>
+              <div class="card-basic"
+                   v-if="activeTasks"
+                   v-for="elem in response"
+                   :key="elem.task_id">
+                <div class="card-basic-content">
+                  <div class="card-basic-header">
+                    <div>{{elem.task_name}}</div>
+                  </div>
+                  <div class="card-basic-body">
+                    <div>{{elem.task_description}}</div>
+                  </div>
+                  <div class="card-basic-footer">
+                    <button class="button"
+                            @click="openPost('task', elem.task_id, elem.task_name, elem.task_description
+                            ,elem.task_text, elem.task_rate)">
+                      Открыть задачу</button>
+                    <div>Рейтинг задачи: {{elem.task_rate}}</div>
+                  </div>
                 </div>
-                <div class="card-basic-body">
-                  <div>{{elem.news_description}}</div>
-                </div>
-                <div class="card-basic-footer">
-                  <button class="button">Открыть новость</button>
-                  <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
-                  <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
-                  <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
-                  <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
+              </div>
+
+              <div class="card-basic"
+                   v-if="activeNews"
+                   v-for="elem in response"
+                   :key="elem.news_id">
+                <div class="card-basic-content">
+                  <div class="card-basic-header">
+                    <div>{{elem.news_name}}</div>
+                  </div>
+                  <div class="card-basic-body">
+                    <div>{{elem.news_description}}</div>
+                  </div>
+                  <div class="card-basic-footer">
+                    <button class="button"
+                            @click="openNewsPost('news', elem.news_id, elem.news_name, elem.news_description, elem.news_text,
+                            elem.news_rate, elem.news_importance)">
+                      Открыть новость</button>
+                    <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
+                    <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
+                    <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
+                    <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </transition>
+          <transition name="slide-fade">
+            <view-post-component v-if="this.isOpenPost"
+                                 :postId="this.postId"
+                                 :postName="this.postName"
+                                 :postDescription = "this.postDescription"
+                                 :postText="this.postText"
+                                 :postType="this.postType"
+                                 :postRate="this.postRate"
+                                 :newsImportance="this.newsImportance"
+                                 @returns="toReturn">
+            </view-post-component>
+          </transition>
         </div>
       </div>
     </div>
@@ -145,10 +172,13 @@
   import LoginWindow from '@/components/ModalWindows/WindowLoginComponent'
   import ChooseLangWindow from '@/components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
+  import ViewPostComponent from "./ViewPostComponent";
+
 
     export default {
       name: "main-component",
       components: {
+        ViewPostComponent,
         login: LoginWindow,
         chooseLang: ChooseLangWindow
       },
@@ -171,9 +201,46 @@
           activeNews: false,
           activeLessons: false,
           activeTasks: false,
+
+          isOpenPost: false,
+
+          postId: null,
+          postName: '',
+          postDescription: '',
+          postText: '',
+          postType: '',
+          postRate: null,
+          newsImportance: null,
         }
       },
       methods:{
+
+        toReturn(){
+          this.isOpenPost = false;
+          this.postId = null;
+          this.postName = "";
+          this.postText = "";
+          this.postDescription="";
+          this.postType = "";
+          this.postRate = null;
+          this.newsImportance = null;
+        },
+
+        openNewsPost(postType, postId, postName, postDescription, postText, postRate, newsImporatance){
+          this.newsImportance = newsImporatance;
+          this.openPost(postType, postId, postName, postDescription, postText, postRate)
+        },
+
+        openPost(postType, postId, postName, postDescription, postText, postRate){
+          this.postId = postId;
+          this.postName = postName;
+          this.postDescription = postDescription;
+          this.postText = postText;
+          this.postType = postType;
+          this.postRate = postRate;
+          this.isOpenPost = true;
+        },
+
         logout(){
           auth.auth().signOut();
           this.$root.authUser = null;
@@ -211,8 +278,9 @@
           this.windowChooseLangModalActive = false;
         },
 
-
         getArticles(){
+          this.isOpenPost = false;
+
           this.activeArticles = true;
           this.activeLessons  = false;
           this.activeNews     = false;
@@ -230,6 +298,8 @@
         },
 
         getLessons(){
+          this.isOpenPost = false;
+
           this.activeArticles = false;
           this.activeLessons  = true;
           this.activeNews     = false;
@@ -247,6 +317,8 @@
         },
 
         getTasks(){
+          this.isOpenPost = false;
+
           this.activeArticles = false;
           this.activeLessons  = false;
           this.activeNews     = false;
@@ -264,6 +336,8 @@
         },
 
         getNews(){
+          this.isOpenPost = false;
+
           this.activeArticles = false;
           this.activeLessons  = false;
           this.activeNews     = true;
@@ -274,7 +348,7 @@
             // console.log(response);
           }).catch((error) => {
             console.log(error);});
-        }
+        },
       },
 
       mounted: function () {
@@ -295,6 +369,24 @@
 </script>
 
 <style scoped lang="scss">
+
+  /*css animate*/
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+    /*z-index: 10000;*/
+    position: fixed;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    /*z-index: 1000;*/
+    position: fixed;
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+    /* .slide-fade-leave-active до версии 2.1.8 */ {
+    transform: translateX(1005px);
+    opacity: 0;
+  }
+
   /*scrollbar*/
   ::-webkit-scrollbar {
     width: 0.5em;
@@ -426,7 +518,7 @@
     margin: 0 auto;
     height: 100%;
 
-    align-content: center;
+    /*align-content: center;*/
     overflow: auto;
     overflow-x: hidden!important;
   }
@@ -468,7 +560,7 @@
   }
 
   .card-basic{
-    width: 22vw;
+    width: 30vw;
     height: 22vh;
 
     margin: 1vh 0.5vw 1vh 0.5vw;
@@ -486,25 +578,26 @@
     width: 100%;
     height: 6vh;
 
-    font-size: 1.5vw;
+    font-size: 1.5rem;
     padding-left: 5px;
     /*TODO если текст не помещается в заданную область необходимо обрезать и добавлять многоточие доделать
       TODO
     */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
     /*word-break: break-all;*/
   }
 
   .card-basic-body{
     width: 100%;
     height: 10vh;
-    font-size: 1vw;
+    font-size: 1rem;
     /*margin: 0 auto;*/
     padding-left: 5px;
     text-overflow: ellipsis;
     word-break: break-all;
+    overflow: hidden;
   }
 
   .card-basic-footer{
@@ -512,7 +605,7 @@
     height: 6vh;
     align-items: center;
     justify-content: space-around;
-    font-size: 0.6vw;
+    font-size: 0.6rem;
   }
 
   .button{

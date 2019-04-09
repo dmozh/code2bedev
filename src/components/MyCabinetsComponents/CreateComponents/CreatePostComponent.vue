@@ -170,7 +170,7 @@
           },
       methods: {
         emitReturn() {
-          this.$emit()
+          this.$emit('returns')
         },
 
         closeError() {
