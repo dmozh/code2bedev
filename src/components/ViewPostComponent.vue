@@ -30,7 +30,8 @@
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
-          <div class="post-text-block">{{this.postText}}</div>
+          <div class="post-text-block"></div>
+
         </div>
         <div class="content-footer"></div>
       </div>
@@ -80,6 +81,15 @@
       },
 
       mounted: function () {
+        console.log(this.postText);
+        const text = this.postText;
+        // this.postText = this.postText.replace('&lt;', '<');
+        // this.postText = this.postText.replace('&gt;', '>');
+        let parentElem = document.getElementsByClassName('post-text-block');
+        parentElem[0].insertAdjacentHTML('afterbegin', text);
+
+        console.log(parentElem);
+
         if(this.postType==="lesson"){
           let body = {
             lessonId: this.postId,
@@ -177,6 +187,7 @@
 
   .info-block{
     width: 80vw;
+    justify-content: space-between;
   }
 
   .post-type-block{
@@ -202,15 +213,16 @@
   .content-body{
     width: 85vw;
     /*height: 100%;*/
-    justify-content: center;
+    /*justify-content: center;*/
     align-content: baseline;
   }
 
   .post-name-block{
     width: 80vw;
-    height: 13vh;
+    /*height: 2em;*/
     font-size: 4rem;
-    background: rgba(191, 191, 191, 0.27);
+    /*background: rgba(191, 191, 191, 0.27);*/
+    background: white;
     align-items: center;
     /*border-bottom: solid 10px #bfbfbf;*/
   }
@@ -220,11 +232,12 @@
     padding-right: 0.5vw;
     padding-left: 0.5vw;
     width: 71vw;
-    height: 15vh;
-    font-size: 0.9rem;
+    /*height: 15vh;*/
+    font-size: 0.9em;
     /*border-bottom: solid 10px #bfbfbf;*/
-    justify-content: center;
-    background: rgba(191, 191, 191, 0.27);
+    /*justify-content: center;*/
+    /*background: rgba(191, 191, 191, 0.27);*/
+    background: white;
     align-items: center;
     /*background: aqua;*/
   }
@@ -237,7 +250,8 @@
     width: 71vw;
     height: auto;
     font-size: 0.9rem;
-    background: rgba(191, 191, 191, 0.27);
+    /*background: rgba(191, 191, 191, 0.27);*/
+    background: white;
   }
 
   .content-footer{

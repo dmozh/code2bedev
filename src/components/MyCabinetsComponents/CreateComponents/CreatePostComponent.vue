@@ -64,15 +64,22 @@
 
         <!--Contents-->
         <div class="limiter">
+          <div class="desc-textarea-container">
+            <textarea v-if="isArticle" v-model="postDescription" placeholder="Введите описание статьи" class="desc-textarea"></textarea>
+            <textarea v-else v-model="postDescription" placeholder="Введите описание новости" class="desc-textarea"></textarea>
+          </div>
 
-          <textarea v-if="isArticle" v-model="postDescription" placeholder="Введите описание статьи" class="desc-textarea"></textarea>
-          <textarea v-else v-model="postDescription" placeholder="Введите описание новости" class="desc-textarea"></textarea>
+          <div class="article-text-textarea-container">
+            <div class="article-text-textarea-container-header">
 
-          <textarea v-if="isArticle" v-model="postText" placeholder="Введите текст вашей статьи" class="article-text-textarea"></textarea>
-          <textarea v-else v-model="postText" placeholder="Введите текст вашей новости" class="article-text-textarea"></textarea>
+            </div>
+            <textarea v-if="isArticle" v-model="postText" placeholder="Введите текст вашей статьи" class="article-text-textarea"></textarea>
+            <textarea v-else v-model="postText" placeholder="Введите текст вашей новости" class="article-text-textarea"></textarea>
+          </div>
 
           <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
           <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
+          <button @click="this.test"> fff</button>
         </div>
       </form>
     </div>
@@ -171,6 +178,10 @@
       methods: {
         emitReturn() {
           this.$emit('returns')
+        },
+
+        test(){
+          console.log(this.postText)
         },
 
         closeError() {
@@ -354,6 +365,52 @@
 
 <style scoped lang="scss">
 
+  .desc-textarea-container, .article-text-textarea-container{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .article-text-textarea-container-header{
+    display: -webkit-flex;
+    -webkit-flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 5vh;
+    width: 69vw;
+    border: solid 1px rgb(169, 169, 169);
+    margin-bottom: 0.4px;
+    /*background: red;*/
+  }
+
+  .article-text-textarea-container{
+    padding: 5px;
+    background: rgba(145, 145, 145, 0.16);
+    height: 40vh;
+    align-content: baseline;
+  }
+
+  .desc-textarea-container{
+    margin-bottom: 1rem;
+  }
+
+  .article-text-textarea{
+    max-width: 69vw;
+    max-height: 34vh;
+    min-width: 69vw;
+    min-height: 34vh;
+    padding: 0.9rem;
+  }
+
+  .desc-textarea{
+    max-width: 70vw;
+    max-height: 10vh;
+    min-width: 70vw;
+    min-height: 10vh;
+    padding: 0.9rem;
+  }
+
   label{
     font-size: large;
     margin: 1vh 2px 0 0;
@@ -457,20 +514,6 @@
     font-size: 3vw !important;
   }
 
-  .article-text-textarea{
-    max-width: 70vw;;
-    max-height: 30vh;
-    min-width: 70vw;
-    min-height: 30vh;
-  }
-
-  .desc-textarea{
-    max-width: 70vw;
-    max-height: 10vh;
-    min-width: 70vw;
-    min-height: 10vh;
-  }
-
   .limiter{
     max-width: 70vw;
     margin: 15px 0 0 0;
@@ -504,19 +547,17 @@
   }
 
   .custom-select{
-    @media screen and (max-width: 900px){
+    /*@media screen and (max-width: 900px){*/
       /*width: 20vw;*/
-      height: 3vh !important;
-      font-size: 1.5vh;
-    }
+      /*height: 3vh !important;*/
+      /*font-size: 1.5vh;*/
+    /*}*/
     display: -webkit-flex !important;
     -webkit-flex-wrap: wrap !important;
     display: flex !important;
     flex-wrap: wrap !important;
     width: 20vw !important;
-    height: 5vh;
-
-    font-size: 2vh;
+    font-size: 1.5rem;
   }
 
   .quest-mark-icon{
