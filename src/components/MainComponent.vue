@@ -76,7 +76,7 @@
                   <div class="card-basic-footer">
                     <button class="button"
                             @click="openPost('article', elem.article_id, elem.article_name, elem.article_description,
-                            elem.article_text, elem.article_rate)">
+                            elem.article_rate)">
                       Открыть статью</button>
                     <div>Рейтинг статьи: {{elem.article_rate}}</div>
                   </div>
@@ -97,7 +97,7 @@
                   <div class="card-basic-footer">
                     <button class="button"
                             @click="openPost('lesson', elem.lesson_id, elem.lesson_name, elem.lesson_description,
-                            elem.lesson_text, elem.lesson_rate)">
+                            elem.lesson_rate)">
                       Открыть урок</button>
                     <div>Рейтинг урока: {{elem.lesson_rate}}</div>
                   </div>
@@ -118,7 +118,7 @@
                   <div class="card-basic-footer">
                     <button class="button"
                             @click="openPost('task', elem.task_id, elem.task_name, elem.task_description
-                            ,elem.task_text, elem.task_rate)">
+                            , elem.task_rate)">
                       Открыть задачу</button>
                     <div>Рейтинг задачи: {{elem.task_rate}}</div>
                   </div>
@@ -138,7 +138,7 @@
                   </div>
                   <div class="card-basic-footer">
                     <button class="button"
-                            @click="openNewsPost('news', elem.news_id, elem.news_name, elem.news_description, elem.news_text,
+                            @click="openNewsPost('news', elem.news_id, elem.news_name, elem.news_description,
                             elem.news_rate, elem.news_importance)">
                       Открыть новость</button>
                     <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
@@ -155,7 +155,6 @@
                                  :postId="this.postId"
                                  :postName="this.postName"
                                  :postDescription = "this.postDescription"
-                                 :postText="this.postText"
                                  :postType="this.postType"
                                  :postRate="this.postRate"
                                  :newsImportance="this.newsImportance"
@@ -207,7 +206,7 @@
           postId: null,
           postName: '',
           postDescription: '',
-          postText: '',
+          // postText: '',
           postType: '',
           postRate: null,
           newsImportance: null,
@@ -219,23 +218,23 @@
           this.isOpenPost = false;
           this.postId = null;
           this.postName = "";
-          this.postText = "";
+          // this.postText = "";
           this.postDescription="";
           this.postType = "";
           this.postRate = null;
           this.newsImportance = null;
         },
 
-        openNewsPost(postType, postId, postName, postDescription, postText, postRate, newsImporatance){
+        openNewsPost(postType, postId, postName, postDescription, postRate, newsImporatance){
           this.newsImportance = newsImporatance;
-          this.openPost(postType, postId, postName, postDescription, postText, postRate)
+          this.openPost(postType, postId, postName, postDescription, postRate)
         },
 
-        openPost(postType, postId, postName, postDescription, postText, postRate){
+        openPost(postType, postId, postName, postDescription, postRate){
           this.postId = postId;
           this.postName = postName;
           this.postDescription = postDescription;
-          this.postText = postText;
+          // this.postText = postText;
           this.postType = postType;
           this.postRate = postRate;
           this.isOpenPost = true;

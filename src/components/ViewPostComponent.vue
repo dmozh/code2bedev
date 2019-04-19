@@ -55,9 +55,9 @@
         postDescription: {
           type: String
         },
-        postText: {
-          type: String
-        },
+        // postText: {
+        //   type: String
+        // },
         postType: {
           type: String
         },
@@ -70,6 +70,7 @@
       },
       data(){
         return{
+          postText: '',
 
         }
       },
@@ -81,28 +82,40 @@
       },
 
       mounted: function () {
-        console.log(this.postText);
-        const text = this.postText;
-        // this.postText = this.postText.replace('&lt;', '<');
-        // this.postText = this.postText.replace('&gt;', '>');
-        let parentElem = document.getElementsByClassName('post-text-block');
-        parentElem[0].insertAdjacentHTML('afterbegin', text);
-
-        console.log(parentElem);
-
-        if(this.postType==="lesson"){
-          let body = {
-            lessonId: this.postId,
+        let body = {
+            type: this.postType,
+            id: this.postId,
           };
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getLessonTasks', jBody).then((response) => {
-            this.response = response.data.tasks;
-            console.log(response);
+        const jBody = JSON.stringify(body);
+        axios.post('http://localhost:8080/getPostText', jBody).then((response) => {
+          this.postText = response.data.post_text;
+          let parentElem = document.getElementsByClassName('post-text-block');
+          parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
+          // console.log(parentElem);
+          // console.log(response);
           }).catch((error) => {
-            console.log(error);});
+            console.log(error);
+          });
         }
-      }
 
+
+        // console.log(this.postText);
+        // const text = this.postText;
+        // let parentElem = document.getElementsByClassName('post-text-block');
+        // parentElem[0].insertAdjacentHTML('afterbegin', text);
+        // console.log(parentElem);
+
+        // if(this.postType==="lesson"){
+        //   let body = {
+        //     lessonId: this.postId,
+        //   };
+        //   const jBody = JSON.stringify(body);
+        //   axios.post('http://localhost:8080/getLessonTasks', jBody).then((response) => {
+        //     this.response = response.data.tasks;
+        //     console.log(response);
+        //   }).catch((error) => {
+        //     console.log(error);});
+        // }
     }
 </script>
 
