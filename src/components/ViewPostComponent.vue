@@ -30,8 +30,17 @@
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
-          <div class="post-text-block"></div>
+          <div class="post-text-block">
 
+          </div>
+          <div v-if="this.postType==='task'" class="code-editor-container">
+            {{this.$root.activeLang}}
+            <label>
+              <textarea v-model="code"></textarea>
+            </label>
+            <button @click="execute">execute</button>
+            {{this.code}}
+          </div>
         </div>
         <div class="content-footer"></div>
       </div>
@@ -71,6 +80,7 @@
       data(){
         return{
           postText: '',
+          code: '',
 
         }
       },
@@ -79,9 +89,24 @@
         emitReturn() {
           this.$emit('returns')
         },
+
+        execute(){
+          let body = {
+            code: this.code,
+            lang: this.$root.activeLang,
+          };
+
+          const jBody = JSON.stringify(body);
+          axios.post('http://localhost:8080/executeCode', jBody).then((response) => {
+            console.log(response)
+          }).catch((error) => {
+            console.log(error);
+          });
+        }
       },
 
       mounted: function () {
+        console.log(this.postType);
         let body = {
             type: this.postType,
             id: this.postId,
@@ -97,25 +122,6 @@
             console.log(error);
           });
         }
-
-
-        // console.log(this.postText);
-        // const text = this.postText;
-        // let parentElem = document.getElementsByClassName('post-text-block');
-        // parentElem[0].insertAdjacentHTML('afterbegin', text);
-        // console.log(parentElem);
-
-        // if(this.postType==="lesson"){
-        //   let body = {
-        //     lessonId: this.postId,
-        //   };
-        //   const jBody = JSON.stringify(body);
-        //   axios.post('http://localhost:8080/getLessonTasks', jBody).then((response) => {
-        //     this.response = response.data.tasks;
-        //     console.log(response);
-        //   }).catch((error) => {
-        //     console.log(error);});
-        // }
     }
 </script>
 
@@ -136,7 +142,7 @@
 
   .body, .content-container, .content-header, .content-body, .content-footer,
   .info-block, .post-seen-block, .post-rate-block, .news-importance-block, .post-name-block, .post-text-block,
-  .post-description-block{
+  .post-description-block, .code-editor-container{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -274,5 +280,14 @@
   .test{
     width: 10vw;
     height: 5vh;
+  }
+
+
+  .code-editor-container{
+    width: 60vw;
+    height: 40vh;
+    background: aqua;
+
+
   }
 </style>
