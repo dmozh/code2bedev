@@ -66,8 +66,8 @@
         },
 
         chooseLang(){
-          this.$root.activeLang = this.langs[this.activeLangId-1].lang_name;
-          console.log(this.$root.activeLang);
+          this.$parent.activeLang = this.langs[this.activeLangId-1].lang_name;
+          localStorage.setItem('activeLang', this.$parent.activeLang);
           this.$emit('close')
         }
       },

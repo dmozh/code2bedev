@@ -42,6 +42,11 @@
               news
             </div>
           </div>
+          <div class="menuitem-container">
+            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="openCompiler">
+              compiler
+            </div>
+          </div>
         </div>
       </div>
       <login :modalActive="modalActive" @close="closeLoginWindow" @logut="logout"></login>
@@ -52,6 +57,7 @@
             <div class="signed-in" v-if="this.$root.authUser">
               <div>Signed in as {{this.userName}}</div>
               <div v-if="!this.$root.authUser.emailVerified" class="warning">Email verified is {{this.$root.authUser.emailVerified}}</div>
+              <div>Current lang {{this.activeLang}}</div>
             </div>
             <div class="bottom-panel">
 
@@ -61,7 +67,7 @@
 
         <div class="content-body" >
           <transition name="slide-fade">
-            <div class="cards-container" v-if="!this.isOpenPost">
+            <div class="cards-container" v-if="!this.isOpenPost & !this.isOpenCompiler">
               <div class="card-basic"
                    v-if="activeArticles"
                    v-for="elem in response"
@@ -161,6 +167,9 @@
                                  @returns="toReturn">
             </view-post-component>
           </transition>
+          <transition name="slide-fade">
+            <compiler-component @returns="toReturn" v-if="this.isOpenCompiler"></compiler-component>
+          </transition>
         </div>
       </div>
     </div>
@@ -172,17 +181,23 @@
   import ChooseLangWindow from '@/components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
   import ViewPostComponent from "./ViewPostComponent";
+  import CompilerComponent from "./CompilerComponent"
 
 
     export default {
       name: "main-component",
       components: {
         ViewPostComponent,
+        CompilerComponent,
         login: LoginWindow,
         chooseLang: ChooseLangWindow
       },
       data() {
         return {
+          isOpenCompiler: false,
+
+          activeLang: '',
+
           userName: '',
           userRole: '',
           userRate: '',
@@ -216,6 +231,8 @@
 
         toReturn(){
           this.isOpenPost = false;
+          this.isOpenCompiler = false;
+
           this.postId = null;
           this.postName = "";
           // this.postText = "";
@@ -285,8 +302,10 @@
           this.activeNews     = false;
           this.activeTasks    = false;
 
+          this.isOpenCompiler = false;
+
           let body = {
-            lang: this.$root.activeLang,
+            lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getArticles', jBody).then((response) => {
@@ -304,8 +323,10 @@
           this.activeNews     = false;
           this.activeTasks    = false;
 
+          this.isOpenCompiler = false;
+
           let body = {
-            lang: this.$root.activeLang,
+            lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getLessons', jBody).then((response) => {
@@ -323,8 +344,10 @@
           this.activeNews     = false;
           this.activeTasks    = true;
 
+          this.isOpenCompiler = false;
+
           let body = {
-            lang: this.$root.activeLang,
+            lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post('http://localhost:8080/getTasks', jBody).then((response) => {
@@ -342,12 +365,25 @@
           this.activeNews     = true;
           this.activeTasks    = false;
 
+          this.isOpenCompiler = false;
+
           axios.get('http://localhost:8080/getNews').then((response) => {
             this.response = response.data.news;
             // console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
+
+        openCompiler(){
+          this.isOpenPost = false;
+
+          this.activeArticles = false;
+          this.activeLessons  = false;
+          this.activeNews     = false;
+          this.activeTasks    = false;
+
+          this.isOpenCompiler = true;
+        }
       },
 
       mounted: function () {
@@ -356,6 +392,7 @@
         // TODO upd решил пока использовать локальное хранилище хотя это тоже нихуя не безопасно
         this.userName = localStorage.getItem('userName');
         this.userRole = localStorage.getItem('userRole');
+        this.activeLang = localStorage.getItem('activeLang');
         if (this.userName && this.userRole === null) {
           this.$root.getUserName()
         }
