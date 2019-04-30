@@ -31,25 +31,12 @@
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
           <div class="post-text-block"></div>
-          <div v-if="this.postType==='task'" class="code-editor-container">
-            <!--{{this.activeLang}}-->
-            <!--<label>-->
-              <!--<textarea v-model="code"></textarea>-->
-            <!--</label>-->
-            <!--<pre>-->
-              <!--<code tabindex="0" @focus="test1" @keydown="test2" @click="test3">{{this.code}}</code>-->
-            <!--</pre>-->
-            <!--<button @click="execute">execute</button>-->
-            <!--<pre>{{this.outputData}}</pre>-->
-            <div id="editor">
-              <!--function foo(items) {-->
-                <!--var x = "All this is syntax highlighted";-->
-                <!--return x;-->
-              <!--}-->
-            </div>
-
-            <!--<iframe src="https://compilers.widgets.sphere-engine.com/lp?hash=a4c3661de71f538d632fd3b6ac847421"></iframe>-->
-            <!--<div class="sec-widget" data-id="3233" data-widget="a4c3661de71f538d632fd3b6ac847421"></div>-->
+          <div v-if="this.postType==='task'">
+            <code-editor-component v-if="this.haveLang"
+                                   :place="this.postType"
+                                   :lang="this.activeLang"
+                                   :theme="this.theme"
+            ></code-editor-component>
           </div>
         </div>
       </div>
@@ -59,13 +46,17 @@
 </template>
 
 <script>
-  import ace from 'ace-builds/src-noconflict/ace.js'
+  // import ace from 'ace-builds/src-noconflict/ace.js'
   import axios from 'axios'
-  import "ace-builds/webpack-resolver"
+  // import "ace-builds/webpack-resolver"
+  import CodeEditorComponent from './CodeEditorComponent'
 
 
 
     export default {
+      components: {
+        CodeEditorComponent
+      },
       name: "view-post-component",
       props: {
         postId: {
@@ -92,20 +83,9 @@
       },
       data(){
         return{
-          editor: Object,
-
-          activeLang: '',
-
-          postText: '',
-          code: '\n#напишите здесь свой код\n',
-
-          inputData: '',
-          outputData: '',
-
-          test: '\n12',
-          focused: false,
-
-
+          activeLang: null,
+          theme: 'eclipse',
+          haveLang: false,
         }
       },
 
@@ -113,72 +93,13 @@
         emitReturn() {
           this.$emit('returns')
         },
-
-        test1: function(e){
-          console.log(e);
-          // this.test = this.test + ""
-          this.focused = true
-        },
-
-        test2: function(e) {
-          if (this.focused) {
-            console.log(e);
-            let keyCode = e.keyCode;
-            let type = e.type;
-
-            switch(keyCode) {
-              case 13:
-                this.code = this.code + "\n";
-                break;
-              case 8:
-                this.code = this.code.slice(0, this.code.length-1);
-                break;
-              case 20:
-                break;
-              case 16:
-                break;
-              case 17:
-                break;
-              case 18:
-                break;
-              case 9:
-                this.code = this.code + "    ";
-                break;
-              default:
-                // this.code = this.code + String.fromCharCode(e.keyCode || e.charCode);
-                this.code = this.code + e.key;
-                break;
-            }
-
-          }
-        },
-
-        test3: function(e){
-          console.log(e)
-        },
-
-        execute(){
-          let body = {
-            code: this.code,
-            lang: this.activeLang,
-          };
-
-          const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/executeCode', jBody).then((response) => {
-            this.outputData = response.data.output;
-            console.log(response)
-          }).catch((error) => {
-            console.log(error);
-          });
-        }
       },
 
       mounted: function () {
         this.activeLang = localStorage.getItem('activeLang');
-
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
+        if(this.activeLang !== null){
+          this.haveLang = true;
+        }
 
         // this.editor = window.ace.edit("editor");
         // this.editor = window.ace.config.set('ace-builds/src-noconflict/ace');
@@ -364,37 +285,14 @@
   }
 
 
-  .code-editor-container, #editor{
-    margin-top: 15px;
-    width: 80vw;
-    height: 45vh;
+  .code-editor-container{
+    margin-top: 10px;
+    width: 71vw;
+    height: 60vh;
     /*background: white;*/
 
     -webkit-flex-wrap: nowrap;
     flex-wrap: nowrap;
     /*overflow-y: auto;*/
-  }
-
-  .main-editor{
-    width: 100vw;
-    height: 45vh;
-    /*background: aqua;*/
-  }
-
-  .left-panel{
-    width: auto;
-    align-content: baseline;
-    height: 45vh;
-  }
-
-  .line-number{
-    /*background: red;*/
-    height: 2.5vh;
-    width: 1vw;
-    justify-content: center;
-  }
-
-  .hidden{
-    /*visibility: hidden;*/
   }
 </style>

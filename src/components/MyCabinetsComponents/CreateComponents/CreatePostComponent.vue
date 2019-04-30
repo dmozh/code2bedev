@@ -79,7 +79,7 @@
 
           <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
           <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
-          <button @click="this.test"> fff</button>
+          <!--<button @click="this.test"> fff</button>-->
         </div>
       </form>
     </div>
