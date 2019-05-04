@@ -26,7 +26,7 @@
         <input type="text" v-model="taskName" placeholder="Введите название задачи" class="custom-input-name-field">
         <!--Contents-->
         <div class="contents">
-          <div class="left-block">
+          <div class="top-block">
             <div class="optional-container in-contents">
               <label for="difficultlySelect">Укажите уровень сложность задачи:</label>
               <select id="difficultlySelect" class="custom-select">
@@ -42,13 +42,30 @@
               </div>
             </div>
 
-            <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
           </div>
-          <div class="right-block">
-            <div class="splitter">
-
+          <div class="bottom-block">
+            <!--<div class="splitter"></div>-->
+            <div>
+              <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
             </div>
-            <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
+            <div class="text-block">
+              <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
+              <div class="input-output-block">
+                <textarea v-model="taskTestInput" placeholder="Введите тестовые данные для проверки решения (каждый новый stdin вводится через Enter)
+                Пример:
+                1
+                2
+                3"
+                          id="input-textarea"></textarea>
+                <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
+                Пример:
+                3
+                6
+                9"
+                          id="output-textarea"></textarea>
+              </div>
+            </div>
+
 
             <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
             <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
@@ -56,9 +73,12 @@
         </div>
       </form>
     </div>
-    <create-error-modal-component :namePost="emptyName"
+    <create-error-modal-component :isTask="true"
+                                  :namePost="emptyName"
                                   :descPost="emptyDesc"
                                   :textPost="emptyText"
+                                  :testInput="emptyTestInput"
+                                  :expectedOutput="emptyExpectedOutput"
                                   :errorModalActive="errorModalActive"
                                   @close="closeError">
     </create-error-modal-component>
@@ -100,6 +120,12 @@
         reqLessonName: {
           type: String
         },
+        reqTestInput: {
+          type: String
+        },
+        reqExpectedOutput: {
+          type: String
+        }
 
       },
       data(){
@@ -109,6 +135,8 @@
           emptyDesc: true,
           emptyText: true,
           emptyLang: true,
+          emptyTestInput: true,
+          emptyExpectedOutput: true,
 
           //название task
           taskName: '',
@@ -116,6 +144,9 @@
           taskDescription: '',
           //сама статья/новость
           taskText: '',
+
+          taskTestInput: '',
+          taskExpectedOutput: '',
 
           //for a while (artciles)
           lessons: [],
@@ -140,10 +171,13 @@
           this.emptyDesc = true;
           this.emptyText = true;
           this.emptyLang = true;
+          this.emptyTestInput = true;
+          this.emptyExpectedOutput = true;
         },
 
         sendTask() {
-          if (this.taskName.length === 0 || this.taskDescription.length === 0 || this.taskText.length === 0){
+          if (this.taskName.length === 0 || this.taskDescription.length === 0 || this.taskText.length === 0
+            || this.taskExpectedOutput.length === 0 || this.taskTestInput.length === 0){
             if (this.taskName.length !== 0){
               this.emptyName = false
             }
@@ -152,6 +186,12 @@
             }
             if (this.taskText.length !== 0){
               this.emptyText = false
+            }
+            if (this.taskExpectedOutput.length !== 0){
+              this.emptyExpectedOutput = false;
+            }
+            if (this.taskTestInput.length !== 0){
+              this.emptyTestInput = false
             }
             // if (document.getElementById("lessonSelect").options.selectedIndex !== 0){
             //   this.emptyLang = false
@@ -176,7 +216,9 @@
                 taskName: this.taskName,
                 taskDescription: this.taskDescription,
                 taskText: this.taskText,
-                difficulty: difficultly
+                difficulty: difficultly,
+                testInput: this.taskTestInput,
+                expectedOutput: this.taskExpectedOutput
               };
             }else{
 
@@ -188,7 +230,9 @@
                 taskName: this.taskName,
                 taskDescription: this.taskDescription,
                 taskText: this.taskText,
-                difficulty: difficultly
+                difficulty: difficultly,
+                testInput: this.taskTestInput,
+                expectedOutput: this.taskExpectedOutput
               };
             }
 
@@ -222,6 +266,8 @@
           this.taskName = this.reqTaskName;
           this.taskDescription = this.reqTaskDescription;
           this.taskText = this.reqTaskText;
+          this.taskTestInput = this.reqTestInput;
+          this.taskExpectedOutput = this.reqExpectedOutput;
           document.getElementById("lessonSelect").value = this.reqLessonName;
           document.getElementById("difficultlySelect").value = this.reqTaskDiff;
         }
@@ -251,7 +297,8 @@
     display: flex;
     flex-wrap: wrap;
     width: 80vw;
-    height: 80vh;
+    /*height: 80vh;*/
+    height: auto;
     justify-content: center;
     align-items: center;
     /*background: aqua;*/
@@ -263,36 +310,37 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 70vh;
+    /*height: 70vh;*/
+    height: auto;
     width: 100%;
     justify-content: center;
   }
 
   .contents{
     display: -webkit-flex;
-    /*-webkit-flex-wrap: wrap;*/
+    -webkit-flex-wrap: wrap;
     display: flex;
-    /*flex-wrap: wrap;*/
+    flex-wrap: wrap;
 
     width: 100%;
 
-    height: 65vh;
-
+    /*height: 65vh;*/
+    height: auto;
     /*background: blue;*/
   }
 
-  .left-block{
+  .top-block{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
 
-    height: auto;
-    width: 35vw;
-    align-items: center;
+    height: 13vh;
+    width: 80vw;
+    align-content: center;
   }
 
-  .right-block{
+  .bottom-block{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -376,6 +424,23 @@
     font-size: 3vw !important;
   }
 
+  .text-block, .input-output-block{
+    display: -webkit-flex;
+    -webkit-flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .text-block{
+    width: 80vw;
+    justify-content: space-between;
+  }
+
+  .input-output-block{
+    width: 35vw;
+    justify-content: space-evenly;
+  }
+
   .article-text-textarea{
     max-width: 45vw;
     max-height: 30vh;
@@ -384,10 +449,24 @@
   }
 
   .desc-textarea{
-    max-width: 30vw;
-    max-height: 45vh;
-    min-width: 30vw;
-    min-height: 45vh;
+    max-width: 80vw;
+    max-height: 17vh;
+    min-width: 80vw;
+    min-height: 17vh;
+  }
+
+  #input-textarea{
+    max-width: 15vw;
+    max-height: 30vh;
+    min-width: 15vw;
+    min-height: 30vh;
+  }
+
+  #output-textarea{
+    max-width: 15vw;
+    max-height: 30vh;
+    min-width: 15vw;
+    min-height: 30vh;
   }
 
   /*scrollbar*/

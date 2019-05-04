@@ -271,6 +271,7 @@
           delete localStorage["userName"];
           delete localStorage["userRole"];
           delete localStorage["userRate"];
+          // delete localStorage["seenPosts"]
         },
         closeLoginWindow(){
           this.modalActive = false;

@@ -13,7 +13,7 @@
     </div>
     <div class="output-container">
       <div style="width: 21vw; height: 3vh; background: white;"></div>
-      <textarea class="output-area" placeholder="Здесб отобразится stdout"
+      <textarea class="output-area" placeholder="Здесь отобразится stdout"
                 disabled v-model="outputData"></textarea>
     </div>
   </div>
@@ -40,6 +40,7 @@
     data(){
       return{
         mode: '',
+        baseValue: '',
         editor: Object,
 
         code: '',
@@ -75,11 +76,26 @@
         this.mode = 'python'
       }else if(this.lang === "Java"){
         this.mode = 'java';
+        this.baseValue = '/* package whatever; // don\'t place package name! */\n' +
+          '\n' +
+          'import java.util.*;\n' +
+          'import java.lang.*;\n' +
+          'import java.io.*;\n' +
+          '\n' +
+          '/* Name of the class has to be "Main" only if the class is public. */\n' +
+          'public class ' +'Ltl '+'\n' +
+          '{\n' +
+          '\tpublic static void main (String[] args) throws java.lang.Exception\n' +
+          '\t{\n' +
+          '\t\t// your code goes here\n' +
+          '\t}\n' +
+          '}'
       }
 
       this.editor = ace.edit("editor");
       this.editor.setTheme("ace/theme/"+this.theme);
       this.editor.session.setMode("ace/mode/"+this.mode);
+      this.editor.setValue(this.baseValue)
     }
   }
 </script>

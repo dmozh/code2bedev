@@ -86,6 +86,10 @@
           activeLang: null,
           theme: 'eclipse',
           haveLang: false,
+
+          userSeenPost: null,
+
+
         }
       },
 
@@ -93,6 +97,11 @@
         emitReturn() {
           this.$emit('returns')
         },
+
+        isSeen(){
+          // this.userSeenPost = localStorage
+          // if()
+        }
       },
 
       mounted: function () {
@@ -100,13 +109,7 @@
         if(this.activeLang !== null){
           this.haveLang = true;
         }
-
-        // this.editor = window.ace.edit("editor");
-        // this.editor = window.ace.config.set('ace-builds/src-noconflict/ace');
-        // this.editor.getSession().setMode(`ace/mode/javascript`);
-        // this.editor.setTheme(`darcula`);
-
-        console.log(this.postType);
+        // console.log(this.postType);
         let body = {
             type: this.postType,
             id: this.postId,
@@ -121,6 +124,31 @@
           }).catch((error) => {
             console.log(error);
         });
+
+        // let postId = this.postId;
+        // console.log(postId);
+        // if(this.postType === 'task'){
+        //   let tasks = JSON.parse(localStorage.getItem('seenTasks'));
+        //   delete localStorage['seenTasks'];
+          // console.log(tasks);
+          // for(let i=0; i<tasks.length;i++){
+          //   if(tasks[i].task_id === postId){
+          //     console.log('true');
+          //     break;
+          //   }else{
+          //     tasks[tasks.length] = {
+          //       user_id: tasks[i].user_id,
+          //       task_id: postId,
+          //       isSeen: true,
+          //       isDecided: false
+          //     };
+          //     localStorage['seenTasks'] = JSON.stringify(tasks);
+          //   }
+          // }
+          // console.log(tasks);
+        // }
+        // console.log(tasks);
+        // console.log(localStorage['seenTasks'])
       },
 
 

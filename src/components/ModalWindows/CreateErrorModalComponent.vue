@@ -15,6 +15,8 @@
               <p v-if="namePost">Заполните поле "Название"</p>
               <p v-if="descPost">Заполните поле "Описание"</p>
               <p v-if="textPost">Заполните поле "Текст"</p>
+              <p v-if="isTask & testInput">Заполните поле "Тестовые входные данные"</p>
+              <p v-if="isTask & expectedOutput">Заполните поле "Ожидаеммые выходные данные"</p>
             </div>
             <button class="button" @click="emitClose">Я понял</button>
           </div>
@@ -39,6 +41,9 @@
         isNews:{
           type: Boolean
         },
+        isTask: {
+          type: Boolean
+        },
 
         errorModalActive: {
           type: Boolean
@@ -57,6 +62,14 @@
         langPost: {
           type: Boolean
         },
+
+        //for create task component
+        testInput: {
+          type: Boolean
+        },
+        expectedOutput: {
+          type: Boolean
+        }
       },
       methods: {
         emitClose() {
@@ -69,7 +82,8 @@
 <style scoped lang="scss">
   p{
     display: flex;
-    justify-content: center;
+    justify-content: baseline;
+    margin-left: 3vw;
     width: 100%;
     font-size: 1.3vw;
   }
@@ -104,8 +118,8 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 60vh;
-    width: 30vw;
+    height: auto;
+    width: 40vw;
     margin: 0 auto;
     /*padding: 20px 30px;*/
     background-color: #fff;
@@ -152,6 +166,7 @@
     border: none;
     cursor: pointer;
     border-radius: 50px;
+    margin-bottom: 10px;
   }
 
   .button:hover{
@@ -205,6 +220,7 @@
     justify-content: center;
     align-items: center;
     font-size: 1.6vw;
+    font-weight: bold;
   }
 
   .err-block{

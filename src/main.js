@@ -36,6 +36,7 @@ firebase.auth().onAuthStateChanged(()=>{
         activeUserName: null,
         activeUserRole: null,
         activeUserRate: null,
+        // userSeenPosts: null,
 
         activeLang: null,
 

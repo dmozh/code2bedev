@@ -71,6 +71,11 @@
               localStorage.setItem('userName', this.$parent.userName);
               localStorage.setItem('userRole', String(this.$parent.userRole));
               localStorage.setItem('userRate', String(this.$parent.userRate));
+
+              localStorage.setItem('seenTasks', JSON.stringify(response.data.user.seenPosts.tasks));
+              localStorage.setItem('seenLessons', JSON.stringify(response.data.user.seenPosts.lessons));
+              localStorage.setItem('seenArticles', JSON.stringify(response.data.user.seenPosts.articles));
+              localStorage.setItem('seenNews', JSON.stringify(response.data.user.seenPosts.news));
             }).catch((error) => {
               console.log(error);
             });

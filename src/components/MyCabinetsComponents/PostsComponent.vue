@@ -110,7 +110,7 @@
                         <div class="btns-container">
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
-                                            elem.task_text, elem.lesson_id, elem.lesson_name, elem.task_difficulty)">
+                                            elem.task_text, elem.lesson_id, elem.lesson_name, elem.task_difficulty, elem.test_input, elem.expected_output)">
                             <img src="@/assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
@@ -220,6 +220,8 @@
                               :reqTaskDiff = "this.taskDiff"
                               :reqLessonId = "this.lessonId"
                               :reqLessonName = "this.lessonName"
+                              :reqTestInput = "this.taskTestInput"
+                              :reqExpectedOutput = "this.taskExpectedOutput"
                               @returns="toReturn">
 
       </create-tasks-component>
@@ -289,6 +291,9 @@
           nextPostTag: '',
           postLangId: null,
           postLangName: null,
+
+          taskTestInput: '',
+          taskExpectedOutput: '',
 
           newsImportance: null,
 
@@ -382,7 +387,7 @@
           this.postLangName = langName;
         },
 
-        pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff){
+        pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput){
           //определение передаваеммых переменых в модалку
           this.isUpdate = true;
           this.postId = taskId;
@@ -391,7 +396,9 @@
           this.postText = text;
           this.lessonId = lessonId;
           this.lessonName=lessonName;
-          this.taskDiff = taskDiff
+          this.taskDiff = taskDiff;
+          this.taskTestInput = testInput;
+          this.taskExpectedOutput = expectedOutput;
         },
 
         showCreateComponentArticles(id, name, desc, text, tags, langId, langName) {
@@ -416,9 +423,9 @@
           this.isOpenLessons = false;
         },
 
-        showCreateComponentTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff) {
+        showCreateComponentTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput) {
 
-          this.pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff);
+          this.pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput);
 
           this.onHide = false;
           this.isOpenArticles = false;
