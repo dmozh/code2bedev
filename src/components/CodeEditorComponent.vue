@@ -3,7 +3,7 @@
     <div class="main">
       <div class="header-editor-container">
         <div class="btn-container">
-          <img id="exec-btn" @click="execute" src="@/assets/png/exec_btn.png"/>
+          <img id="exec-btn" @click="execute(false)" src="@/assets/png/exec_btn.png"/>
         </div>
       </div>
       <div id="editor"></div>
@@ -12,7 +12,9 @@
       </div>
     </div>
     <div class="output-container">
-      <div style="width: 21vw; height: 3vh; background: white;"></div>
+      <div style="width: 21vw; height: 3vh; background: white; display: flex; justify-content: center; align-items: center;" >
+        <button class="button" @click="validCheck">Проверить</button>
+      </div>
       <textarea class="output-area" placeholder="Здесь отобразится stdout"
                 disabled v-model="outputData"></textarea>
     </div>
@@ -35,7 +37,17 @@
       },
       lang: {
         type: String
-      }
+      },
+
+      taskId: {
+        type: Number
+      },
+      testInput: {
+        type: String
+      },
+      expectedOutput: {
+        type: String
+      },
     },
     data(){
       return{
@@ -47,30 +59,72 @@
         inputData: '',
 
         outputData: '',
+
+        isExecute: false,
       }
     },
 
     methods: {
-      execute(){
+      execute(isCheck){
+        this.outputData = '';
+
+        this.isExecute = true;
         this.code = this.editor.getValue();
 
-        let body = {
-          code: this.code,
-          lang: this.lang,
-          input: this.inputData
-        };
+        let body = {};
+        if(isCheck) {
+          const userId = localStorage.getItem('userID');
+          const postId = this.taskId;
+
+          body = {
+            code: this.code,
+            lang: this.lang,
+            input: this.inputData,
+            expectedOutput: this.expectedOutput,
+            userId: userId,
+            postId: postId
+          };
+        }else{
+          body = {
+            code: this.code,
+            lang: this.lang,
+            input: this.inputData
+          };
+        }
 
         const jBody = JSON.stringify(body);
-        axios.post('http://localhost:8080/executeCode', jBody).then((response) => {
-          this.outputData = response.data.output;
-          console.log(response)
-        }).catch((error) => {
-          console.log(error);
-        });
+        if(!isCheck){
+          axios.post('http://localhost:8080/executeCode', jBody).then((response) => {
+            this.outputData = response.data.output;
+            console.log(response)
+          }).catch((error) => {
+            console.log(error);
+          });
+        }else{
+          axios.post('http://localhost:8080/checkExecuteCode', jBody).then((response) => {
+            this.outputData = response.data.output;
+            if (response.data.isDecided){
+            //TODO создать кастомную модалку
+              alert('Congratulations')
+            }else {
+              alert('Please try again')
+            }
+            console.log(response)
+          }).catch((error) => {
+            console.log(error);
+          });
+        }
+
+      },
+
+      validCheck(){
+        this.inputData = this.testInput;
+        this.execute(true)
       }
     },
 
     mounted: function(){
+      console.log(this.expectedOutput);
       console.log(this.lang, this.place, this.theme);
       if(this.lang === "Python3"){
         this.mode = 'python'
@@ -195,6 +249,21 @@
   #editor{
     width: 50vw;
     height: 45vh;
+  }
+
+  .button{
+    width: 50%;
+    /*height: 100%;*/
+    height: 2vh;
+    background: rgba(22,22,22, 0.1);
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+  }
+
+  .button:hover{
+    transition: .5s all;
+    background: #a6ffb7;
   }
 
 </style>

@@ -71,6 +71,7 @@
               localStorage.setItem('userName', this.$parent.userName);
               localStorage.setItem('userRole', String(this.$parent.userRole));
               localStorage.setItem('userRate', String(this.$parent.userRate));
+              localStorage.setItem('userID', response.data.user.id);
 
               localStorage.setItem('seenTasks', JSON.stringify(response.data.user.seenPosts.tasks));
               localStorage.setItem('seenLessons', JSON.stringify(response.data.user.seenPosts.lessons));

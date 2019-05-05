@@ -36,6 +36,9 @@
                                    :place="this.postType"
                                    :lang="this.activeLang"
                                    :theme="this.theme"
+                                   :testInput="testInput"
+                                   :expectedOutput="expectedOutput"
+                                   :taskId = "postId"
             ></code-editor-component>
           </div>
         </div>
@@ -79,7 +82,14 @@
         },
         newsImportance:{
           type: Number
-        }
+        },
+        //for tasks
+        testInput: {
+          type: String
+        },
+        expectedOutput: {
+          type: String
+        },
       },
       data(){
         return{
@@ -98,9 +108,13 @@
           this.$emit('returns')
         },
 
-        isSeen(){
-          // this.userSeenPost = localStorage
-          // if()
+        haveIs(arr, postId){
+          for(let i = 0; i<arr.length; i++){
+            if(arr[i].task_id === postId){
+              return true
+            }
+          }
+          return false
         }
       },
 
@@ -109,10 +123,14 @@
         if(this.activeLang !== null){
           this.haveLang = true;
         }
+
+        let postId = this.postId;
+        let postType = this.postType;
+
         // console.log(this.postType);
         let body = {
-            type: this.postType,
-            id: this.postId,
+            type: postType,
+            id: postId,
           };
         const jBody = JSON.stringify(body);
         axios.post('http://localhost:8080/getPostText', jBody).then((response) => {
@@ -125,30 +143,40 @@
             console.log(error);
         });
 
-        // let postId = this.postId;
-        // console.log(postId);
-        // if(this.postType === 'task'){
-        //   let tasks = JSON.parse(localStorage.getItem('seenTasks'));
-        //   delete localStorage['seenTasks'];
-          // console.log(tasks);
-          // for(let i=0; i<tasks.length;i++){
-          //   if(tasks[i].task_id === postId){
-          //     console.log('true');
-          //     break;
-          //   }else{
-          //     tasks[tasks.length] = {
-          //       user_id: tasks[i].user_id,
-          //       task_id: postId,
-          //       isSeen: true,
-          //       isDecided: false
-          //     };
-          //     localStorage['seenTasks'] = JSON.stringify(tasks);
-          //   }
-          // }
-          // console.log(tasks);
-        // }
-        // console.log(tasks);
-        // console.log(localStorage['seenTasks'])
+        if (this.$root.authUser !== null) {
+          const userId = localStorage.getItem('userID');
+          console.log(userId);
+          let tasks = JSON.parse(localStorage.getItem('seenTasks'));
+          const haveIs = this.haveIs(tasks, postId);
+          //если не просмотрена, просматриваем
+          if (!haveIs) {
+            let body = {
+              postType: postType,
+              postId: postId,
+              userId: userId,
+              isSeen: true,
+              isDecided: false
+            };
+            const jBody = JSON.stringify(body);
+            axios.post('http://localhost:8080/addSeenPost', jBody).then((response) => {
+              console.log(response);
+              if (postType === "task") {
+                localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
+              }
+              else if(postType === "lesson") {
+                localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
+              }
+              else if(postType === "article") {
+                localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
+              }
+              else if(postType === "news") {
+                localStorage.setItem('seenNews', JSON.stringify(response.data.news))
+              }
+            }).catch((error) => {
+              console.log(error);
+            });
+          }
+        }
       },
 
 

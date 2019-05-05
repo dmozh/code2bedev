@@ -123,8 +123,8 @@
                   </div>
                   <div class="card-basic-footer">
                     <button class="button"
-                            @click="openPost('task', elem.task_id, elem.task_name, elem.task_description
-                            , elem.task_rate)">
+                            @click="openTaskPost('task', elem.task_id, elem.task_name, elem.task_description,
+                            elem.task_rate, elem.test_input, elem.expected_output)">
                       Открыть задачу</button>
                     <div>Рейтинг задачи: {{elem.task_rate}}</div>
                   </div>
@@ -164,6 +164,8 @@
                                  :postType="this.postType"
                                  :postRate="this.postRate"
                                  :newsImportance="this.newsImportance"
+                                 :testInput="this.taskTestInput"
+                                 :expectedOutput="this.taskExpectedOutput"
                                  @returns="toReturn">
             </view-post-component>
           </transition>
@@ -225,6 +227,9 @@
           postType: '',
           postRate: null,
           newsImportance: null,
+
+          taskTestInput: '',
+          taskExpectedOutput: '',
         }
       },
       methods:{
@@ -240,10 +245,19 @@
           this.postType = "";
           this.postRate = null;
           this.newsImportance = null;
+
+          this.taskTestInput = '';
+          this.taskExpectedOutput = '';
         },
 
         openNewsPost(postType, postId, postName, postDescription, postRate, newsImporatance){
           this.newsImportance = newsImporatance;
+          this.openPost(postType, postId, postName, postDescription, postRate)
+        },
+
+        openTaskPost(postType, postId, postName, postDescription, postRate, testInput, expectedOutput){
+          this.taskTestInput = testInput;
+          this.taskExpectedOutput = expectedOutput;
           this.openPost(postType, postId, postName, postDescription, postRate)
         },
 
