@@ -124,8 +124,8 @@
     },
 
     mounted: function(){
-      console.log(this.expectedOutput);
-      console.log(this.lang, this.place, this.theme);
+      // console.log(this.expectedOutput);
+      // console.log(this.lang, this.place, this.theme);
       if(this.lang === "Python3"){
         this.mode = 'python'
       }else if(this.lang === "Java"){

@@ -12,9 +12,6 @@
             <div class="post-seen-block">
               Просмотрено: {{posts_views}} раз
             </div>
-            <div class="post-rate-block">
-              Рейтинг: {{this.postRate}}
-            </div>
             <div v-if="this.postType==='news'"
               class="news-importance-block">
               <div v-if="this.newsImportance      === 0">Важность новости: Не важно</div>
@@ -44,7 +41,15 @@
         </div>
       </div>
 
-      <div class="content-footer"></div>
+      <div class="content-footer">
+        <div class="post-rate-block">
+          Рейтинг: {{this.postRate}}
+          <div class="arrows-container">
+            <img src="@/assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">
+            <img src="@/assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -99,9 +104,9 @@
 
           userSeenPost: null,
 
+          posts: Object,
+
           posts_views: '',
-
-
         }
       },
 
@@ -111,14 +116,12 @@
         },
 
         haveIs(arr, postId, postType){
-
           for(let i = 0; i<arr.length; i++){
-            if(postType==="task"){
+            if      (postType==="task"){
               if(arr[i].task_id === postId){
                 return true
               }
             }else if(postType==="lesson"){
-              console.log(postId+": "+postType);
               if(arr[i].lesson_id === postId){
                 return true
               }
@@ -133,6 +136,100 @@
             }
           }
           return false
+        },
+
+        isVote(voteType, arr, postId, postType){
+          if(voteType==='up'){
+            for(let i = 0; i<arr.length; i++){
+              if      (postType==="task"){
+                if(arr[i].task_id === postId){
+                  return arr[i].upVote
+                }
+              }else if(postType==="lesson"){
+                if(arr[i].lesson_id === postId){
+                  return arr[i].upVote
+                }
+              }else if(postType==="news"){
+                if(arr[i].news_id === postId){
+                  return arr[i].upVote
+                }
+              }else if(postType==="article"){
+                if(arr[i].article_id === postId){
+                  return arr[i].upVote
+                }
+              }
+            }
+            return false
+          }else{
+            for(let i = 0; i<arr.length; i++){
+              if      (postType==="task"){
+                if(arr[i].task_id === postId){
+                  return arr[i].downVote
+                }
+              }else if(postType==="lesson"){
+                if(arr[i].lesson_id === postId){
+                  return arr[i].downVote
+                }
+              }else if(postType==="news"){
+                if(arr[i].news_id === postId){
+                  return arr[i].downVote
+                }
+              }else if(postType==="article"){
+                if(arr[i].article_id === postId){
+                  return arr[i].downVote
+                }
+              }
+            }
+            return false
+          }
+        },
+
+        postVote(voteType){
+          if (this.$root.authUser !== null) {
+            let voteIs = this.isVote(voteType, this.posts, this.postId, this.postType);
+            if (!voteIs){
+              console.log('mogete');
+              if(voteType==='up'){
+                this.$parent.postRate = this.$parent.postRate-1
+              }else{
+                this.$parent.postRate = this.$parent.postRate-1
+              }
+              const userId = localStorage.getItem('userID');
+              let body = {
+                postType: this.postType,
+                postId: this.postId,
+                userId: userId,
+                voteType: voteType,
+              };
+              const jBody = JSON.stringify(body);
+              axios.post('http://localhost:8080/updatePostRate', jBody).then((response) => {
+                console.log(response);
+                if      (this.postType === "task") {
+                  this.posts = response.data.tasks;
+                  localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
+                }
+                else if (this.postType === "lesson") {
+                  this.posts = response.data.lessons;
+                  localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
+                }
+                else if (this.postType === "article") {
+                  this.posts = response.data.articles;
+                  localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
+                }
+                else if (this.postType === "news") {
+                  this.posts = response.data.news;
+                  localStorage.setItem('seenNews', JSON.stringify(response.data.news))
+                }
+              }).catch((error) => {
+                console.log(error);
+              });
+            }else{
+              alert('Накручивать не хорошо :)')
+            }
+          }else{
+            //TODO кастомное высплывающие окно
+            alert('Для голосования необходимо авторизироваться')
+          }
         }
       },
 
@@ -165,21 +262,21 @@
 
         if (this.$root.authUser !== null) {
           const userId = localStorage.getItem('userID');
-          let posts = Object;
+          // let posts = Object;
           let haveIs = Boolean;
 
           if(postType==="task"){
-            posts = JSON.parse(localStorage.getItem('seenTasks'));
-            haveIs = this.haveIs(posts, postId, postType);
+            this.posts = JSON.parse(localStorage.getItem('seenTasks'));
+            haveIs = this.haveIs(this.posts, postId, postType);
           }else if(postType==="lesson"){
-            posts = JSON.parse(localStorage.getItem('seenLessons'));
-            haveIs = this.haveIs(posts, postId, postType);
+            this.posts = JSON.parse(localStorage.getItem('seenLessons'));
+            haveIs = this.haveIs(this.posts, postId, postType);
           }else if(postType==="article"){
-            posts = JSON.parse(localStorage.getItem('seenArticles'));
-            haveIs = this.haveIs(posts, postId, postType);
+            this.posts = JSON.parse(localStorage.getItem('seenArticles'));
+            haveIs = this.haveIs(this.posts, postId, postType);
           }else if(postType==="news"){
-            posts = JSON.parse(localStorage.getItem('seenNews'));
-            haveIs = this.haveIs(posts, postId, postType);
+            this.posts = JSON.parse(localStorage.getItem('seenNews'));
+            haveIs = this.haveIs(this.posts, postId, postType);
           }
 
           //если не просмотрена, просматриваем
@@ -235,7 +332,7 @@
 
   .body, .content-container, .content-header, .content-body, .content-footer,
   .info-block, .post-seen-block, .post-rate-block, .news-importance-block, .post-name-block, .post-text-block,
-  .post-description-block, .code-editor-container, .left-panel, .line-number, .main-editor, .editor{
+  .post-description-block, .code-editor-container, .left-panel, .line-number, .main-editor, .editor, .arrows-container{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -308,7 +405,7 @@
     margin-right: 1vw;
   }
 
-  .post-seen-block, .post-rate-block, .news-importance-block{
+  .post-seen-block, .news-importance-block{
     height: 6vh;
     width: 10vw;
     justify-content: center;
@@ -364,6 +461,56 @@
     font-size: 0.9rem;
     /*background: rgba(191, 191, 191, 0.27);*/
     background: white;
+  }
+
+  .content-footer{
+    margin-bottom: 20px;
+  }
+
+  .post-rate-block{
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+
+    height: 6vh;
+    width: auto;
+    justify-content: baseline;
+    align-items: center;
+    font-size: 1.7rem;
+    color: #9e9e9e;
+    margin-right: 1vw;
+
+  }
+
+  .arrows-container{
+    margin-left: 0.7vw;
+    max-height: 100%;
+    max-width: 100%;
+    /*justify-content: center;*/
+    align-items: flex-end;
+    height: 6vh;
+    width: 2vw;
+  }
+
+  .rate-btn{
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+  }
+
+  .rate-btn-reverse{
+    transform: scale(1, -1);
+  }
+
+  .rate-btn:hover{
+    background: rgba(241, 255, 253, 0.18);
+    transform: scale(1.3);
+    transition: .3s all;
+    z-index: 10000000;
+    cursor: pointer;
+  }
+
+  .rate-btn-reverse:hover{
+    transform: scale(1.3, -1);
   }
 
   .content-footer{
