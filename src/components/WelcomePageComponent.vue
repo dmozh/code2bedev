@@ -6,7 +6,7 @@
           <p>НА ГЛАВНУЮ</p>
           <div class="splitter"></div>
           <router-link to="/main" class="card">
-            <img src="@/assets/png/home.png" class="pic">
+            <img src="../assets/png/home.png" class="pic">
           </router-link>
         </div>
 
@@ -16,7 +16,7 @@
           <p>ЗАРЕГИСТРИРОВАТЬСЯ</p>
           <div class="splitter"></div>
           <router-link to="/register" class="card">
-            <img src="@/assets/png/signup.png" class="pic">
+            <img src="../assets/png/signup.png" class="pic">
           </router-link>
         </div>
       </div>

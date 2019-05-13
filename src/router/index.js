@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import WelcomePageComponent from '@/components/WelcomePageComponent.vue'
-import RegisterComponent from '@/components/RegisterComponent.vue'
-import MyCabinetComponent from '@/components/MyCabinetComponent.vue'
-import MainComponent from '@/components/MainComponent.vue'
+import WelcomePageComponent from '../components/WelcomePageComponent.vue'
+import RegisterComponent from '../components/RegisterComponent.vue'
+import MyCabinetComponent from '../components/MyCabinetComponent.vue'
+import MainComponent from '../components/MainComponent.vue'
 import auth from 'firebase'
 
 Vue.use(Router);

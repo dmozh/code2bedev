@@ -4,7 +4,7 @@
       <div class="back-btn-container">
         <router-link to="/main" class="nav-bar-btns menuitem waves-effect waves-dark">
             <p class="note-back-to-main">НА ГЛАВНУЮ</p>
-            <img src="@/assets/png/home.png" class="icon">
+            <img src="../assets/png/home.png" class="icon">
         </router-link>
       </div>
       <div class="menu">
@@ -44,10 +44,10 @@
 </template>
 
 <script>
-    import ProfileComponent from '@/components/MyCabinetsComponents/ProfileComponent'
-    import PostsComponent from '@/components/MyCabinetsComponents/PostsComponent'
-    import CreateComponent from '@/components/MyCabinetsComponents/CreateComponent'
-    import SeenComponent from '@/components/MyCabinetsComponents/SeenComponent'
+    import ProfileComponent from '../components/MyCabinetsComponents/ProfileComponent'
+    import PostsComponent from '../components/MyCabinetsComponents/PostsComponent'
+    import CreateComponent from '../components/MyCabinetsComponents/CreateComponent'
+    import SeenComponent from '../components/MyCabinetsComponents/SeenComponent'
 
     export default {
       name: "my-cabinet-component",

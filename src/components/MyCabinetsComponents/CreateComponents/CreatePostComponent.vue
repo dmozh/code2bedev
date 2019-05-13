@@ -14,7 +14,7 @@
         </select>
         <label v-if="isUpdate">Текущий язык: {{reqLangName}}</label>
         <div class="quest-mark-icon tooltip">
-          <img src="@/assets/png/question_mark.png" class="icon qm">
+          <img src="../../../assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен.</span>
         </div>
       </div>
@@ -29,7 +29,7 @@
         </select>
         <label v-if="isUpdate">Текущая важность новости: {{this.importance[reqNewsImportance].name}}</label>
         <div class="quest-mark-icon tooltip">
-          <img src="@/assets/png/question_mark.png" class="icon qm">
+          <img src="../../../assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр опционален. В зависимости от выбора важности, новость будет по разному отображаться.
           К примеру если выбрать "Критически важно", новость будет подсвечиваться красным цветом в блоке новостей.
           </span>
@@ -37,7 +37,7 @@
       </div>
 
       <div class="back-btn waves-effect waves-dark">
-        <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
     </div>
     <div class="main-content-container">
@@ -51,7 +51,7 @@
           <input type="text" placeholder="Введите тег" class="tags-input" id="tagInput" v-model="tag">
           <div class="plus-btn-container">
             <div class="plus-btn" @click="addTag">
-              <img src="@/assets/png/plus.png" class="plus-btn-icon"/>
+              <img src="../../../assets/png/plus.png" class="plus-btn-icon"/>
             </div>
           </div>
          <div class="tags-container">

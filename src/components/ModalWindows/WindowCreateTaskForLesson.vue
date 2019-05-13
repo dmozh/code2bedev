@@ -5,7 +5,7 @@
         <div class="modal-container">
           <div class="modal-header">
             <div class="close-btn">
-              <img src="@/assets/png/close-btn.png" class="pic" @click="emitClose">
+              <img src="../../assets/png/close-btn.png" class="pic" @click="emitClose">
             </div>
           </div>
           <div class="main-content-container">
@@ -24,7 +24,7 @@
                       </option>
                     </select>
                     <div class="quest-mark-icon tooltip">
-                      <img src="@/assets/png/question_mark.png" class="icon qm">
+                      <img src="/src/assets/png/question_mark.png" class="icon qm">
                       <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
                     </div>
                   </div>

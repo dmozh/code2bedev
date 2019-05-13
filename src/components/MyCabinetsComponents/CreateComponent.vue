@@ -5,7 +5,7 @@
 
           <div class="column">
             <div class="col-header">
-              <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentArticles">
+              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentArticles">
               <p>СТАТЬЮ</p>
             </div>
             <div class="col-body">
@@ -25,7 +25,7 @@
 
           <div class="column">
             <div class="col-header">
-              <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentLessons">
+              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentLessons">
               <p>УРОК</p>
             </div>
             <div class="col-body">
@@ -45,7 +45,7 @@
 
           <div class="column">
             <div class="col-header">
-              <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentTasks">
+              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentTasks">
               <p>ЗАДАЧУ</p>
             </div>
             <div class="col-body">
@@ -65,7 +65,7 @@
 
           <div class="column" v-if="this.userRole===666">
             <div class="col-header">
-              <img src="@/assets/png/plus.png" class="icon pulse" @click="showCreateComponentNews">
+              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentNews">
               <p>НОВОСТЬ</p>
             </div>
             <div class="col-body">
@@ -114,9 +114,9 @@
 </template>
 
 <script>
-  import CreatePostComponent from '@/components/MyCabinetsComponents/CreateComponents/CreatePostComponent'
-  import CreateLessonComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateLessonComponent'
-  import CreateTasksComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateTasksComponent'
+  import CreatePostComponent from '../MyCabinetsComponents/CreateComponents/CreatePostComponent'
+  import CreateLessonComponent from '../MyCabinetsComponents/CreateComponents/CreateLessonComponent'
+  import CreateTasksComponent from '../MyCabinetsComponents/CreateComponents/CreateTasksComponent'
 
   import axios from 'axios'
 

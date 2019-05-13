@@ -31,11 +31,11 @@
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentArticles(elem.article_id, elem.article_name, elem.article_description,
                                                             elem.article_text, elem.article_tags, elem.lang_id, elem.lang_name)">
-                            <img src="@/assets/png/change_button.png" class="icon">
+                            <img src="../../assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
                                @click="deleteArticle(elem.article_id, $event)">
-                            <img src="@/assets/png/delete_button.png" class="icon">
+                            <img src="../../assets/png/delete_button.png" class="icon">
                           </div>
                         </div>
                       </div>
@@ -71,11 +71,11 @@
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentLessons(elem.lesson_id, elem.lesson_name, elem.lesson_description,
                                                                   elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name)">
-                            <img src="@/assets/png/change_button.png" class="icon">
+                            <img src="../../assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
                                @click="deleteLesson(elem.lesson_id, $event)">
-                            <img src="@/assets/png/delete_button.png" class="icon">
+                            <img src="../../assets/png/delete_button.png" class="icon">
                           </div>
                         </div>
                       </div>
@@ -111,11 +111,11 @@
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
                                             elem.task_text, elem.lesson_id, elem.lesson_name, elem.task_difficulty, elem.test_input, elem.expected_output)">
-                            <img src="@/assets/png/change_button.png" class="icon">
+                            <img src="../../assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
                                @click="deleteTask(elem.task_id, $event)">
-                            <img src="@/assets/png/delete_button.png" class="icon">
+                            <img src="../../assets/png/delete_button.png" class="icon">
                           </div>
                         </div>
                       </div>
@@ -147,11 +147,11 @@
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentNews(elem.news_id, elem.news_name, elem.news_description,
                                                      elem.news_text, elem.news_tags, elem.news_importance)">
-                            <img src="@/assets/png/change_button.png" class="icon">
+                            <img src="../../assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
                                @click="deleteNews(elem.news_id, $event)">
-                            <img src="@/assets/png/delete_button.png" class="icon">
+                            <img src="../../assets/png/delete_button.png" class="icon">
                           </div>
                         </div>
                       </div>
@@ -247,9 +247,9 @@
 <script>
   import axios from 'axios'
 
-  import CreatePostComponent from '@/components/MyCabinetsComponents/CreateComponents/CreatePostComponent'
-  import CreateLessonComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateLessonComponent'
-  import CreateTasksComponent from '@/components/MyCabinetsComponents/CreateComponents/CreateTasksComponent'
+  import CreatePostComponent from '../MyCabinetsComponents/CreateComponents/CreatePostComponent'
+  import CreateLessonComponent from '../MyCabinetsComponents/CreateComponents/CreateLessonComponent'
+  import CreateTasksComponent from '../MyCabinetsComponents/CreateComponents/CreateTasksComponent'
 
     export default {
       name: "posts-component",

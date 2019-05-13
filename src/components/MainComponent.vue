@@ -14,10 +14,10 @@
           </div>
           <div class="btn-container">
             <div class="nav-bar-btns logged-in waves-effect waves-dark" v-if="this.$root.authUser" @click="logout">
-              <img src="@/assets/png/pic_for_login_btn.png" class="icon">
+              <img src="../assets/png/pic_for_login_btn.png" class="icon">
             </div>
             <div class="nav-bar-btns logged-out waves-effect waves-dark" v-else @click="openLoginWindow">
-              <img src="@/assets/png/pic_for_login_btn.png" class="icon">
+              <img src="../assets/png/pic_for_login_btn.png" class="icon">
             </div>
           </div>
         </div>
@@ -179,8 +179,8 @@
 
 <script>
   import auth from 'firebase'
-  import LoginWindow from '@/components/ModalWindows/WindowLoginComponent'
-  import ChooseLangWindow from '@/components/ModalWindows/WindowChooseLangComponent'
+  import LoginWindow from '../components/ModalWindows/WindowLoginComponent'
+  import ChooseLangWindow from '../components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
   import ViewPostComponent from "./ViewPostComponent";
   import CompilerComponent from "./CompilerComponent"

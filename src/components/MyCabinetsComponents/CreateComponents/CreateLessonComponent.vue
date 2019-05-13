@@ -12,13 +12,13 @@
         </select>
         <label v-if="isUpdate">Текущий язык: {{reqLangName}}</label>
         <div class="quest-mark-icon tooltip">
-          <img src="@/assets/png/question_mark.png" class="icon qm">
+          <img src="../../../assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен.</span>
         </div>
 
       </div>
       <div class="back-btn waves-effect waves-dark">
-        <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
     </div>
 
@@ -32,7 +32,7 @@
           <input type="text" placeholder="Введите тег" class="tags-input" id="tagInput" v-model="tag">
           <div class="plus-btn-container">
             <div class="plus-btn" @click="addTag">
-              <img src="@/assets/png/plus.png" class="plus-btn-icon"/>
+              <img src="../../../assets/png/plus.png" class="plus-btn-icon"/>
             </div>
           </div>
           <div class="tags-container">
@@ -70,7 +70,7 @@
               </div>
               <div class="plus-btn-container">
                 <div class="plus-btn" @click="openCreateTaskWindow">
-                  <img src="@/assets/png/plus.png" class="plus-btn-icon"/>
+                  <img src="../../../assets/png/plus.png" class="plus-btn-icon"/>
                 </div>
               </div>
 
@@ -98,8 +98,8 @@
 </template>
 
 <script>
-  import WindowCreateTaskForLesson from '@/components/ModalWindows/WindowCreateTaskForLesson'
-  import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
+  import WindowCreateTaskForLesson from '../../ModalWindows/WindowCreateTaskForLesson'
+  import CreateErrorModalComponent from '../../ModalWindows/CreateErrorModalComponent';
   import axios from 'axios'
 
   export default {

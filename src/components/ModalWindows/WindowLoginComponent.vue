@@ -5,7 +5,7 @@
         <div class="modal-container">
           <div class="modal-header">
             <div class="close-btn">
-              <img src="@/assets/png/close-btn.png" class="pic" @click="emitClose">
+              <img src="../../assets/png/close-btn.png" class="pic" @click="emitClose">
             </div>
           </div>
           <div class="login-container">

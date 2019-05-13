@@ -3,7 +3,7 @@
     <div class="main">
       <div class="header-editor-container">
         <div class="btn-container">
-          <img id="exec-btn" @click="execute(false)" src="@/assets/png/exec_btn.png"/>
+          <img id="exec-btn" @click="execute(false)" src="../assets/png/exec_btn.png"/>
         </div>
       </div>
       <div id="editor"></div>

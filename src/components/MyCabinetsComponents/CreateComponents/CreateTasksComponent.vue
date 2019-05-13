@@ -11,13 +11,13 @@
           </option>
         </select>
         <div class="quest-mark-icon tooltip">
-          <img src="@/assets/png/question_mark.png" class="icon qm">
+          <img src="../../../assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен</span>
         </div>
         <label v-if="isUpdate">Сейчас задача относится к уроку: {{reqLessonName}}</label>
       </div>
       <div class="back-btn waves-effect waves-dark">
-        <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
     </div>
     <div class="main-content-container">
@@ -37,7 +37,7 @@
               </select>
               <label v-if="isUpdate">Сейчас уровень задачи: {{reqTaskDiff}}</label>
               <div class="quest-mark-icon tooltip">
-                <img src="@/assets/png/question_mark.png" class="icon qm">
+                <img src="../../../assets/png/question_mark.png" class="icon qm">
                 <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
               </div>
             </div>

@@ -5,7 +5,7 @@
         <div class="modal-container">
           <div class="modal-header">
             <div class="close-btn">
-              <img src="@/assets/png/alert_sign.png" class="pic">
+              <img src="../../assets/png/alert_sign.png" class="pic">
             </div>
             <div class="header-note">ОШИБКА</div>
           </div>

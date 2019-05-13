@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="back-btn waves-effect waves-dark" @click="emitReturn">
-            <img src="@/assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+            <img src="../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
           </div>
         </div>
         <div class="content-body">
@@ -39,14 +39,13 @@
             ></code-editor-component>
           </div>
         </div>
-      </div>
-
-      <div class="content-footer">
-        <div class="post-rate-block">
-          Рейтинг: {{this.postRate}}
-          <div class="arrows-container">
-            <img src="@/assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">
-            <img src="@/assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">
+        <div class="content-footer">
+          <div class="post-rate-block">
+            Рейтинг: {{this.postRate}}
+            <div class="arrows-container">
+              <img src="../assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">
+              <img src="../assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">
+            </div>
           </div>
         </div>
       </div>
@@ -190,7 +189,7 @@
             if (!voteIs){
               console.log('mogete');
               if(voteType==='up'){
-                this.$parent.postRate = this.$parent.postRate-1
+                this.$parent.postRate = this.$parent.postRate+1
               }else{
                 this.$parent.postRate = this.$parent.postRate-1
               }
@@ -421,6 +420,8 @@
 
   .content-body{
     width: 85vw;
+    min-height: 90vh;
+    height: auto;
     /*height: 100%;*/
     /*justify-content: center;*/
     align-content: baseline;
@@ -464,6 +465,7 @@
   }
 
   .content-footer{
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
