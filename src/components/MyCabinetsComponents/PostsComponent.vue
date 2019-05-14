@@ -451,7 +451,7 @@
           };
           //создаем json
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getUserAllPosts', jBody).then((response) => {
+          axios.post(this.$root.URL+'getUserAllPosts', jBody).then((response) => {
             this.response = response.data.posts;
             this.tasks = this.response.tasks;
             // console.log(response.data.posts.articles);
@@ -516,7 +516,7 @@
             authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/deleteUserArticle', jBody).then((response) => {
+          axios.post(this.$root.URL+'deleteUserArticle', jBody).then((response) => {
             console.log(response);
           }).catch((error) => {
             console.log(error);});
@@ -536,7 +536,7 @@
             authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/deleteUserNews', jBody).then((response) => {
+          axios.post(this.$root.URL+'deleteUserNews', jBody).then((response) => {
             console.log(response);
           }).catch((error) => {
             console.log(error);});
@@ -555,7 +555,7 @@
             authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/deleteUserTask', jBody).then((response) => {
+          axios.post(this.$root.URL+'deleteUserTask', jBody).then((response) => {
             console.log(response);
           }).catch((error) => {
             console.log(error);});
@@ -574,7 +574,7 @@
             authorName: localStorage.getItem('userName')
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/deleteUserLesson', jBody).then((response) => {
+          axios.post(this.$root.URL+'deleteUserLesson', jBody).then((response) => {
             console.log(response);
           }).catch((error) => {
             console.log(error);});

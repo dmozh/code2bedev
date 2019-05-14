@@ -227,12 +227,12 @@
             const jBody = JSON.stringify(body);
 
             if(!this.isUpdate){
-              axios.post('http://localhost:8080/addLesson', jBody).then((response) => {
+              axios.post(this.$root.URL+'addLesson', jBody).then((response) => {
                 console.log(response);
               }).catch((error) => {
                 console.log(error);});
             }else{
-              axios.post('http://localhost:8080/updateUserLesson', jBody).then((response) => {
+              axios.post(this.$root.URL+'updateUserLesson', jBody).then((response) => {
                 console.log(response);
               }).catch((error) => {
                 console.log(error);})

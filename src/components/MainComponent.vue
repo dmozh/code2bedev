@@ -323,7 +323,7 @@
             lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getArticles', jBody).then((response) => {
+          axios.post(this.$root.URL+'getArticles', jBody).then((response) => {
             this.response = response.data.articles;
             // console.log(response);
           }).catch((error) => {
@@ -344,7 +344,7 @@
             lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getLessons', jBody).then((response) => {
+          axios.post(this.$root.URL+'getLessons', jBody).then((response) => {
             this.response = response.data.lessons;
             // console.log(response);
           }).catch((error) => {
@@ -365,7 +365,7 @@
             lang: this.activeLang,
           };
           const jBody = JSON.stringify(body);
-          axios.post('http://localhost:8080/getTasks', jBody).then((response) => {
+          axios.post(this.$root.URL+'getTasks', jBody).then((response) => {
             this.response = response.data.tasks;
             // console.log(response);
           }).catch((error) => {
@@ -382,7 +382,7 @@
 
           this.isOpenCompiler = false;
 
-          axios.get('http://localhost:8080/getNews').then((response) => {
+          axios.get(this.$root.URL+'getNews').then((response) => {
             this.response = response.data.news;
             // console.log(response);
           }).catch((error) => {
@@ -406,6 +406,7 @@
         //TODO но необходимо найти способ решение данной проблемы.
         // TODO upd решил пока использовать локальное хранилище хотя это тоже нихуя не безопасно
         this.userName = localStorage.getItem('userName');
+        console.log(localStorage.getItem('userName'));
         this.userRole = localStorage.getItem('userRole');
         this.activeLang = localStorage.getItem('activeLang');
         if (this.userName && this.userRole === null) {

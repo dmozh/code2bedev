@@ -201,7 +201,7 @@
                 voteType: voteType,
               };
               const jBody = JSON.stringify(body);
-              axios.post('http://localhost:8080/updatePostRate', jBody).then((response) => {
+              axios.post(this.$root.URL+'updatePostRate', jBody).then((response) => {
                 console.log(response);
                 if      (this.postType === "task") {
                   this.posts = response.data.tasks;
@@ -248,7 +248,7 @@
             id: postId,
           };
         const jBody = JSON.stringify(body);
-        axios.post('http://localhost:8080/getPostText', jBody).then((response) => {
+        axios.post(this.$root.URL+'getPostText', jBody).then((response) => {
           this.postText = response.data.post_text;
           this.posts_views = response.data.views;
           let parentElem = document.getElementsByClassName('post-text-block');
@@ -289,7 +289,7 @@
               isDecided: false
             };
             const jBody = JSON.stringify(body);
-            axios.post('http://localhost:8080/addSeenPost', jBody).then((response) => {
+            axios.post(this.$root.URL+'addSeenPost', jBody).then((response) => {
               console.log(response);
               if (postType === "task") {
                 localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))

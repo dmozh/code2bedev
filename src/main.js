@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
@@ -32,6 +32,9 @@ firebase.auth().onAuthStateChanged(()=>{
       router,
       render: h => h(App),
       data: {
+        URL: "http://localhost:8080/api/v1/", //dev
+        // URL: "http://code2be.dev/api/v1/",   //dep
+
         authUser: null,
         activeUserName: null,
         activeUserRole: null,
@@ -75,7 +78,8 @@ firebase.auth().onAuthStateChanged(()=>{
             };
             //создаем json
             const jBody = JSON.stringify(body);
-            axios.post('http://localhost:8080/getUserLessonsName', jBody).then((response) => {
+            axios.post(this.URL+'getUserLessonsName', jBody)
+              .then((response) => {
               console.log(response.data);
               this.userLessons = response.data.lessons;
             }).catch((error) => {
@@ -87,7 +91,7 @@ firebase.auth().onAuthStateChanged(()=>{
 
       mounted: function() {
         if (this.langsName === null){
-          axios.get('http://localhost:8080/getLangsName').then(response => {
+          axios.get(this.URL+'getLangsName').then(response => {
             this.langsName = response.data.langs_name
           })
         }

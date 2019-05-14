@@ -22,12 +22,16 @@
 
 <script>
   import auth from 'firebase'
-  import axi from 'axios'
+  import 'firebase/auth'
+  import axios from 'axios'
 
     export default {
       name: "register-component",
       data() {
         return {
+          // URL: "http://localhost:8080/api/v1/", //dev
+          // URL: "http://code2be.dev/api/v1/",   //dep
+
           name: '',
           email: '',
           password: '',
@@ -35,10 +39,7 @@
           authUser: null,
 
           logi: '',
-          postBody: {   // пример данных для отправки(позже они преобразуются в json)
-            name : ' michail ',
-            ade : 22
-          },
+          valid: null
         }
       },
       methods:{
@@ -51,43 +52,48 @@
           if (this.password !== this.passwordRepeat){
             alert('Passwords do not match');
           }else{
-            //определяем переменные для запроса
-            const userEmail = this.email, userName = this.name;
-
-            auth.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
-              // Handle Errors here.
-              const errorCode = error.code;
-              const errorMessage = error.message;
-              // [START_EXCLUDE]
-              if (errorCode === 'auth/weak-password') {
-                alert(errorMessage);
-              } else if (errorCode === 'auth/email-already-in-use'){
-                alert (errorMessage);
-              } else {
-              }
-              console.log(error);
-              // [END_EXCLUDE]
-            }).then(function () {
+            if (this.password.length < 7){
+              alert('Password is week')
+            }else{
+              //определяем переменные для запроса
+              const userEmail = this.email, userName = this.name;
               const body = {
-                  userEmail: userEmail,
-                  userName: userName
-                };
-                const jBody = JSON.stringify(body);
-                //TODO отключил добавление юзеров в вторуб дб, для упрощения разработки
-                //TODO включить потом
-                // axi.post('http://localhost:8080/addUser', jBody).then((response) => {
-                //   console.log(response);
-                // }).catch((error) => {
-                //   console.log(error);});
+                userEmail: userEmail,
+                userName: userName
+              };
+              const jBody = JSON.stringify(body);
+              console.log(this.$root.URL);
+              axios.post(this.$root.URL+'addUser', jBody).then((response) => {
+                console.log(response);
+                this.valid = response.data.valid;
+                if(this.valid){
+                  auth.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
+                    // Handle Errors here.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // [START_EXCLUDE]
+                    if (errorCode === 'auth/weak-password') {
+                      alert(errorMessage);
+                    } else if (errorCode === 'auth/email-already-in-use'){
+                      alert (errorMessage);
+                    } else {
+                    }
+                    console.log(error);
+                    // [END_EXCLUDE]
+                  }).then(function () {
+                    localStorage.setItem('userName', userName);
+                    if (auth.auth().currentUser.emailVerified === true){
 
-            }).then(function () {
-              if (auth.auth().currentUser.emailVerified === true){
-
-              }else{
-                auth.auth().currentUser.sendEmailVerification();
-              }
-            });
-            this.$router.replace('/main');
+                    }else{
+                      auth.auth().currentUser.sendEmailVerification();
+                    }
+                  });
+                  this.$router.replace('/main')
+                }else{
+                  alert(response.data.msg)
+                }
+              }).catch((error) => {console.log(error);});
+            }
           }
         },
 

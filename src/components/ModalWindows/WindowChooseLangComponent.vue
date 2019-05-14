@@ -55,7 +55,7 @@
           this.$emit('close')
         },
         getLangsInfo(){
-          axios.get('http://localhost:8080/getLangs').then(response=>{
+          axios.get(this.$root.URL+'getLangs').then(response=>{
             this.langs = response.data.langs;
           })
         },

@@ -275,7 +275,7 @@
             let toastHtml = '';
             //TODO сделать оповещание о том успешно/неуспешно создана/обновлена/удалена пост
             if (this.isArticle && !this.isUpdate) {
-              axios.post('http://localhost:8080/addArticle', jBody).then((response) => {
+              axios.post(this.$root.URL+'addArticle', jBody).then((response) => {
                 console.log(response);
                 this.resp = response.data.msg;
                 // console.log(this.resp);
@@ -284,19 +284,19 @@
                 console.log(error);
               });
             } else if (this.isNews && !this.isUpdate) {
-              axios.post('http://localhost:8080/addNews', jBody).then((response) => {
+              axios.post(this.$root.URL+'addNews', jBody).then((response) => {
                 // console.log(response);
               }).catch((error) => {
                 console.log(error);
               });
             } else if (this.isArticle && this.isUpdate){
-              axios.post('http://localhost:8080/updateUserArticle', jBody).then((response) => {
+              axios.post(this.$root.URL+'updateUserArticle', jBody).then((response) => {
                 // console.log(response);
               }).catch((error) => {
                 console.log(error);
               });
             }else if(this.isNews && this.isUpdate){
-              axios.post('http://localhost:8080/updateUserNews', jBody).then((response) => {
+              axios.post(this.$root.URL+'updateUserNews', jBody).then((response) => {
                 // console.log(response);
               }).catch((error) => {
                 console.log(error);

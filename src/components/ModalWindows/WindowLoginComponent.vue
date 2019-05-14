@@ -57,7 +57,7 @@
             const body = {email: this.email};
             const jBody = JSON.stringify(body);
 
-            axios.post('http://localhost:8080/getUser', jBody).then((response) => {
+            axios.post(this.$root.URL+'getUser', jBody).then((response) => {
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменную
               this.$root.activeUserName = response.data.user.user_name;

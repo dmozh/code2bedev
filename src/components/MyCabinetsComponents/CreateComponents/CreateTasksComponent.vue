@@ -238,12 +238,12 @@
 
             const jBody = JSON.stringify(body);
             if(!this.isUpdate){
-              axios.post('http://localhost:8080/addTask', jBody).then((response) => {
+              axios.post(this.$root.URL+'addTask', jBody).then((response) => {
                 console.log(response);
               }).catch((error) => {
                 console.log(error);});
             }else{
-              axios.post('http://localhost:8080/updateUserTask', jBody).then((response) => {
+              axios.post(this.$root.URL+'updateUserTask', jBody).then((response) => {
                 console.log(response);
               }).catch((error) => {
                 console.log(error);});

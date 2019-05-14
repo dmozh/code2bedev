@@ -94,14 +94,16 @@
 
         const jBody = JSON.stringify(body);
         if(!isCheck){
-          axios.post('http://localhost:8080/executeCode', jBody).then((response) => {
+          axios.post(this.$root.URL+'executeCode', jBody)
+            .then((response) => {
             this.outputData = response.data.output;
             console.log(response)
           }).catch((error) => {
             console.log(error);
           });
         }else{
-          axios.post('http://localhost:8080/checkExecuteCode', jBody).then((response) => {
+          axios.post(this.$root.URL+'checkExecuteCode', jBody)
+            .then((response) => {
             this.outputData = response.data.output;
             if (response.data.isDecided){
             //TODO создать кастомную модалку
