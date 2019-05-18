@@ -178,7 +178,7 @@
 </template>
 
 <script>
-  import auth from 'firebase'
+  // import auth from 'firebase/auth'
   import LoginWindow from '../components/ModalWindows/WindowLoginComponent'
   import ChooseLangWindow from '../components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
@@ -272,7 +272,7 @@
         },
 
         logout(){
-          auth.auth().signOut();
+          firebase.auth().signOut();
           this.$root.authUser = null;
           this.$root.activeUserName = null;
           this.$root.activeUserRole = null;
@@ -402,6 +402,8 @@
       },
 
       mounted: function () {
+        this.$root.mainOn();
+        sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
         //TODO есть баг, при обновлении страницы имя пользователя пропадает, пока будет костыль чтобы не тратить на это время,
         //TODO но необходимо найти способ решение данной проблемы.
         // TODO upd решил пока использовать локальное хранилище хотя это тоже нихуя не безопасно
@@ -412,6 +414,11 @@
         if (this.userName && this.userRole === null) {
           this.$root.getUserName()
         }
+      },
+
+      beforeMount: function(){
+        let lastRoute = sessionStorage.getItem('currentRoute');
+        sessionStorage.setItem('lastRoute', lastRoute);
       },
 
       created: function () {
@@ -465,8 +472,8 @@
 
   .body{
     /*position: fixed;*/
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: aliceblue;
   }
 

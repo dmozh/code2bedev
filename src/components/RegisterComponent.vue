@@ -21,8 +21,8 @@
 </template>
 
 <script>
-  import auth from 'firebase'
-  import 'firebase/auth'
+  // import auth from 'firebase/auth'
+  // import 'firebase'
   import axios from 'axios'
 
     export default {
@@ -37,6 +37,8 @@
           password: '',
           passwordRepeat: '',
           authUser: null,
+
+
 
           logi: '',
           valid: null
@@ -67,7 +69,7 @@
                 console.log(response);
                 this.valid = response.data.valid;
                 if(this.valid){
-                  auth.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
+                  firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
                     // Handle Errors here.
                     const errorCode = error.code;
                     const errorMessage = error.message;
@@ -82,10 +84,10 @@
                     // [END_EXCLUDE]
                   }).then(function () {
                     localStorage.setItem('userName', userName);
-                    if (auth.auth().currentUser.emailVerified === true){
+                    if (firebase.auth().currentUser.emailVerified === true){
 
                     }else{
-                      auth.auth().currentUser.sendEmailVerification();
+                      firebase.auth().currentUser.sendEmailVerification();
                     }
                   });
                   this.$router.replace('/main')
@@ -97,16 +99,25 @@
           }
         },
 
-        created() {
-          auth.auth().onAuthStateChanged(user => { this.authUser = user;})
-        }
+        // created() {
+        //   firebase.auth().onAuthStateChanged(user => { this.authUser = user;})
+        // }
       },
 
       mounted: function () {
-        if (this.$root.authUser){
-          this.$router.replace('/main');
+        sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
+
+        if (this.$router.currentRoute.name === 'register'){
+          this.$root.signUpOn();
         }
-      }
+        if (this.$root.authUser){
+          this.$router.replace('/');
+        }
+      },
+      beforeMount: function(){
+        let lastRoute = sessionStorage.getItem('currentRoute');
+        sessionStorage.setItem('lastRoute', lastRoute);
+      },
     }
 </script>
 

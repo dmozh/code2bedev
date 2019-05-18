@@ -1,17 +1,9 @@
 import Vue from 'vue'
-import firebase from 'firebase/app'
+// import f_app from 'firebase/app'
+// import auth from 'firebase/firebase-auth'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
-
-// const SEC_HTTPS = true;
-// const SEC_BASE = "compilers.widgets.sphere-engine.com";
-// (function(d, s, id){ SEC = window.SEC || (window.SEC = []);
-//   var js, fjs = d.getElementsByTagName(s)[0];
-//   if (d.getElementById(id)) return; js = d.createElement(s); js.id = id;
-//   js.src = (SEC_HTTPS ? "https" : "http") + "://" + SEC_BASE + "/static/sdk/sdk.js";
-//   fjs.parentNode.insertBefore(js, fjs);
-// }(document, "script", "sphere-engine-compilers-jssdk"));
 
 let app ='';
 const config = {
@@ -32,8 +24,12 @@ firebase.auth().onAuthStateChanged(()=>{
       router,
       render: h => h(App),
       data: {
+        mainIsOn: false,
+        signUpIsOn: false,
+        myCabIsOn: false,
+
         URL: "http://localhost:8080/api/v1/", //dev
-        // URL: "http://code2be.dev/api/v1/",   //dep
+        // URL: "https://code2be.dev/api/v1/",   //dep
 
         authUser: null,
         activeUserName: null,
@@ -49,6 +45,22 @@ firebase.auth().onAuthStateChanged(()=>{
       },
 
       methods: {
+        mainOn(){
+          this.mainIsOn = true;
+          this.signUpIsOn = false;
+          this.myCabIsOn = false;
+        },
+        signUpOn(){
+          this.mainIsOn = false;
+          this.signUpIsOn = true;
+          this.myCabIsOn = false;
+        },
+        myCabOn(){
+          this.mainIsOn = false;
+          this.signUpIsOn = false;
+          this.myCabIsOn = true;
+        },
+
         getUserName(){
           //если пользователь авторизован, получаем из бд его данные
           if (this.authUser !== null) {
@@ -56,7 +68,7 @@ firebase.auth().onAuthStateChanged(()=>{
             const body = {email: this.authUser.email};
             const jBody = JSON.stringify(body);
 
-            axios.post('http://localhost:8080/getUser', jBody).then((response) => {
+            axios.post(this.URL+'getUser', jBody).then((response) => {
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменнst
               this.activeUserName = response.data.user.user_name;
@@ -90,6 +102,9 @@ firebase.auth().onAuthStateChanged(()=>{
       },
 
       mounted: function() {
+        // if (this.$router.currentRoute.name !== 'register'){
+        //   this.signUpOn = false;
+        // }
         if (this.langsName === null){
           axios.get(this.URL+'getLangsName').then(response => {
             this.langsName = response.data.langs_name

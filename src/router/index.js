@@ -4,7 +4,7 @@ import WelcomePageComponent from '../components/WelcomePageComponent.vue'
 import RegisterComponent from '../components/RegisterComponent.vue'
 import MyCabinetComponent from '../components/MyCabinetComponent.vue'
 import MainComponent from '../components/MainComponent.vue'
-import auth from 'firebase'
+// import auth from 'firebase/auth'
 
 Vue.use(Router);
 
@@ -12,7 +12,7 @@ let router = new Router({
 
   routes: [
     {
-      path: '/',
+      path: '/welcome',
       name: 'welcome',
       component: WelcomePageComponent,
       meta: {
@@ -20,7 +20,7 @@ let router = new Router({
       }
     },
     {
-      path: '/main',
+      path: '/',
       name: 'main',
       component: MainComponent,
       meta: {
@@ -51,7 +51,7 @@ router.beforeEach((to, from, next) => {
   // Check for requiresAuth guard
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // Check if NO logged user
-    if (!auth.auth().onAuthStateChanged) {
+    if (!firebase.auth().onAuthStateChanged) {
       // Go to login
       next({
         path: '/',
@@ -65,7 +65,7 @@ router.beforeEach((to, from, next) => {
     }
   } else if (to.matched.some(record => record.meta.requiresGuest)) {
     // Check if NO logged user
-    if (auth.auth().onAuthStateChanged) {
+    if (firebase.auth().onAuthStateChanged) {
       // Go to login
       next({
         path: '/',

@@ -5,7 +5,7 @@
         <div class="column">
           <p>НА ГЛАВНУЮ</p>
           <div class="splitter"></div>
-          <router-link to="/main" class="card">
+          <router-link to="/" class="card">
             <img src="../assets/png/home.png" class="pic">
           </router-link>
         </div>
@@ -27,7 +27,16 @@
     export default {
       name: "welcome-page-component",
       methods: {
-      }
+
+      },
+      mounted: function () {
+        this.$root.mainOn = false;
+        sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
+      },
+      beforeMount: function(){
+        let lastRoute = sessionStorage.getItem('currentRoute');
+        sessionStorage.setItem('lastRoute', lastRoute);
+      },
     }
 </script>
 

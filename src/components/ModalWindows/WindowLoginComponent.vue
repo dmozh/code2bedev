@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import auth from 'firebase'
+  // import auth from 'firebase/auth'
   import axios from 'axios'
 
     export default {
@@ -44,10 +44,11 @@
         methods:{
           emitClose () {
             this.getUserName();
-            this.$emit('close')
+            this.$emit('close');
+            this.$router.push({path: '/'})
           },
           logIn() {
-            auth.auth().signInWithEmailAndPassword(this.email, this.password).then( user => {
+            firebase.auth().signInWithEmailAndPassword(this.email, this.password).then( user => {
               this.emitClose()
             })
           },

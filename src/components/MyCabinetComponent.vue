@@ -95,8 +95,13 @@
 
       //my lovely crutches
       mounted: function() {
+        sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
+
         if (this.$root.authUser === null){
-          this.$router.replace('/main')
+          this.$router.replace('/')
+        }
+        if (this.$router.currentRoute.name === 'mycabinet'){
+          this.$root.myCabOn();
         }
 
         //TODO при добавление нового урока нужно чтобы массив обновлялся,
@@ -104,6 +109,10 @@
         if(this.$root.userLessons === null){
           this.$root.getUserLessons();
         }
+      },
+      beforeMount: function(){
+        let lastRoute = sessionStorage.getItem('currentRoute');
+        sessionStorage.setItem('lastRoute', lastRoute);
       },
 
     }
