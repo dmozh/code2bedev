@@ -1,63 +1,15 @@
 <template>
     <div class="body">
-      <div class="left-panel-container">
-        <div class="btns-container">
-          <div class="btn-container">
-            <div class="nav-bar-btns waves-effect waves-dark" @click="openWindowChooseLang">
-              langs
-            </div>
-          </div>
-          <div class="btn-container">
-            <div to="/mycabinet" class="nav-bar-btns waves-effect waves-dark" @click="toMyCabinet">
-              lk
-            </div>
-          </div>
-          <div class="btn-container">
-            <div class="nav-bar-btns logged-in waves-effect waves-dark" v-if="this.$root.authUser" @click="logout">
-              <img src="../assets/png/pic_for_login_btn.png" class="icon">
-            </div>
-            <div class="nav-bar-btns logged-out waves-effect waves-dark" v-else @click="openLoginWindow">
-              <img src="../assets/png/pic_for_login_btn.png" class="icon">
-            </div>
-          </div>
-        </div>
-        <div class="menu">
-          <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getLessons">
-              lessons
-            </div>
-          </div>
-          <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getTasks">
-              tasks
-            </div>
-          </div>
-          <div class="menuitem-container ">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getArticles">
-              articles
-            </div>
-          </div>
-          <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="getNews">
-              news
-            </div>
-          </div>
-          <div class="menuitem-container">
-            <div class="nav-bar-btns menuitem waves-effect waves-dark" @click="openCompiler">
-              compiler
-            </div>
-          </div>
-        </div>
-      </div>
-      <login :modalActive="modalActive" @close="closeLoginWindow" @logut="logout"></login>
-      <choose-lang :windowChooseLangModalActive="windowChooseLangModalActive" @close="closeWindowChooseLang"></choose-lang>
+      <header-component>
+
+      </header-component>
       <div class="content-container ">
         <div class="content-header">
           <div class="top-panel" >
             <div class="signed-in" v-if="this.$root.authUser">
-              <div>Signed in as {{this.userName}}</div>
+              <div v-if="this.$root.activeUserName !== null">Signed in as {{this.$root.activeUserName}}</div>
               <div v-if="!this.$root.authUser.emailVerified" class="warning">Email verified is {{this.$root.authUser.emailVerified}}</div>
-              <div>Current lang {{this.activeLang}}</div>
+              <div v-if="this.$root.activeLang !== null">Current lang {{this.$root.activeLang}}</div>
             </div>
             <div class="bottom-panel">
 
@@ -184,15 +136,15 @@
   import axios from 'axios'
   import ViewPostComponent from "./ViewPostComponent";
   import CompilerComponent from "./CompilerComponent"
+  import HeaderComponent from "./HeaderComponent";
 
 
     export default {
       name: "main-component",
       components: {
+        HeaderComponent,
         ViewPostComponent,
         CompilerComponent,
-        login: LoginWindow,
-        chooseLang: ChooseLangWindow
       },
       data() {
         return {
@@ -203,11 +155,6 @@
           userName: '',
           userRole: '',
           userRate: '',
-
-          loggedIn: "logged-in",
-          loggedOut: "logged-out",
-          modalActive: false,
-          windowChooseLangModalActive: false,
           email: '',
 
           response: '',
@@ -271,44 +218,6 @@
           this.isOpenPost = true;
         },
 
-        logout(){
-          firebase.auth().signOut();
-          this.$root.authUser = null;
-          this.$root.activeUserName = null;
-          this.$root.activeUserRole = null;
-          this.$root.activeUserRate =  null;
-
-          this.userName = '';
-          this.userRole = '';
-          this.userRate = '';
-
-          delete localStorage["userName"];
-          delete localStorage["userRole"];
-          delete localStorage["userRate"];
-          // delete localStorage["seenPosts"]
-        },
-        closeLoginWindow(){
-          this.modalActive = false;
-        },
-        openLoginWindow(){
-          this.modalActive = true;
-        },
-        toMyCabinet(){
-          if (this.$root.authUser === null){
-            //TODO сделать модалку кастомную красивую с вызовом модалки логирования
-            alert('Please log in in your account')
-          }else{
-            this.$router.push({path: '/mycabinet'})
-          }
-        },
-
-        openWindowChooseLang(){
-          this.windowChooseLangModalActive = true;
-        },
-        closeWindowChooseLang(){
-          this.windowChooseLangModalActive = false;
-        },
-
         getArticles(){
           this.isOpenPost = false;
 
@@ -320,7 +229,7 @@
           this.isOpenCompiler = false;
 
           let body = {
-            lang: this.activeLang,
+            lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post(this.$root.URL+'getArticles', jBody).then((response) => {
@@ -330,7 +239,7 @@
             console.log(error);});
         },
 
-        getLessons(){
+        getLessons() {
           this.isOpenPost = false;
 
           this.activeArticles = false;
@@ -341,7 +250,7 @@
           this.isOpenCompiler = false;
 
           let body = {
-            lang: this.activeLang,
+            lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post(this.$root.URL+'getLessons', jBody).then((response) => {
@@ -362,7 +271,7 @@
           this.isOpenCompiler = false;
 
           let body = {
-            lang: this.activeLang,
+            lang: this.$root.activeLang,
           };
           const jBody = JSON.stringify(body);
           axios.post(this.$root.URL+'getTasks', jBody).then((response) => {
@@ -404,16 +313,16 @@
       mounted: function () {
         this.$root.mainOn();
         sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
-        //TODO есть баг, при обновлении страницы имя пользователя пропадает, пока будет костыль чтобы не тратить на это время,
-        //TODO но необходимо найти способ решение данной проблемы.
-        // TODO upd решил пока использовать локальное хранилище хотя это тоже нихуя не безопасно
-        this.userName = localStorage.getItem('userName');
-        console.log(localStorage.getItem('userName'));
-        this.userRole = localStorage.getItem('userRole');
-        this.activeLang = localStorage.getItem('activeLang');
-        if (this.userName && this.userRole === null) {
-          this.$root.getUserName()
+        if(this.$root.getAuthUser()!==null){
+          this.$root.getUserName();
         }
+        if(sessionStorage.getItem('activeLang')!==null && this.$root.activeLang===null){
+          this.$root.activeLang = sessionStorage.getItem('activeLang');
+        }
+        if(sessionStorage.getItem('activeLangId')!==null && this.$root.activeLangId===null){
+          this.$root.activeLangId = sessionStorage.getItem('activeLangId');
+        }
+
       },
 
       beforeMount: function(){
@@ -424,6 +333,9 @@
       created: function () {
 
       },
+
+      updated: function () {
+      }
     }
 </script>
 
@@ -473,7 +385,8 @@
   .body{
     /*position: fixed;*/
     width: 100%;
-    height: 100%;
+
+    min-height: 93vh;
     background: aliceblue;
   }
 
@@ -574,6 +487,7 @@
 
   .content-container{
     width: 85vw;
+    /*margin-top: 60px;*/
     margin: 0 auto;
     height: 100%;
 
@@ -588,7 +502,7 @@
   }
 
   .content-body{
-    height: 90vh;
+    height: 90%;
     width: 87vw;
     justify-content: center;
   }
@@ -611,7 +525,7 @@
 
   .cards-container{
     width: 70vw;
-    height: 90vh;
+    height: 90%;
     align-content: baseline;
     /*justify-content: space-evenly;*/
 

@@ -14,7 +14,7 @@
   .body{
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: 90%;
     background: aliceblue;
 
     font-size: 7vw;

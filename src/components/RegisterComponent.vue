@@ -1,12 +1,12 @@
 <template>
   <div class="body">
-    <div class="divider"></div>
+    <header-component></header-component>
     <div class="header">
       <router-link to="/" class="back-btn waves-effect waves-dark">
         <img src="../assets/png/back_arrow2.png" class="icon">
       </router-link>
     </div>
-    <div class="form-container">
+    <div class="form-container" v-if="this.register">
       <form @submit.prevent="signUp" class="form">
         <input type="text" v-model="name" placeholder="Type your name" class="custom-input">
         <input type="email" v-model="email" placeholder="Type your email" class="custom-input">
@@ -17,6 +17,11 @@
         <!--</div>-->
       </form>
     </div>
+    <div v-else>
+      <router-link to="/" class="back-btn waves-effect waves-dark">
+        <img src="../assets/png/back_arrow2.png" class="icon">
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -24,20 +29,21 @@
   // import auth from 'firebase/auth'
   // import 'firebase'
   import axios from 'axios'
+  import HeaderComponent from "./HeaderComponent";
+  import regeneratorRuntime from "regenerator-runtime";
 
     export default {
+      components: {HeaderComponent},
       name: "register-component",
       data() {
         return {
-          // URL: "http://localhost:8080/api/v1/", //dev
-          // URL: "http://code2be.dev/api/v1/",   //dep
-
           name: '',
           email: '',
           password: '',
           passwordRepeat: '',
           authUser: null,
 
+          register: true,
 
 
           logi: '',
@@ -45,11 +51,11 @@
         }
       },
       methods:{
-        goTo(){
-          this.$router.replace('/main')
+        async regOff(){
+          this.register = false;
         },
 
-        signUp () {
+        async signUp () {
           //TO DO сделать проверку на имеющиеся имя в бд, отправку данных бд
           if (this.password !== this.passwordRepeat){
             alert('Passwords do not match');
@@ -65,8 +71,8 @@
               };
               const jBody = JSON.stringify(body);
               console.log(this.$root.URL);
-              axios.post(this.$root.URL+'addUser', jBody).then((response) => {
-                console.log(response);
+              await axios.post(this.$root.URL+'addUser', jBody).then((response) => {
+                // console.log(response);
                 this.valid = response.data.valid;
                 if(this.valid){
                   firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
@@ -83,25 +89,23 @@
                     console.log(error);
                     // [END_EXCLUDE]
                   }).then(function () {
-                    localStorage.setItem('userName', userName);
                     if (firebase.auth().currentUser.emailVerified === true){
 
                     }else{
-                      firebase.auth().currentUser.sendEmailVerification();
+                      firebase.auth().currentUser.sendEmailVerification().then(function () {
+
+                        }
+                      );
                     }
                   });
-                  this.$router.replace('/main')
                 }else{
                   alert(response.data.msg)
                 }
               }).catch((error) => {console.log(error);});
+              await this.regOff();
             }
           }
         },
-
-        // created() {
-        //   firebase.auth().onAuthStateChanged(user => { this.authUser = user;})
-        // }
       },
 
       mounted: function () {
@@ -122,13 +126,6 @@
 </script>
 
 <style scoped lang="scss">
-
-  .divider{
-    height: 1vh;
-    width: 100vw;
-    background: aliceblue;
-  }
-
 
   .back-btn{
     margin-left: 50px;
@@ -202,8 +199,8 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: aliceblue;
     justify-content: center;
     align-content: baseline;

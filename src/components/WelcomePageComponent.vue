@@ -1,5 +1,6 @@
 <template>
     <div class="body">
+      <header-component></header-component>
       <div class="card-container">
 
         <div class="column">
@@ -24,13 +25,16 @@
 </template>
 
 <script>
+    import HeaderComponent from "./HeaderComponent";
+
     export default {
+      components: {HeaderComponent},
       name: "welcome-page-component",
       methods: {
 
       },
       mounted: function () {
-        this.$root.mainOn = false;
+        this.$root.welcomeOn();
         sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
       },
       beforeMount: function(){

@@ -42,14 +42,18 @@
           },
         },
         methods:{
-          emitClose () {
+          return(){
             this.getUserName();
             this.$emit('close');
             this.$router.push({path: '/'})
           },
+          emitClose () {
+            this.getUserName();
+            this.$emit('close');
+          },
           logIn() {
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).then( user => {
-              this.emitClose()
+              this.return()
             })
           },
 
@@ -66,6 +70,7 @@
               this.$root.activeUserRate = response.data.user.user_rate;
 
               this.$parent.userName = response.data.user.user_name;
+              console.log(this.$parent.userName);
               this.$parent.userRole = response.data.user.role_id;
               this.$parent.userRate = response.data.user.user_rate;
 

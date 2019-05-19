@@ -1,36 +1,7 @@
 <template>
   <div class="body">
-    <div class="left-panel-container">
-      <div class="back-btn-container">
-        <router-link to="/main" class="nav-bar-btns menuitem waves-effect waves-dark">
-            <p class="note-back-to-main">НА ГЛАВНУЮ</p>
-            <img src="../assets/png/home.png" class="icon">
-        </router-link>
-      </div>
-      <div class="menu">
-        <div class="menuitem-container">
-          <div class="nav-bar-btns waves-effect waves-dark" @click="showProfileComponent">
-            <p>МОЙ ПРОФИЛЬ</p>
-          </div>
-        </div>
-        <div class="menuitem-container ">
-          <div class="nav-bar-btns waves-effect waves-dark " @click="showPostsComponent">
-            <p>МОИ ПОСТЫ</p>
-          </div>
-        </div>
-        <div class="menuitem-container">
-          <div class="nav-bar-btns waves-effect waves-dark" @click="showSeenComponent">
-            <p>ПРОСМОТРЕНО</p>
-          </div>
-        </div>
-        <div class="menuitem-container">
-          <div class="nav-bar-btns waves-effect waves-dark" @click="showCreateComponent">
-            <p>СОЗДАТЬ</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="content-container">
+    <header-component></header-component>
+    <div class="container content">
       <profile-component  v-if="this.showProfile"></profile-component>
       <posts-component    v-if="this.showPosts"></posts-component>
       <seen-component     v-if="this.showSeen"></seen-component>
@@ -48,10 +19,12 @@
     import PostsComponent from '../components/MyCabinetsComponents/PostsComponent'
     import CreateComponent from '../components/MyCabinetsComponents/CreateComponent'
     import SeenComponent from '../components/MyCabinetsComponents/SeenComponent'
+    import HeaderComponent from "./HeaderComponent";
 
     export default {
       name: "my-cabinet-component",
       components: {
+        HeaderComponent,
         ProfileComponent,
         PostsComponent,
         CreateComponent,
@@ -71,25 +44,25 @@
           this.showPosts = false;
           this.showSeen = false;
           this.showCreate = false;
-          this.showProfile = !this.showProfile
+          this.showProfile = true;
         },
         showPostsComponent(){
           this.showProfile = false;
           this.showSeen = false;
           this.showCreate = false;
-          this.showPosts = !this.showPosts
+          this.showPosts = true;
         },
         showSeenComponent(){
           this.showProfile = false;
           this.showPosts = false;
           this.showCreate = false;
-          this.showSeen = !this.showSeen
+          this.showSeen = true;
         },
         showCreateComponent() {
           this.showPosts = false;
           this.showSeen= false;
           this.showProfile = false;
-          this.showCreate = !this.showCreate
+          this.showCreate = true;
         }
       },
 
@@ -97,10 +70,10 @@
       mounted: function() {
         sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
 
-        if (this.$root.authUser === null){
+        if (this.$root.getAuthUser() === null){
           this.$router.replace('/')
         }
-        if (this.$router.currentRoute.name === 'mycabinet'){
+        if (this.$router.currentRoute.name === 'profile'){
           this.$root.myCabOn();
         }
 
@@ -128,8 +101,9 @@
     color: black;
   }
   .body{
-    width: 100vw;
-    height: 100vh;
+    margin-top: 60px;
+    width: 100%;
+    height: 93.8vh;
     background: aliceblue;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
@@ -138,9 +112,10 @@
   }
 
   .left-panel-container{
+    /*margin-top: 60px;*/
     min-width: 100px;
-    width: 13vw;
-    height: 100vh;
+    width: 13%;
+    height: 100%;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -157,7 +132,7 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 13vw;
+    width: 100%;
     height: 10vh;
     align-items: center;
     border-bottom: 1px solid rgb(205, 198, 207);
@@ -167,7 +142,7 @@
     display: -webkit-flex;
     display: flex;
     margin: 0 auto;
-    width: 10vw;
+    width: 100%;
     height: 5vh;
     background-color: white;
     border-radius: 15px;
@@ -190,7 +165,7 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 13vw;
+    width: 100%;
     height: 90vh;
     align-content: baseline;
     justify-content: center;
@@ -201,7 +176,7 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 13vw;
+    width: 100%;
     height: 6vh;
     align-items: center;
     margin: 5px 0 0 0;
@@ -219,18 +194,17 @@
   }
 
 
-  .content-container{
-    width: 85vw;
-    margin: 0 auto;
-    height: 100%;
+  .content{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
     align-content: center;
-    overflow: auto;
+    height: 100%;
+    /*background: red;*/
+    /*overflow: auto;*/
     /*background: rgba(0, 0, 0, 0.36);*/
-    background: aliceblue;
-    overflow-x: hidden!important;
+    /*background: aliceblue;*/
+    /*overflow-x: hidden!important;*/
   }
 </style>

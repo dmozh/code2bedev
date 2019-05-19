@@ -28,8 +28,8 @@ let router = new Router({
       }
     },
     {
-      path: '/mycabinet',
-      name: 'mycabinet',
+      path: '/profile',
+      name: 'profile',
       component: MyCabinetComponent,
       meta: {
         requiresAuth: true
@@ -47,40 +47,40 @@ let router = new Router({
 
 });
 
-router.beforeEach((to, from, next) => {
-  // Check for requiresAuth guard
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Check if NO logged user
-    if (!firebase.auth().onAuthStateChanged) {
-      // Go to login
-      next({
-        path: '/',
-        query: {
-          redirect: to.fullPath
-        }
-      });
-    } else {
-      // Proceed to route
-      next();
-    }
-  } else if (to.matched.some(record => record.meta.requiresGuest)) {
-    // Check if NO logged user
-    if (firebase.auth().onAuthStateChanged) {
-      // Go to login
-      next({
-        path: '/',
-        query: {
-          redirect: to.fullPath
-        }
-      });
-    } else {
-      // Proceed to route
-      next();
-    }
-  } else {
-    // Proceed to route
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   // Check for requiresAuth guard
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     // Check if NO logged user
+//     if (!firebase.auth().onAuthStateChanged) {
+//       // Go to login
+//       next({
+//         path: '/',
+//         query: {
+//           redirect: to.fullPath
+//         }
+//       });
+//     } else {
+//       // Proceed to route
+//       next();
+//     }
+//   } else if (to.matched.some(record => record.meta.requiresGuest)) {
+//     // Check if NO logged user
+//     if (firebase.auth().onAuthStateChanged) {
+//       // Go to login
+//       next({
+//         path: '/',
+//         query: {
+//           redirect: to.fullPath
+//         }
+//       });
+//     } else {
+//       // Proceed to route
+//       next();
+//     }
+//   } else {
+//     // Proceed to route
+//     next();
+//   }
+// });
 
 export default router;

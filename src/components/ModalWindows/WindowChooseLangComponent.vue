@@ -12,7 +12,18 @@
                 <div class="lang-block"
                      v-if="langs"
                      v-for="(lang) in langs"
-                     v-bind:key="lang.lang_id" @click="showInfo(lang.lang_id)">{{lang.lang_name}}
+                     v-bind:key="lang.lang_id"
+                     @click="showInfo(lang.lang_id, lang.lang_name)">
+                  <div class="inner" v-if="lang.lang_name==='Python3'"
+                  v-bind:class="{active_tab: activePythonTab}">
+                    {{lang.lang_name}}
+                  </div>
+
+                  <div class="inner" v-else-if="lang.lang_name==='Java'"
+                       v-bind:class="{active_tab: activeJavaTab}">
+                    {{lang.lang_name}}
+                  </div>
+
                 </div>
               </div>
               <div class="right-container">
@@ -31,14 +42,15 @@
 </template>
 
 <script>
-  import axios from 'axios'
-
+  import axios from 'axios';
+  import regeneratorRuntime from "regenerator-runtime";
     export default {
       name: "window-choose-langs-component",
 
       data() {
         return {
-          activeLangId: null,
+          activePythonTab: false,
+          activeJavaTab: false,
 
           langs: null,
           activeDesc: '',
@@ -50,24 +62,44 @@
         },
       },
       methods: {
+
         emitClose() {
           // this.$root.activeLang = null;
           this.$emit('close')
         },
-        getLangsInfo(){
-          axios.get(this.$root.URL+'getLangs').then(response=>{
+        async getLangsInfo(){
+          await axios.get(this.$root.URL+'getLangs').then(response=>{
             this.langs = response.data.langs;
-          })
+          });
+          if(sessionStorage.getItem('activeLang') && sessionStorage.getItem('activeLangId')){
+            if      (sessionStorage.getItem('activeLang') === 'Python3'){
+              this.activePythonTab = true;
+              this.activeJavaTab = false;
+            }else if(sessionStorage.getItem('activeLang') === 'Java')   {
+              this.activePythonTab = false;
+              this.activeJavaTab = true;
+            }
+            this.activeDesc = this.langs[sessionStorage.getItem('activeLangId')-1].lang_description;
+          }
         },
 
-        showInfo(id){
-          this.activeLangId = id;
+        showInfo: function(id, name){
+          this.$root.activeLangId = id;
           this.activeDesc = this.langs[id-1].lang_description;
+          if      (name === 'Python3'){
+            this.activePythonTab = true;
+            this.activeJavaTab = false;
+          }else if(name === 'Java')   {
+            this.activePythonTab = false;
+            this.activeJavaTab = true;
+          }
+          // event.target.classList += ' active_tab';
         },
 
         chooseLang(){
-          this.$parent.activeLang = this.langs[this.activeLangId-1].lang_name;
-          localStorage.setItem('activeLang', this.$parent.activeLang);
+          this.$root.activeLang = this.langs[this.$root.activeLangId-1].lang_name;
+          sessionStorage.setItem('activeLang', this.$root.activeLang);
+          sessionStorage.setItem('activeLangId', this.$root.activeLangId);
           this.$emit('close')
         }
       },
@@ -184,7 +216,7 @@
   .close-btn:hover{
     transform: scale(1.15);
     transition: .3s all;
-    z-index: 10000000;
+    z-index: 10001;
     cursor: pointer;
     /*background: rgba(152, 152, 152, 0.61);*/
     /*box-shadow: 0 2px 20px 2px rgb(140, 211, 215);*/
@@ -212,15 +244,23 @@
     /*background: blue;*/
   }
 
-  .lang-block{
+  .lang-block, .inner{
     display: flex;
-    width: 5vw;
-    height: 10vh;
-    margin: 1vw;
-    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
     align-items: center;
     justify-content: center;
     background: aliceblue;
+  }
+
+  .lang-block{
+    margin: 1vw;
+  }
+
+  .inner{
+    width: 100%;
+    height: 100%;
   }
 
   .lang-block:hover{
@@ -261,6 +301,16 @@
   .button:hover{
     transition: .5s all;
     background: #a6ffb7;
+  }
+
+  .active_tab{
+    width: 115%;
+    height: 105%;
+    transform: scale(1.1);
+    transition: .2s all;
+    z-index: 1000;
+    background: rgb(174, 255, 218);
+    box-shadow: 0 2px 20px 2px rgb(134, 255, 158);
   }
 
 </style>

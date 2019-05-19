@@ -4,7 +4,7 @@
       <div class="inner-container" v-if="onHide">
         <div class="header">
           <label for="postsType">Выберите какие посты показать: </label>
-          <select id="postsType" class="custom-select" @change="change($event)">
+          <select id="postsType" class="custom-select" @change="change()">
             <!--тут определяются языки программировпния в селекте-->
             <option v-for="type in postsType" :key="type.id" :value="type.type">{{type.type}}</option>
           </select>
@@ -130,7 +130,7 @@
               </div>
             </div>
           </div>
-          <div class="post-block news" v-if="showNews && this.userRole === 666">
+          <div class="post-block news" v-if="showNews && this.$root.activeUserRole === 666">
             <div class="post-block-header">
               <h5>НОВОСТИ</h5>
             </div>
@@ -261,17 +261,16 @@
       data(){
         return{
           postsType: [
-            {id: 1, type: 'Все посты'},
-            {id: 2, type: 'Статьи'},
-            {id: 3, type: 'Уроки'},
-            {id: 4, type: 'Задачи'},
-            {id: 5, type: 'Новости'}
+            {id: 1, type: 'Статьи'},
+            {id: 2, type: 'Уроки'},
+            {id: 3, type: 'Задачи'},
+            {id: 4, type: 'Новости'}
           ],
 
-          showArticles: true,
-          showLessons: true,
-          showTasks: true,
-          showNews: true,
+          showArticles: false,
+          showLessons: false,
+          showTasks: false,
+          showNews: false,
 
           response: '',
 
@@ -309,42 +308,37 @@
           isOpenNews: false,
           isOpenLessons: false,
 
-
-          userRole: '',
         }
       },
       methods: {
-        change(event) {
+        change() {
           //получение значения селекта
           const selectedIndex = document.getElementById("postsType").options.selectedIndex;
-          const item = document.getElementById("postsType").options[selectedIndex].value;
-          console.log(selectedIndex + " " +event.target.value);
 
-          if (selectedIndex === 0) {
-            this.showArticles = true;
-            this.showLessons = true;
-            this.showTasks = true;
-            this.showNews = true;
-          }else if(selectedIndex === 1){
+          if(selectedIndex === 0){
             this.showArticles = true;
             this.showLessons = false;
             this.showTasks = false;
             this.showNews = false;
-          }else if(selectedIndex === 2){
+            sessionStorage.setItem('activeIndexOnPostsSelect', 0);
+          }else if(selectedIndex === 1){
             this.showArticles = false;
             this.showLessons = true;
             this.showTasks = false;
             this.showNews = false;
+            sessionStorage.setItem('activeIndexOnPostsSelect', 1);
+          }else if(selectedIndex === 2){
+            this.showArticles = false;
+            this.showLessons = false;
+            this.showTasks = true;
+            this.showNews = false;
+            sessionStorage.setItem('activeIndexOnPostsSelect', 2);
           }else if(selectedIndex === 3){
             this.showArticles = false;
             this.showLessons = false;
-            this.showTasks = true;
-            this.showNews = false;
-          }else if(selectedIndex === 4){
-            this.showArticles = false;
-            this.showLessons = false;
             this.showTasks = false;
             this.showNews = true;
+            sessionStorage.setItem('activeIndexOnPostsSelect', 3);
           }
         },
 
@@ -582,7 +576,10 @@
       },
 
       mounted(){
-        this.userRole = Number(localStorage.getItem('userRole'));
+        if(sessionStorage.getItem('activeIndexOnPostsSelect')){
+          document.getElementById("postsType").options[sessionStorage.getItem('activeIndexOnPostsSelect')].selected=true;
+        }
+        this.change();
         this.getUserAllPosts()
       }
     }
@@ -660,7 +657,7 @@
   }
 
   .body, .inner-container{
-
+    margin: 0 auto;
     width: 100%;
     height: 100%;
     background: aliceblue;
@@ -669,7 +666,7 @@
   .header{
 
     width: 100%;
-    height: 10vh;
+    height: 10%;
     align-items: center;
 
   }
@@ -693,19 +690,17 @@
   .content-container {
 
     width: 100%;
-    height: 90vh;
+    height: 90%;
 
   }
 
   .post-block{
     /*background: aliceblue;*/
     width: 100vw;
-    height: 90vh;
+    height: 100%;
 
     overflow-y: auto;
     overflow-x: hidden;
-
-    margin-top: 10vh;
   }
   .post-block-header{
 

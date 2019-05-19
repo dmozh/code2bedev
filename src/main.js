@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import regeneratorRuntime from "regenerator-runtime";
 
 let app ='';
 const config = {
@@ -38,6 +39,7 @@ firebase.auth().onAuthStateChanged(()=>{
         // userSeenPosts: null,
 
         activeLang: null,
+        activeLangId: null,
 
         langsName: null,
 
@@ -60,27 +62,51 @@ firebase.auth().onAuthStateChanged(()=>{
           this.signUpIsOn = false;
           this.myCabIsOn = true;
         },
+        welcomeOn(){
+          this.mainIsOn = false;
+          this.signUpIsOn = false;
+          this.myCabIsOn = false;
+        },
 
-        getUserName(){
+        async getAuthUser(){
+          if(this.authUser){
+            return this.authUser;
+          }else{
+            await firebase.auth().onAuthStateChanged(user => {this.authUser = user});
+          }
+          return this.authUser;
+        },
+
+        async getUserName(){
+          await this.getAuthUser();
           //если пользователь авторизован, получаем из бд его данные
           if (this.authUser !== null) {
             // console.log(1111111);
             const body = {email: this.authUser.email};
             const jBody = JSON.stringify(body);
+            try {
+              await axios.post(this.URL+'getUser', jBody).then((response) => {
+                console.log(response);
+                //     получаем имая пользователя из ответа и назначаем переменнst
+                this.activeUserName = response.data.user.user_name;
+                this.activeUserRole = response.data.user.role_id.toString();
+                this.activeUserRate = response.data.user.user_rate.toString();
 
-            axios.post(this.URL+'getUser', jBody).then((response) => {
-              console.log(response);
-              //     получаем имая пользователя из ответа и назначаем переменнst
-              this.activeUserName = response.data.user.user_name;
-              this.activeUserRole = response.data.user.role_id.toString();
-              this.activeUserRate = response.data.user.user_rate.toString();
+                localStorage.setItem('userName', this.activeUserName);
+                localStorage.setItem('userRole', this.activeUserRole);
+                localStorage.setItem('userRate', this.activeUserRate);
+                localStorage.setItem('userID', response.data.user.id);
 
-              localStorage.setItem('userName', this.activeUserName);
-              localStorage.setItem('userRole', this.activeUserRole);
-              localStorage.setItem('userRate', this.activeUserRate);
-            }).catch((error) => {
-              console.log(error);
-            });
+                localStorage.setItem('seenTasks', JSON.stringify(response.data.user.seenPosts.tasks));
+                localStorage.setItem('seenLessons', JSON.stringify(response.data.user.seenPosts.lessons));
+                localStorage.setItem('seenArticles', JSON.stringify(response.data.user.seenPosts.articles));
+                localStorage.setItem('seenNews', JSON.stringify(response.data.user.seenPosts.news));
+              }).catch((error) => {
+                console.log(error);
+              });
+            } catch (e) {
+              throw new Error(e)
+            }
           }
         },
         getUserLessons(){
@@ -105,6 +131,8 @@ firebase.auth().onAuthStateChanged(()=>{
         // if (this.$router.currentRoute.name !== 'register'){
         //   this.signUpOn = false;
         // }
+        // console.log('mounted main js');
+        this.getUserName();
         if (this.langsName === null){
           axios.get(this.URL+'getLangsName').then(response => {
             this.langsName = response.data.langs_name
@@ -113,7 +141,6 @@ firebase.auth().onAuthStateChanged(()=>{
       },
 
       created: function () {
-        firebase.auth().onAuthStateChanged(user => {this.authUser = user});
       },
 
 

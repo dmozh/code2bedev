@@ -339,14 +339,14 @@
   }
 
   .body{
-    height: 90vh;
+    /*height: 90vh;*/
     width: 87vw;
     justify-content: center;
     /*overflow-y: auto;*/
   }
 
   .content-container{
-    height: 90vh;
+    /*height: 90vh;*/
     width: 85vw;
     align-content: baseline;
   }

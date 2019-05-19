@@ -13,8 +13,8 @@
 <style scoped lang="scss">
   .body{
     display: flex;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 93%;
     background: aliceblue;
 
     font-size: 7vw;
