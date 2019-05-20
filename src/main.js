@@ -44,6 +44,8 @@ firebase.auth().onAuthStateChanged(()=>{
         langsName: null,
 
         userLessons: null,
+
+        compilerIsOpen: false,
       },
 
       methods: {

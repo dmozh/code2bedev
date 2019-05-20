@@ -8,13 +8,111 @@
               <img src="../../assets/png/close-btn.png" class="pic" @click="emitClose">
             </div>
           </div>
-          <div class="login-container">
+          <div class="login-container" v-if="this.openLogCont">
             <div class="limiter">
-              <form @submit.prevent="logIn">
-                <input type="email" v-model="email" placeholder="Type your email" class="custom-input">
-                <input type="password" v-model="password" placeholder="Type your password" class="custom-input">
-                <button class="button waves-effect waves-dark"> Submit</button>
+              <form @submit.prevent="logIn" v-if="this.isLogIn">
+                <input type="email" v-model="email" placeholder="Введите ваш Email" class="custom-input">
+                <input type="password" v-model="password" placeholder="Введите ваш пароль" class="custom-input">
+                <button class="button waves-effect waves-dark">Авторизироваться</button>
               </form>
+              <form @submit.prevent="resetPassword" v-else-if="!this.isLogIn && !this.sendingResPass && !this.isSent">
+                <input type="email" v-model="email" placeholder="Введите ваш Email" class="custom-input">
+                <button class="button waves-effect waves-dark">Восстановить пароль</button>
+              </form>
+              <div class="label" v-if="this.isSent">Ссылка для восстановления пароля была отправлена на вашу почту.</div>
+              <div class="links-container" v-if="!this.sendingResPass">
+                <div class="link" @click="switchMode" v-if="this.isLogIn">Забыли пароль?</div>
+                <div class="link" @click="switchMode" v-else-if="!this.isLogIn && !this.isSent">Вспомнили?</div>
+                <div class="link" @click="switchMode" v-else-if="!this.isLogIn && this.isSent">Вернутся и ввести новый пароль</div>
+                <div class="link" @click="goToRegister">Нет аккаунта?</div>
+              </div>
+              <div class="cen" v-else>
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                  </div>
+
+                  <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                  </div>
+
+                  <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                  </div>
+
+                  <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="cen" v-else>
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
             </div>
           </div>
         </div>
@@ -25,7 +123,8 @@
 
 <script>
   // import auth from 'firebase/auth'
-  import axios from 'axios'
+  import axios from 'axios';
+  import regeneratorRuntime from "regenerator-runtime";
 
     export default {
         name: "login-window",
@@ -34,6 +133,12 @@
             email: '',
             password: '',
             authUser: null,
+
+            isLogIn: true,
+
+            openLogCont: true,
+            sendingResPass: false,
+            isSent: false,
           }
         },
         props: {
@@ -42,8 +147,27 @@
           },
         },
         methods:{
-          return(){
-            this.getUserName();
+          switchMode(){
+            this.isLogIn = !this.isLogIn;
+            this.isSent = false;
+          },
+          goToRegister(){
+            this.$router.push('/register');
+            this.$emit('close')
+          },
+          resetPassword(){
+            let self = this;
+            self.sendingResPass = true;
+            firebase.auth().sendPasswordResetEmail(this.email).then(function() {
+              self.sendingResPass = false;
+              self.isSent = true;
+            }).catch(function(error) {
+              // An error happened.
+            });
+          },
+
+          async return(){
+            await this.getUserName();
             this.$emit('close');
             this.$router.push({path: '/'})
           },
@@ -52,17 +176,27 @@
             this.$emit('close');
           },
           logIn() {
-            firebase.auth().signInWithEmailAndPassword(this.email, this.password).then( user => {
-              this.return()
-            })
+            this.openLogCont = false;
+            let self = this;
+
+            firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(function (){
+              self.return()
+            }).catch(async function (error) {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // [START_EXCLUDE]
+                if (errorCode === 'auth/user-not-found') {
+                  alert(errorMessage);
+                }});
           },
 
-          getUserName(){
+          async getUserName(){
             //если пользователь авторизован, получаем из бд его данные
             const body = {email: this.email};
             const jBody = JSON.stringify(body);
 
-            axios.post(this.$root.URL+'getUser', jBody).then((response) => {
+            await axios.post(this.$root.URL+'getUser', jBody).then((response) => {
               console.log(response);
               //     получаем имая пользователя из ответа и назначаем переменную
               this.$root.activeUserName = response.data.user.user_name;
@@ -92,6 +226,15 @@
 </script>
 
 <style scoped>
+  .label{
+    display: inline-flex;
+    font-size: 1.3em;
+    color: #919191;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 60px;
+  }
 
   .modal-mask {
     position: fixed;
@@ -124,8 +267,8 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 60vh;
-    width: 30vw;
+    height: 600px;
+    width: 500px;
     margin: 0 auto;
     /*padding: 20px 30px;*/
     background-color: #fff;
@@ -133,6 +276,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
     transition: all .3s ease;
     justify-content: center;
+    align-items: baseline;
 
   }
 
@@ -172,7 +316,7 @@
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    margin: 25vh 0 0 0;
+    margin: 50px 0 0 0;
   }
 
   .button:hover{
@@ -181,7 +325,7 @@
   }
 
   .limiter{
-    max-width: 320px;
+    max-width: 400px;
     margin: auto;
   }
 
@@ -226,5 +370,22 @@
     cursor: pointer;
     /*background: rgba(152, 152, 152, 0.61);*/
     /*box-shadow: 0 2px 20px 2px rgb(140, 211, 215);*/
+  }
+  .links-container{
+    display: flex;
+    margin-top: 15px;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    min-width: 400px;
+  }
+  .link{
+    display: inline-flex;
+    color: #039be5
+  }
+
+  .link:hover{
+    cursor: pointer;
+    transform: scale(1.02);
+    transition: .1s;
   }
 </style>

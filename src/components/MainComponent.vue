@@ -122,7 +122,9 @@
             </view-post-component>
           </transition>
           <transition name="slide-fade">
-            <compiler-component @returns="toReturn" v-if="this.isOpenCompiler"></compiler-component>
+            <compiler-component @changeTab="changeTab"
+                                @getTasks="getTasks"
+                                v-if="this.isOpenCompiler"></compiler-component>
           </transition>
         </div>
       </div>
@@ -180,6 +182,11 @@
         }
       },
       methods:{
+
+        changeTab(){
+          //так делать плохо
+          this.$children[0].activeTab('task');
+        },
 
         toReturn(){
           this.isOpenPost = false;
@@ -492,8 +499,8 @@
     height: 100%;
 
     /*align-content: center;*/
-    overflow: auto;
-    overflow-x: hidden!important;
+    /*overflow: auto;*/
+    /*overflow-x: hidden!important;*/
   }
 
   .content-header{
@@ -502,7 +509,7 @@
   }
 
   .content-body{
-    height: 90%;
+    height: 100%;
     width: 87vw;
     justify-content: center;
   }

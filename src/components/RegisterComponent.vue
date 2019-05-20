@@ -1,26 +1,70 @@
 <template>
   <div class="body">
     <header-component></header-component>
-    <div class="header">
-      <router-link to="/" class="back-btn waves-effect waves-dark">
-        <img src="../assets/png/back_arrow2.png" class="icon">
-      </router-link>
-    </div>
+    <div class="header"></div>
     <div class="form-container" v-if="this.register">
-      <form @submit.prevent="signUp" class="form">
-        <input type="text" v-model="name" placeholder="Type your name" class="custom-input">
-        <input type="email" v-model="email" placeholder="Type your email" class="custom-input">
-        <input type="password" v-model="password" placeholder="Type your password" class="custom-input">
-        <input type="password" v-model="passwordRepeat" placeholder="Repeat your password" class="custom-input">
+      <form @submit.prevent="signUp" class="form" v-if="this.openForm">
+        <input type="text" v-model="name" placeholder="Введите отображаемое имя" class="custom-input">
+        <input type="email" v-model="email" placeholder="Введите ваш Email" class="custom-input">
+        <input type="password" v-model="password" placeholder="Введите ваш пароль" class="custom-input">
+        <input type="password" v-model="passwordRepeat" placeholder="Повторите введенный вами пароль" class="custom-input">
         <!--<div class="btn-container">-->
-        <button class="button waves-effect waves-dark">submit</button>
+        <button class="button waves-effect waves-dark">ЗАРЕГИСТРИРОВАТЬСЯ</button>
         <!--</div>-->
       </form>
+      <div class="cen" v-else>
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
+            <div class="circle"></div>
+          </div><div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+          </div>
+
+          <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
+            <div class="circle"></div>
+          </div><div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+          </div>
+
+          <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
+            <div class="circle"></div>
+          </div><div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+          </div>
+
+          <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
+            <div class="circle"></div>
+          </div><div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div v-else>
-      <router-link to="/" class="back-btn waves-effect waves-dark">
-        <img src="../assets/png/back_arrow2.png" class="icon">
-      </router-link>
+    <div v-else-if="!this.register && !this.openForm">
+      <div class="label">Регистрация прошла успешно, вы автоматически прошли авторизацию, но для получения полного доступа на сайте
+        подтвердите свой Email. Письмо с подтверждением было выслано вам на почту
+      </div>
+      <div class="cont">
+        <router-link to="/" class="">
+          <div class="btn">Я понял, вернутся на главную</div>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -44,14 +88,14 @@
           authUser: null,
 
           register: true,
-
+          openForm: true,
 
           logi: '',
           valid: null
         }
       },
       methods:{
-        async regOff(){
+        regOff(){
           this.register = false;
         },
 
@@ -71,11 +115,13 @@
               };
               const jBody = JSON.stringify(body);
               console.log(this.$root.URL);
+              let self = this;
               await axios.post(this.$root.URL+'addUser', jBody).then((response) => {
                 // console.log(response);
                 this.valid = response.data.valid;
                 if(this.valid){
-                  firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function (error) {
+                  self.openForm = false;
+                  firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(async function (error) {
                     // Handle Errors here.
                     const errorCode = error.code;
                     const errorMessage = error.message;
@@ -86,24 +132,24 @@
                       alert (errorMessage);
                     } else {
                     }
-                    console.log(error);
+                    // console.log(error);
                     // [END_EXCLUDE]
-                  }).then(function () {
+                  }).then(async function () {
                     if (firebase.auth().currentUser.emailVerified === true){
 
                     }else{
-                      firebase.auth().currentUser.sendEmailVerification().then(function () {
-
-                        }
-                      );
+                      await firebase.auth().currentUser.sendEmailVerification();
                     }
+                    self.regOff();
                   });
                 }else{
                   alert(response.data.msg)
                 }
-              }).catch((error) => {console.log(error);});
-              await this.regOff();
+              }).catch((error) => {console.log(error);}).then(function () {
+
+              });
             }
+            // this.regOff()
           }
         },
       },
@@ -176,8 +222,22 @@
     margin: 0 auto;
     height: 100%;
   }
+  .label{
+    display: inline-flex;
+    font-size: 3em;
+    color: #919191;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
 
-
+  .cont{
+    display: flex;
+    width: 100%;
+    margin-top: 25px;
+    justify-content: center;
+  }
   .button{
     width: 100%;
     /*height: 100%;*/
@@ -187,13 +247,26 @@
     cursor: pointer;
     border-radius: 50px;
     margin: 25vh 0 0 0;
+    letter-spacing: .5px;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
   }
 
   .button:hover{
     transition: .5s all;
     background: #a6ffb7;
   }
-
+  .cen{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    > div{
+      width: 300px;
+      height: 300px;
+    }
+  }
   .body{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
@@ -213,8 +286,8 @@
     display: flex;
     flex-wrap: wrap;
     margin: auto;
-    width: 25vw;
-    height: 65vh;
+    width: 500px;
+    height: 700px;
     background: white;
     border-radius: 50px;
   }

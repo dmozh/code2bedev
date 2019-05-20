@@ -4,14 +4,17 @@
       <div class="version">
         alpha-version v.0-0-2
       </div>
-      <div class="logo-container">
+      <div class="logo-container" v-if="this.$root.mainIsOn">
         <img src="../assets/png/logo.png" class="logo">
+      </div>
+      <div class="logo-container" v-else>
+        <img src="../assets/png/logo.png" class="logo hov" @click="goToMain">
       </div>
     </div>
     <div class="middle-container">
       <div class="tabs-container" v-if="this.$root.mainIsOn">
         <div class="tab waves-effect waves-dark lng"
-             v-if="!this.windowChooseLangModalActive && !this.$root.signUpIsOn && !this.$root.myCabIsOn"
+             v-if="!this.windowChooseLangModalActive && !this.$root.signUpIsOn && !this.$root.myCabIsOn && !this.$root.compilerIsOpen"
              @click="openWindowChooseLang">
           ВЫБРАТЬ ЯЗЫК
         </div>
@@ -103,6 +106,10 @@
       },
 
       methods: {
+
+        goToMain(){
+          this.$router.push('/')
+        },
 
         activeTab(tab) {
           if (this.$root.mainIsOn){
@@ -261,6 +268,12 @@
     height: 90%;
   }
 
+  .hov:hover{
+    transition: 0.2s;
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
   .icon{
     /*margin: 0 auto;*/
     max-width: 70%;
@@ -404,6 +417,7 @@
   .logged-out:hover{
     /*box-shadow: 0 2px 20px 2px rgb(104, 215, 79);*/
     background: rgb(97, 209, 103);
+    /*background: #a6ffb7;*/
   }
 
   .lng{

@@ -13,7 +13,7 @@
     </div>
     <div class="output-container">
       <div style="width: 21vw; height: 3vh; background: white; display: flex; justify-content: center; align-items: center;" >
-        <button class="button" @click="validCheck">Проверить</button>
+        <button class="button" @click="validCheck" v-if="this.place==='task'">Проверить</button>
       </div>
       <textarea class="output-area" placeholder="Здесь отобразится stdout"
                 disabled v-model="outputData"></textarea>
@@ -152,6 +152,14 @@
       this.editor.setTheme("ace/theme/"+this.theme);
       this.editor.session.setMode("ace/mode/"+this.mode);
       this.editor.setValue(this.baseValue)
+    },
+
+    updated: function () {
+
+    },
+
+    destroyed: function () {
+      this.$root.compilerIsOpen = false;
     }
   }
 </script>

@@ -233,7 +233,7 @@
       },
 
       mounted: function () {
-        this.activeLang = localStorage.getItem('activeLang');
+        this.activeLang = sessionStorage.getItem('activeLang');
         if(this.activeLang !== null){
           this.haveLang = true;
         }
