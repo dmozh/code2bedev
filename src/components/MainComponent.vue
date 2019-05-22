@@ -1,8 +1,8 @@
 <template>
     <div class="body">
-      <header-component>
-
-      </header-component>
+      <!--<header-component>-->
+<!---->
+      <!--</header-component>-->
       <div class="content-container ">
         <div class="content-header">
           <div class="top-panel" >
@@ -16,137 +16,23 @@
             </div>
           </div>
         </div>
-
         <div class="content-body" >
-          <transition name="slide-fade">
-            <div class="cards-container" v-if="!this.isOpenPost & !this.isOpenCompiler">
-              <div class="card-basic"
-                   v-if="activeArticles"
-                   v-for="elem in response"
-                   :key="elem.article_id">
-                <div class="card-basic-content">
-                  <div class="card-basic-header">
-                    {{elem.article_name}}
-                  </div>
-                  <div class="card-basic-body">
-                    {{elem.article_description}}
-                  </div>
-                  <div class="card-basic-footer">
-                    <button class="button"
-                            @click="openPost('article', elem.article_id, elem.article_name, elem.article_description,
-                            elem.article_rate)">
-                      Открыть статью</button>
-                    <div>Рейтинг статьи: {{elem.article_rate}}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-basic"
-                   v-if="activeLessons"
-                   v-for="elem in response"
-                   :key="elem.lesson_id">
-                <div class="card-basic-content">
-                  <div class="card-basic-header">
-                    <div>{{elem.lesson_name}}</div>
-                  </div>
-                  <div class="card-basic-body">
-                    <div>{{elem.lesson_description}}</div>
-                  </div>
-                  <div class="card-basic-footer">
-                    <button class="button"
-                            @click="openPost('lesson', elem.lesson_id, elem.lesson_name, elem.lesson_description,
-                            elem.lesson_rate)">
-                      Открыть урок</button>
-                    <div>Рейтинг урока: {{elem.lesson_rate}}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-basic"
-                   v-if="activeTasks"
-                   v-for="elem in response"
-                   :key="elem.task_id">
-                <div class="card-basic-content">
-                  <div class="card-basic-header">
-                    <div>{{elem.task_name}}</div>
-                  </div>
-                  <div class="card-basic-body">
-                    <div>{{elem.task_description}}</div>
-                  </div>
-                  <div class="card-basic-footer">
-                    <button class="button"
-                            @click="openTaskPost('task', elem.task_id, elem.task_name, elem.task_description,
-                            elem.task_rate, elem.test_input, elem.expected_output)">
-                      Открыть задачу</button>
-                    <div>Рейтинг задачи: {{elem.task_rate}}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-basic"
-                   v-if="activeNews"
-                   v-for="elem in response"
-                   :key="elem.news_id">
-                <div class="card-basic-content">
-                  <div class="card-basic-header">
-                    <div>{{elem.news_name}}</div>
-                  </div>
-                  <div class="card-basic-body">
-                    <div>{{elem.news_description}}</div>
-                  </div>
-                  <div class="card-basic-footer">
-                    <button class="button"
-                            @click="openNewsPost('news', elem.news_id, elem.news_name, elem.news_description,
-                            elem.news_rate, elem.news_importance)">
-                      Открыть новость</button>
-                    <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
-                    <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
-                    <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
-                    <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </transition>
-          <transition name="slide-fade">
-            <view-post-component v-if="this.isOpenPost"
-                                 :postId="this.postId"
-                                 :postName="this.postName"
-                                 :postDescription = "this.postDescription"
-                                 :postType="this.postType"
-                                 :postRate="this.postRate"
-                                 :newsImportance="this.newsImportance"
-                                 :testInput="this.taskTestInput"
-                                 :expectedOutput="this.taskExpectedOutput"
-                                 @returns="toReturn">
-            </view-post-component>
-          </transition>
-          <transition name="slide-fade">
-            <compiler-component @changeTab="changeTab"
-                                @getTasks="getTasks"
-                                v-if="this.isOpenCompiler"></compiler-component>
-          </transition>
         </div>
       </div>
     </div>
 </template>
 
 <script>
-  // import auth from 'firebase/auth'
   import LoginWindow from '../components/ModalWindows/WindowLoginComponent'
   import ChooseLangWindow from '../components/ModalWindows/WindowChooseLangComponent'
   import axios from 'axios'
   import ViewPostComponent from "./ViewPostComponent";
-  import CompilerComponent from "./CompilerComponent"
-  import HeaderComponent from "./HeaderComponent";
 
 
     export default {
       name: "main-component",
       components: {
-        HeaderComponent,
         ViewPostComponent,
-        CompilerComponent,
       },
       data() {
         return {
@@ -183,11 +69,6 @@
       },
       methods:{
 
-        changeTab(){
-          //так делать плохо
-          this.$children[0].activeTab('task');
-        },
-
         toReturn(){
           this.isOpenPost = false;
           this.isOpenCompiler = false;
@@ -203,118 +84,6 @@
           this.taskTestInput = '';
           this.taskExpectedOutput = '';
         },
-
-        openNewsPost(postType, postId, postName, postDescription, postRate, newsImporatance){
-          this.newsImportance = newsImporatance;
-          this.openPost(postType, postId, postName, postDescription, postRate)
-        },
-
-        openTaskPost(postType, postId, postName, postDescription, postRate, testInput, expectedOutput){
-          this.taskTestInput = testInput;
-          this.taskExpectedOutput = expectedOutput;
-          this.openPost(postType, postId, postName, postDescription, postRate)
-        },
-
-        openPost(postType, postId, postName, postDescription, postRate){
-          this.postId = postId;
-          this.postName = postName;
-          this.postDescription = postDescription;
-          // this.postText = postText;
-          this.postType = postType;
-          this.postRate = postRate;
-          this.isOpenPost = true;
-        },
-
-        getArticles(){
-          this.isOpenPost = false;
-
-          this.activeArticles = true;
-          this.activeLessons  = false;
-          this.activeNews     = false;
-          this.activeTasks    = false;
-
-          this.isOpenCompiler = false;
-
-          let body = {
-            lang: this.$root.activeLang,
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'getArticles', jBody).then((response) => {
-            this.response = response.data.articles;
-            // console.log(response);
-          }).catch((error) => {
-            console.log(error);});
-        },
-
-        getLessons() {
-          this.isOpenPost = false;
-
-          this.activeArticles = false;
-          this.activeLessons  = true;
-          this.activeNews     = false;
-          this.activeTasks    = false;
-
-          this.isOpenCompiler = false;
-
-          let body = {
-            lang: this.$root.activeLang,
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'getLessons', jBody).then((response) => {
-            this.response = response.data.lessons;
-            // console.log(response);
-          }).catch((error) => {
-            console.log(error);});
-        },
-
-        getTasks(){
-          this.isOpenPost = false;
-
-          this.activeArticles = false;
-          this.activeLessons  = false;
-          this.activeNews     = false;
-          this.activeTasks    = true;
-
-          this.isOpenCompiler = false;
-
-          let body = {
-            lang: this.$root.activeLang,
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'getTasks', jBody).then((response) => {
-            this.response = response.data.tasks;
-            // console.log(response);
-          }).catch((error) => {
-            console.log(error);});
-        },
-
-        getNews(){
-          this.isOpenPost = false;
-
-          this.activeArticles = false;
-          this.activeLessons  = false;
-          this.activeNews     = true;
-          this.activeTasks    = false;
-
-          this.isOpenCompiler = false;
-
-          axios.get(this.$root.URL+'getNews').then((response) => {
-            this.response = response.data.news;
-            // console.log(response);
-          }).catch((error) => {
-            console.log(error);});
-        },
-
-        openCompiler(){
-          this.isOpenPost = false;
-
-          this.activeArticles = false;
-          this.activeLessons  = false;
-          this.activeNews     = false;
-          this.activeTasks    = false;
-
-          this.isOpenCompiler = true;
-        }
       },
 
       mounted: function () {
@@ -342,6 +111,17 @@
       },
 
       updated: function () {
+        // if (this.$route.name==='posts'){
+        //   if(this.$route.params.postsType==='articles'){
+        //     this.getArticles();
+        //   }else if(this.$route.params.postsType==='lessons'){
+        //     this.getLessons();
+        //   }else if(this.$route.params.postsType==='tasks'){
+        //     this.getTasks();
+        //   }else if(this.$route.params.postsType==='news'){
+        //     this.getNews();
+        //   }
+        // }
       }
     }
 </script>

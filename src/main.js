@@ -28,6 +28,7 @@ firebase.auth().onAuthStateChanged(()=>{
         mainIsOn: false,
         signUpIsOn: false,
         myCabIsOn: false,
+        welcomeIsOn: false,
 
         URL: "http://localhost:8080/api/v1/", //dev
         // URL: "https://code2be.dev/api/v1/",   //dep
@@ -41,6 +42,8 @@ firebase.auth().onAuthStateChanged(()=>{
         activeLang: null,
         activeLangId: null,
 
+        postIsOpen: false,
+
         langsName: null,
 
         userLessons: null,
@@ -53,23 +56,37 @@ firebase.auth().onAuthStateChanged(()=>{
           this.mainIsOn = true;
           this.signUpIsOn = false;
           this.myCabIsOn = false;
+          this.welcomeIsOn = false;
         },
         signUpOn(){
           this.mainIsOn = false;
           this.signUpIsOn = true;
           this.myCabIsOn = false;
+          this.welcomeIsOn = false;
         },
         myCabOn(){
           this.mainIsOn = false;
           this.signUpIsOn = false;
           this.myCabIsOn = true;
+          this.welcomeIsOn = false;
         },
         welcomeOn(){
           this.mainIsOn = false;
           this.signUpIsOn = false;
           this.myCabIsOn = false;
+          this.welcomeIsOn = true;
         },
-
+        offAll(){
+          this.mainIsOn = false;
+          this.signUpIsOn = false;
+          this.myCabIsOn = false;
+          this.welcomeIsOn = false;
+        },
+        changeTab(tab){
+          //так делать очень-очень плохо
+          // console.log(tab);
+          this.$children[0]._vnode.children[0].child.activeTab(tab)
+        },
         async getAuthUser(){
           if(this.authUser){
             return this.authUser;
@@ -88,7 +105,7 @@ firebase.auth().onAuthStateChanged(()=>{
             const jBody = JSON.stringify(body);
             try {
               await axios.post(this.URL+'getUser', jBody).then((response) => {
-                console.log(response);
+                // console.log(response);
                 //     получаем имая пользователя из ответа и назначаем переменнst
                 this.activeUserName = response.data.user.user_name;
                 this.activeUserRole = response.data.user.role_id.toString();
@@ -118,9 +135,8 @@ firebase.auth().onAuthStateChanged(()=>{
             };
             //создаем json
             const jBody = JSON.stringify(body);
-            axios.post(this.URL+'getUserLessonsName', jBody)
-              .then((response) => {
-              console.log(response.data);
+            axios.post(this.URL+'getUserLessonsName', jBody).then((response) => {
+              // console.log(response.data);
               this.userLessons = response.data.lessons;
             }).catch((error) => {
               console.log(error);

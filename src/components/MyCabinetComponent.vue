@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <header-component></header-component>
+    <!--<header-component></header-component>-->
     <div class="container content">
       <profile-component  v-if="this.showProfile"></profile-component>
       <posts-component    v-if="this.showPosts"></posts-component>
@@ -24,7 +24,6 @@
     export default {
       name: "my-cabinet-component",
       components: {
-        HeaderComponent,
         ProfileComponent,
         PostsComponent,
         CreateComponent,
@@ -73,15 +72,16 @@
         if (this.$root.getAuthUser() === null){
           this.$router.replace('/')
         }
+        this.$root.myCabOn();
         if (this.$router.currentRoute.name === 'profile'){
           this.$root.myCabOn();
         }
 
         //TODO при добавление нового урока нужно чтобы массив обновлялся,
         //TODO можно делать каждый раз запрос на сервер, но если будет много пользователей, сервер умрет от такого
-        if(this.$root.userLessons === null){
-          this.$root.getUserLessons();
-        }
+        // if(this.$root.userLessons === null){
+        //   this.$root.getUserLessons();
+        // }
       },
       beforeMount: function(){
         let lastRoute = sessionStorage.getItem('currentRoute');

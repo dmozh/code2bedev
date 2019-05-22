@@ -184,6 +184,7 @@
       },
 
       mounted: function () {
+        this.$root.myCabOn();
         this.userRole = Number(localStorage.getItem('userRole'));
       }
     }

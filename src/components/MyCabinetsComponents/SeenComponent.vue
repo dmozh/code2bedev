@@ -6,7 +6,10 @@
 
 <script>
     export default {
-        name: "seen-component"
+      name: "seen-component",
+      mounted: function () {
+        this.$root.myCabOn();
+      }
     }
 </script>
 

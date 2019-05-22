@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="modal-mask" v-if="windowChooseLangModalActive">
+    <div class="modal-mask" v-if="lessonsChooseActive">
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
@@ -9,28 +9,15 @@
             </div>
             <div class="content-container">
               <div class="left-container">
-                <div class="lang-block"
-                     v-if="langs"
-                     v-for="(lang) in langs"
-                     v-bind:key="lang.lang_id"
-                     @click="showInfo(lang.lang_id, lang.lang_name)">
-                  <div class="inner" v-if="lang.lang_name==='Python3'"
-                  v-bind:class="{active_tab: activePythonTab}">
-                    {{lang.lang_name}}
-                  </div>
-
-                  <div class="inner" v-else-if="lang.lang_name==='Java'"
-                       v-bind:class="{active_tab: activeJavaTab}">
-                    {{lang.lang_name}}
-                  </div>
-
+                <div class="lesson-block"
+                     v-if="lessons"
+                     v-for="(lesson) in lessons"
+                     v-bind:key="lesson.id"
+                     @click="selectLesson(lesson.id, lesson.lesson_name, $event)">
+                  {{lesson.lesson_name}}
                 </div>
-              </div>
-              <div class="right-container">
-                <div class="lang-info" v-if="this.activeDesc">{{this.activeDesc}}
-                  <div class="btn-container">
-                    <button class="button" @click="chooseLang">Выбрать</button>
-                  </div>
+                <div class="btn-container">
+                  <button class="button" @click="selected">Выбрать</button>
                 </div>
               </div>
             </div>
@@ -42,76 +29,51 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  import regeneratorRuntime from "regenerator-runtime";
     export default {
-      name: "window-choose-langs-component",
-
-      data() {
-        return {
-          activePythonTab: false,
-          activeJavaTab: false,
-
-          langs: null,
-          activeDesc: '',
-        }
-      },
+      name: "window-choose-lessons-for-task",
       props: {
-        windowChooseLangModalActive: {
+        lessonsChooseActive:{
           type: Boolean
         },
+        lessons: {
+          type: Array
+        }
+      },
+      data() {
+        return {
+        }
       },
       methods: {
-
         emitClose() {
-          // this.$root.activeLang = null;
-          this.$emit('close')
-        },
-        async getLangsInfo(){
-          await axios.get(this.$root.URL+'getLangs').then(response=>{
-            this.langs = response.data.langs;
-          });
-          if(sessionStorage.getItem('activeLang') && sessionStorage.getItem('activeLangId')){
-            if      (sessionStorage.getItem('activeLang') === 'Python3'){
-              this.activePythonTab = true;
-              this.activeJavaTab = false;
-            }else if(sessionStorage.getItem('activeLang') === 'Java')   {
-              this.activePythonTab = false;
-              this.activeJavaTab = true;
-            }
-            this.activeDesc = this.langs[sessionStorage.getItem('activeLangId')-1].lang_description;
-          }
-        },
 
-        showInfo: function(id, name){
-          this.$root.activeLangId = id;
-          this.activeDesc = this.langs[id-1].lang_description;
-          if      (name === 'Python3'){
-            this.activePythonTab = true;
-            this.activeJavaTab = false;
-          }else if(name === 'Java')   {
-            this.activePythonTab = false;
-            this.activeJavaTab = true;
-          }
-          // event.target.classList += ' active_tab';
+          this.$parent.selectedLessons = [];
+          this.$emit('close');
         },
-
-        chooseLang(){
-          this.$root.activeLang = this.langs[this.$root.activeLangId-1].lang_name;
-          sessionStorage.setItem('activeLang', this.$root.activeLang);
-          sessionStorage.setItem('activeLangId', this.$root.activeLangId);
-          //так делать ОООООООЧЕНЬ плохо, еще хуже чем в меине
-          if(this.$route.name !== 'news' && this.$route.name !== 'compiler' && this.$route.name !== 'main'){
-            this.$root.$children[0].$children[1].getPosts();
+        selected(){
+          this.$emit('close');
+        },
+        selectLesson: function(id, name, event){
+          // if(event.target.classList.contains('active_tab')){
+          //   event.target.classList.remove('active_tab')
+          // }else{
+          //   event.target.classList.add('active_tab');
+          // }
+          if(this.$parent.checkLesson(name)){
+            console.log(this.$parent);
+            this.$parent.selectedLessons.push({
+              lesson_id: id,
+              lesson_name: name
+            });
+            event.target.classList.add('active_tab')
+          }else{
+            alert('Урок уже добавлен');
+            // this.$parent.selectedLessons.splice(this.$parent.selectedLessons._index, id)
           }
-          this.$emit('close')
         }
       },
 
-      mounted: function(){
-        if (this.langs === null){
-          this.getLangsInfo()
-        }
+      mounted: function () {
+
       },
     }
 </script>
@@ -227,7 +189,7 @@
   }
 
 
-  .content-container, .left-container, .right-container{
+  .content-container, .left-container{
     display: -webkit-flex;
     display: flex;
     height: 65vh;
@@ -238,7 +200,7 @@
   }
 
   .left-container{
-    width: 40vw;
+    width: 100%;
     /*background: aqua;*/
     flex-wrap: wrap;
   }
@@ -248,7 +210,7 @@
     /*background: blue;*/
   }
 
-  .lang-block, .inner{
+  .lesson-block, .inner{
     display: flex;
     width: 100px;
     height: 100px;
@@ -258,7 +220,7 @@
     background: aliceblue;
   }
 
-  .lang-block{
+  .lesson-block{
     margin: 1vw;
   }
 
@@ -267,20 +229,12 @@
     height: 100%;
   }
 
-  .lang-block:hover{
+  .lesson-block:hover{
     transform: scale(1.15);
     transition: .2s all;
     z-index: 10000000;
     cursor: pointer;
     box-shadow: 0 2px 20px 2px rgb(140, 215, 189);
-  }
-
-  .lang-info{
-    display: flex;
-    flex-wrap: wrap;
-    width: 30vw;
-    height: 40vh;
-    text-align: center;
   }
 
   .btn-container{
@@ -308,13 +262,12 @@
   }
 
   .active_tab{
-    width: 115%;
-    height: 105%;
+    /*width: 115%;*/
+    /*height: 105%;*/
     transform: scale(1.1);
     transition: .2s all;
     z-index: 1000;
     background: rgb(174, 255, 218);
     box-shadow: 0 2px 20px 2px rgb(134, 255, 158);
   }
-
 </style>

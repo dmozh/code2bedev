@@ -7,7 +7,6 @@
         <label for="sel1">Выберите язык программирования: </label>
         <select id="sel1" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option></option>
           <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name">
             {{lang.lang_name}}
           </option>
@@ -200,7 +199,7 @@
             console.log('news')
           }
           if (this.postName.length === 0 || this.postDescription.length === 0 ||
-            this.postText.length === 0 || document.getElementById("sel1").options.selectedIndex === 0) {
+            this.postText.length === 0) {
             if (this.postName.length !== 0) {
               this.emptyName = false
             }
@@ -210,9 +209,9 @@
             if (this.postText.length !== 0) {
               this.emptyText = false
             }
-            if (this.isArticle && document.getElementById("sel1").options.selectedIndex !== 0) {
-              this.emptyLang = false
-            }
+            // if (this.isArticle && document.getElementById("sel1").options.selectedIndex !== 0) {
+            //   this.emptyLang = false
+            // }
             //show modal with error
             this.errorModalActive = true;
           } else {

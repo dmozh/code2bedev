@@ -1,6 +1,6 @@
 <template>
     <div class="body">
-      <header-component></header-component>
+      <!--<header-component></header-component>-->
       <div class="card-container">
 
         <div class="column">

@@ -6,7 +6,10 @@
 
 <script>
     export default {
-        name: "profile-component"
+      name: "profile-component",
+      mounted: function () {
+        this.$root.myCabOn();
+      }
     }
 </script>
 

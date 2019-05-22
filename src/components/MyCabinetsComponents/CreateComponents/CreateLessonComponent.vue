@@ -37,10 +37,10 @@
           </div>
           <div class="tags-container">
             <label v-if="postTags.length === 0">Добавьте сюда свои тэги</label>
-           <span v-for="(tag, index) in postTags"
+            <span v-for="(tag, index) in postTags"
                  :key="tag.id" class="tag"
                  v-on:click="postTags.splice(index, 1)">{{'#'+tag.name}}&nbsp;
-           </span>
+            </span>
           </div>
         </div>
 
@@ -568,6 +568,8 @@
 
   .tag:hover{
     cursor: pointer;
+    transition: .2s;
+    transform: scale(1.05);
   }
 
   .article-text-textarea{
@@ -706,6 +708,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 45vw;
+    margin-left: 30px;
     justify-content: center;
   }
 </style>

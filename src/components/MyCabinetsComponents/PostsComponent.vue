@@ -96,21 +96,21 @@
             </div>
             <div class="post-block-content-container">
               <div class="post-block-content-types"
-                   v-for="(item) in lessonsForTasks"
+                   v-for="(item) in progLanguages"
                    :key="item.id">
-                <div class="post-block-content-types-header">{{item.lesson_name}}</div>
+                <div class="post-block-content-types-header">{{item.lang}}</div>
                 <div class="posts-container">
                   <div class="wrapper-container">
                     <div class="post-card"
                          v-for="elem in response.tasks"
                          :key="elem.task_id"
-                         v-if="elem.lesson_name === item.lesson_name">
+                         v-if="elem.lang_name === item.lang">
                       <div class="left-container-post-card">
                         <div class="post-logo">Картинки нет</div>
                         <div class="btns-container">
                           <div class="functional-btn update-btn"
                                @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
-                                            elem.task_text, elem.lesson_id, elem.lesson_name, elem.task_difficulty, elem.test_input, elem.expected_output)">
+                                            elem.task_text, elem.lang_id, elem.lang_name, elem.task_difficulty, elem.test_input, elem.expected_output, elem.lessons)">
                             <img src="../../assets/png/change_button.png" class="icon">
                           </div>
                           <div class="functional-btn delete-btn"
@@ -218,10 +218,11 @@
                               :reqTaskDescription = "this.postDescription"
                               :reqTaskText = "this.postText"
                               :reqTaskDiff = "this.taskDiff"
-                              :reqLessonId = "this.lessonId"
-                              :reqLessonName = "this.lessonName"
+                              :reqLangId = "this.postLangId"
+                              :reqLangName = "this.postLangName"
                               :reqTestInput = "this.taskTestInput"
                               :reqExpectedOutput = "this.taskExpectedOutput"
+                              :reqLinkedLessons ="this.linkedLessons"
                               @returns="toReturn">
 
       </create-tasks-component>
@@ -293,6 +294,7 @@
 
           taskTestInput: '',
           taskExpectedOutput: '',
+          linkedLessons: null,
 
           newsImportance: null,
 
@@ -381,18 +383,19 @@
           this.postLangName = langName;
         },
 
-        pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput){
+        pushParamsForTasks(taskId, name, desc, text, langId, langName, taskDiff, testInput, expectedOutput, lessons){
           //определение передаваеммых переменых в модалку
           this.isUpdate = true;
           this.postId = taskId;
           this.postName = name;
           this.postDescription = desc;
           this.postText = text;
-          this.lessonId = lessonId;
-          this.lessonName=lessonName;
+          this.postLangId = langId;
+          this.postLangName=langName;
           this.taskDiff = taskDiff;
           this.taskTestInput = testInput;
           this.taskExpectedOutput = expectedOutput;
+          this.linkedLessons = lessons;
         },
 
         showCreateComponentArticles(id, name, desc, text, tags, langId, langName) {
@@ -417,9 +420,9 @@
           this.isOpenLessons = false;
         },
 
-        showCreateComponentTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput) {
+        showCreateComponentTasks(taskId, name, desc, text, langId, langName, taskDiff, testInput, expectedOutput, lessons) {
 
-          this.pushParamsForTasks(taskId, name, desc, text, lessonId, lessonName, taskDiff, testInput, expectedOutput);
+          this.pushParamsForTasks(taskId, name, desc, text, langId, langName, taskDiff, testInput, expectedOutput, lessons);
 
           this.onHide = false;
           this.isOpenArticles = false;
@@ -449,7 +452,7 @@
             this.response = response.data.posts;
             this.tasks = this.response.tasks;
             // console.log(response.data.posts.articles);
-            // console.log(response.data.posts.tasks);
+            console.log(response.data.posts.tasks);
 
             for(let i=0; i < response.data.posts.lessons.length; i++){
               if (this.contains(this.progLanguages, response.data.posts.lessons[i].lang_name, "lang") === true){
@@ -466,9 +469,9 @@
             }
 
             for(let i=0; i < response.data.posts.tasks.length; i++){
-              if (this.contains(this.lessonsForTasks, response.data.posts.tasks[i].lesson_name, "lesson_name") === true){
+              if (this.contains(this.progLanguages, response.data.posts.tasks[i].lang_name, "lang") === true){
               }else {
-                this.lessonsForTasks.push({id: this.lessonsForTasks.length, lesson_name: response.data.posts.tasks[i].lesson_name})
+                this.progLanguages.push({id: this.progLanguages.length, lang: response.data.posts.tasks[i].lang_name})
               }
             }
           }).catch((error) => {
@@ -483,7 +486,7 @@
 
           //TODO при добавление нового урока нужно чтобы массив обновлялся,
           //TODO можно делать каждый раз запрос на сервер, но если будет много пользователей, сервер умрет от такого
-          this.$root.getUserLessons();
+          // this.$root.getUserLessons();
           this.getUserAllPosts();
 
           this.onHide = true;
@@ -576,6 +579,7 @@
       },
 
       mounted(){
+        this.$root.myCabOn();
         if(sessionStorage.getItem('activeIndexOnPostsSelect')){
           document.getElementById("postsType").options[sessionStorage.getItem('activeIndexOnPostsSelect')].selected=true;
         }

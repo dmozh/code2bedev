@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="left-container">
       <div class="version">
-        alpha-version v.0-0-2
+        alpha-version v.0-0-3
       </div>
       <div class="logo-container" v-if="this.$root.mainIsOn">
         <img src="../assets/png/logo.png" class="logo">
@@ -12,22 +12,24 @@
       </div>
     </div>
     <div class="middle-container">
-      <div class="tabs-container" v-if="this.$root.mainIsOn">
+      <div class="tabs-container" v-if="!this.$root.myCabIsOn && !this.$root.signUpIsOn && !this.$root.welcomeIsOn">
         <div class="tab waves-effect waves-dark lng"
-             v-if="!this.windowChooseLangModalActive && !this.$root.signUpIsOn && !this.$root.myCabIsOn && !this.$root.compilerIsOpen"
+             v-if="!this.windowChooseLangModalActive && !this.$root.signUpIsOn && !this.$root.myCabIsOn
+             && !this.$root.compilerIsOpen && !this.$root.postIsOpen"
              @click="openWindowChooseLang">
-          ВЫБРАТЬ ЯЗЫК
+          <div v-if="this.$root.activeLang !== null">{{this.$root.activeLang}}</div>
+          <div v-else>ВЫБРАТЬ ЯЗЫК</div>
         </div>
         <div class="tab l waves-effect waves-dark" v-bind:class="{active_tab: compilerTabIsActive}" @click="activeTab('compiler')">
           ОНЛАЙН-КОМПИЛЯТОР
         </div>
-        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: articleTabIsActive}" @click="activeTab('article')">
+        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: articleTabIsActive}" @click="activeTab('articles')">
           СТАТЬИ
         </div>
-        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: lessonTabIsActive}" @click="activeTab('lesson')">
+        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: lessonTabIsActive}" @click="activeTab('lessons')">
           УРОКИ
         </div>
-        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: taskTabIsActive}" @click="activeTab('task')">
+        <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: taskTabIsActive}" @click="activeTab('tasks')">
           ЗАДАЧИ
         </div>
         <div class="tab waves-effect waves-dark" v-bind:class="{active_tab: newsTabIsActive}" @click="activeTab('news')">
@@ -35,16 +37,16 @@
         </div>
       </div>
       <div class="tabs-container" v-if="this.$root.myCabIsOn">
-        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: myProfileTabIsActive}" @click="activeTab('profile')">
+        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: myProfileTabIsActive}" @click="activeTab('myProfile')">
           МОЙ ПРОФИЛЬ
         </div>
-        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: myPostsTabIsActive}" @click="activeTab('posts')">
+        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: myPostsTabIsActive}" @click="activeTab('myPosts')">
           МОИ ПОСТЫ
         </div>
-        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: mySeensTabIsActive}" @click="activeTab('seen')">
+        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: mySeensTabIsActive}" @click="activeTab('myViews')">
           ПРОСМОТРЕНО
         </div>
-        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: createTabIsActive}" @click="activeTab('create')">
+        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: createTabIsActive}" @click="activeTab('creates')">
           СОЗДАТЬ
         </div>
       </div>
@@ -55,12 +57,12 @@
         <div class="btn waves-effect waves-dark cu" v-if="this.$root.authUser && !this.$root.myCabIsOn && !this.$root.signUpIsOn" @click="toMyCabinet">
           ЛИЧНЫЙ КАБИНЕТ
         </div>
-        <router-link to="/" v-if="this.$root.authUser && this.$root.myCabIsOn" class="cu btn waves-effect waves-dark rl">
+        <div v-if="this.$root.authUser && this.$root.myCabIsOn" @click="goToBack" class="cu btn waves-effect waves-dark rl">
           <div class="note-back">
             НА ГЛАВНУЮ
           </div>
           <img src="../assets/png/home.png" class="icon">
-        </router-link>
+        </div>
         <div class="btn waves-effect waves-dark cu logged-in" v-if="this.$root.authUser" @click="logout">
           ВЫЙТИ
         </div>
@@ -110,33 +112,52 @@
         goToMain(){
           this.$router.push('/')
         },
-
+        goToBack(){
+          this.$root.myCabIsOn=false;
+          this.$router.push({name: sessionStorage.getItem('activeRouteOnMain')})
+        },
         activeTab(tab) {
+          // if (this.$root.mainIsOn) {
           if (this.$root.mainIsOn){
-            if (tab === 'article') {
+            this.articleTabIsActive   = false;
+            this.lessonTabIsActive    = false;
+            this.taskTabIsActive      = false;
+            this.newsTabIsActive      = false;
+            this.compilerTabIsActive  = false;
+            this.$router.push({name: tab});
+            // this.emitCallGetArticles();
+            // this.$parent.getArticles();
+            // delete sessionStorage['activeTabOnMain']
+            sessionStorage.setItem('activeTabOnMain', tab)
+          }
+          if (!this.$root.mainIsOn && !this.$root.myCabIsOn && !this.$root.signUpIsOn && !this.$root.welcomeIsOn){
+            if (tab === 'articles') {
+              this.$router.push({name: tab});
               this.articleTabIsActive   = true;
               this.lessonTabIsActive    = false;
               this.taskTabIsActive      = false;
               this.newsTabIsActive      = false;
               this.compilerTabIsActive  = false;
-              // this.emitCallGetArticles();
-              this.$parent.getArticles();
+
+              this.$router.push({name: tab});
               sessionStorage.setItem('activeTabOnMain', tab)
-            } else if (tab === 'lesson') {
+            } else if (tab === 'lessons') {
               this.articleTabIsActive   = false;
               this.lessonTabIsActive    = true;
               this.taskTabIsActive      = false;
               this.newsTabIsActive      = false;
               this.compilerTabIsActive  = false;
-              this.$parent.getLessons();
+
+              this.$router.push({name: tab});
               sessionStorage.setItem('activeTabOnMain', tab)
-            } else if (tab === 'task') {
+            } else if (tab === 'tasks') {
               this.articleTabIsActive   = false;
               this.lessonTabIsActive    = false;
               this.taskTabIsActive      = true;
               this.newsTabIsActive      = false;
               this.compilerTabIsActive  = false;
-              this.$parent.getTasks();
+
+              this.$router.push({name: tab});
               sessionStorage.setItem('activeTabOnMain', tab)
             } else if (tab === 'news') {
               this.articleTabIsActive   = false;
@@ -144,7 +165,8 @@
               this.taskTabIsActive      = false;
               this.newsTabIsActive      = true;
               this.compilerTabIsActive  = false;
-              this.$parent.getNews();
+
+              this.$router.push({name: tab});
               sessionStorage.setItem('activeTabOnMain', tab)
             } else if (tab === 'compiler') {
               this.articleTabIsActive   = false;
@@ -152,39 +174,41 @@
               this.taskTabIsActive      = false;
               this.newsTabIsActive      = false;
               this.compilerTabIsActive  = true;
-              this.$parent.openCompiler();
+
+              this.$router.push({name: tab});
               sessionStorage.setItem('activeTabOnMain', tab)
             }
           }else if(this.$root.myCabIsOn){
-            if      (tab==='profile'){
+            if      (tab==='myProfile'){
               this.myProfileTabIsActive    = true;
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = false;
-              this.$parent.showProfileComponent();
-              sessionStorage.setItem('activeTabOnMyCab', tab)
-            }else if(tab==='posts'){
+              sessionStorage.setItem('activeTabOnMyCab', tab);
+              this.$router.push({name: tab});
+            }else if(tab==='myPosts'){
               this.myProfileTabIsActive    = false;
               this.myPostsTabIsActive      = true;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = false;
-              this.$parent.showPostsComponent();
-              sessionStorage.setItem('activeTabOnMyCab', tab)
-            }else if(tab==='seen'){
+              sessionStorage.setItem('activeTabOnMyCab', tab);
+              this.$router.push({name: tab});
+            }else if(tab==='myViews'){
               this.myProfileTabIsActive    = false;
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = true;
               this.createTabIsActive       = false;
-              this.$parent.showSeenComponent();
-              sessionStorage.setItem('activeTabOnMyCab', tab)
-            }else if(tab==='create'){
+              sessionStorage.setItem('activeTabOnMyCab', tab);
+              this.$router.push({name: tab});
+            }else if(tab==='creates'){
               this.myProfileTabIsActive    = false;
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = true;
-              this.$parent.showCreateComponent();
-              sessionStorage.setItem('activeTabOnMyCab', tab)
+              sessionStorage.setItem('activeTabOnMyCab', tab);
+              this.$router.push({name: tab});
             }
+
           }
         },
 
@@ -220,6 +244,7 @@
         },
         closeWindowChooseLang(){
           this.windowChooseLangModalActive = false;
+          console.log(this.$root.activeLang)
         },
 
         toSignUp(){
@@ -231,24 +256,35 @@
             //TODO сделать модалку кастомную красивую с вызовом модалки логирования
             alert('Please log in in your account')
           }else{
-            this.$router.push('/profile')
+            this.$router.push({name: 'profile'})
           }
         },
       },
 
       mounted: function () {
-        console.log('head mount')
+        if (sessionStorage.getItem('activeLang')){
+          this.$root.activeLang = sessionStorage.getItem('activeLang');
+        }
+        this.activeTab(this.$route.params.postsType);
+        // console.log(this.$route.params)
       },
 
       updated: function () {
-        if      (sessionStorage.getItem('currentRoute')==='main')     {
+        console.log('upd head');
+        let route = this.$route.name;
+        console.log(route);
+        if      (route ==='articles' || route ==='lessons' || route ==='tasks' || route ==='news' || route ==='compiler')     {
           if (sessionStorage.getItem('activeTabOnMain')){
+            sessionStorage.setItem('activeRouteOnMain', route);
             this.activeTab(sessionStorage.getItem('activeTabOnMain'))
           }
         }else if(sessionStorage.getItem('currentRoute')==='profile'){
           if (sessionStorage.getItem('activeTabOnMyCab')){
             this.activeTab(sessionStorage.getItem('activeTabOnMyCab'))
           }
+
+        } else if (route === 'main'){
+          this.activeTab(route)
         }
       }
     }

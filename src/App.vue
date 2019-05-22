@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <header-component></header-component>
     <div class="content">
       <router-view></router-view>
     </div>
@@ -8,9 +9,12 @@
 </template>
 
 <script>
+  import HeaderComponent from "./components/HeaderComponent";
+
   export default {
 
-  name: 'app',
+    components: {HeaderComponent},
+    name: 'app',
     data () {
       return {
 
@@ -18,7 +22,10 @@
   },
 
   methods: {
-
+    changeTab(){
+      //так делать плохо
+      this.$children[0].activeTab('task');
+    },
   }
 }
 </script>

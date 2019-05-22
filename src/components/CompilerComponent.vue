@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!--<div class="sec-widget" data-widget="a4c3661de71f538d632fd3b6ac847421"></div>-->
-    <!--<button @click="emitReturn">return</button>-->
     <div class="label" v-if="!this.isUnderstand">Эта вкладка позволяет использовать онлайн-компилятор в свободном режиме.
       Если вы хотите решать задачи, то перейдите во вкладку "ЗАДАЧИ"
     </div>
@@ -47,9 +45,13 @@
 
       methods: {
         onUnderstand(){
-          this.isUnderstand=true;
-          this.activeLang = sessionStorage.getItem('activeLang')
-          this.$root.compilerIsOpen = true;
+          this.activeLang = sessionStorage.getItem('activeLang');
+          if(this.activeLang) {
+            this.isUnderstand = true;
+            this.$root.compilerIsOpen = true;
+          }else{
+            alert("Не выбран ни один язык программирования. Пожалуйста выберите желаемый язык программирования")
+          }
         },
         goToTasks(){
           // this.articleTabIsActive   = false;
@@ -57,8 +59,10 @@
           // this.taskTabIsActive      = true;
           // this.newsTabIsActive      = false;
           // this.compilerTabIsActive  = false;
-          this.$emit('changeTab');
-          this.$emit('getTasks');
+          // this.$emit('changeTab');
+          // this.$emit('getTasks');
+          this.$root.changeTab('tasks');
+          this.$router.push({name: 'tasks'});
         },
         emitReturn() {
           this.$emit('returns')
@@ -66,6 +70,8 @@
       },
 
       mounted: function () {
+        this.$root.offAll();
+        sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
       },
     }
 </script>

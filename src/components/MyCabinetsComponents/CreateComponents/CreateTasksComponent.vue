@@ -3,18 +3,18 @@
     <div class="header">
       <!--ARTICLES-->
       <div class="optional-container">
-        <label for="lessonSelect">Выберите урок к задаче</label>
-        <select id="lessonSelect" class="custom-select">
+        <label for="langSelect">Выберите язык программирования</label>
+        <select id="langSelect" class="custom-select">
           <!--тут определяются языки программировпния в селекте-->
-          <option v-for="item in this.$root.userLessons" :key="item.id" :value="item.lesson_name">
-            {{item.lesson_name}}
+          <option v-for="lang in this.$root.langsName" :key="lang.lang_id" :value="lang.lang_name" @click="click">
+            {{lang.lang_name}}
           </option>
         </select>
         <div class="quest-mark-icon tooltip">
           <img src="../../../assets/png/question_mark.png" class="icon qm">
           <span class="tooltiptext">Этот параметр обязателен</span>
         </div>
-        <label v-if="isUpdate">Сейчас задача относится к уроку: {{reqLessonName}}</label>
+        <label v-if="isUpdate">Сейчас задача относится к: {{reqLangName}}</label>
       </div>
       <div class="back-btn waves-effect waves-dark">
         <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
@@ -45,8 +45,23 @@
           </div>
           <div class="bottom-block">
             <!--<div class="splitter"></div>-->
-            <div>
+            <div class="middle">
               <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
+              <div class="lessons-container">
+                <div class="plus-btn-container">
+                  <div class="plus-btn" @click="openLessonsChoose">
+                    <img src="../../../assets/png/plus.png" class="plus-btn-icon"/>
+                  </div>
+                </div>
+                <div class="lessons">
+                  <!--<label v-if="this.selectedLessons.length===0">Добавьте связанные уроки с этой задачей</label>-->
+                  <div>
+                    <span v-for="(lesson, index) in selectedLessons"
+                          :key="lesson.lesson_id" class="les"
+                          v-on:click="selectedLessons.splice(index, 1)">Урок: {{lesson.lesson_name}}&nbsp;</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="text-block">
               <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
@@ -73,6 +88,12 @@
         </div>
       </form>
     </div>
+    <window-choose-lessons-for-task v-if="this.lessonsChooseActive"
+                                    :lessonsChooseActive="lessonsChooseActive"
+                                    :lessons="lessons"
+                                    @close="closeLessonsChoose">
+
+    </window-choose-lessons-for-task>
     <create-error-modal-component :isTask="true"
                                   :namePost="emptyName"
                                   :descPost="emptyDesc"
@@ -88,10 +109,11 @@
 <script>
   import axios from 'axios'
   import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
-
+  import WindowChooseLessonsForTask from "../../ModalWindows/WindowChooseLessonsForTask";
     export default {
       name: "create-tasks-component",
       components:{
+        WindowChooseLessonsForTask,
         CreateErrorModalComponent
       },
       props: {
@@ -114,10 +136,10 @@
         reqTaskDiff:{
           type: Number
         },
-        reqLessonId: {
+        reqLangId: {
           type: Number
         },
-        reqLessonName: {
+        reqLangName: {
           type: String
         },
         reqTestInput: {
@@ -125,11 +147,16 @@
         },
         reqExpectedOutput: {
           type: String
+        },
+        reqLinkedLessons: {
+          type: Array
         }
 
       },
       data(){
         return{
+          lessonsChooseActive: false,
+
           errorModalActive: false,
           emptyName: true,
           emptyDesc: true,
@@ -148,9 +175,8 @@
           taskTestInput: '',
           taskExpectedOutput: '',
 
-          //for a while (artciles)
-          lessons: [],
-
+          lessons: null,
+          selectedLessons: [],
           //for difficultly (for a while)
           difficultly: [
             {id: 1, diff: 1},
@@ -161,6 +187,40 @@
         }
       },
       methods: {
+        checkLesson(name){
+          let check = true;
+          for (let curLess in this.selectedLessons){
+            if(this.selectedLessons[curLess].lesson_name === name){
+              check = false;
+              break;
+            }
+          }
+          return check;
+        },
+        closeLessonsChoose() {
+          this.lessonsChooseActive = false;
+
+        },
+        openLessonsChoose() {
+          let lang = document.getElementById("langSelect").value;
+          console.log(lang);
+          // if(this.lessons === null){
+          const body = {
+            authorEmail: this.$root.authUser.email,
+            lang: lang
+          };
+          //создаем json
+          const jBody = JSON.stringify(body);
+          axios.post(this.$root.URL+'getUserLessonsName', jBody).then((response) => {
+            console.log(response.data);
+            this.lessons = response.data.lessons;
+          }).catch((error) => {
+            console.log(error);
+          });
+          // }
+          this.lessonsChooseActive = true;
+        },
+
         emitReturn() {
           this.$emit('returns')
         },
@@ -204,26 +264,26 @@
             // if(this.isUpdate && document.getElementById("lessonSelect").options.selectedIndex === 0){
             //   document.getElementById("lessonSelect").value = this.reqLessonName;
             // }
-            let lesson = document.getElementById("lessonSelect").value;
-            console.log(lesson);
+            let lang = document.getElementById("langSelect").value;
+            console.log(lang);
             const selectedIndexDifficultlySelect = document.getElementById("difficultlySelect").options.selectedIndex;
             const difficultly = document.getElementById("difficultlySelect").options[selectedIndexDifficultlySelect].value;
             let body = {};
             if(!this.isUpdate){
               body = {
-                lesson_name: lesson,
+                lang_id: lang,
                 authorEmail: this.$root.authUser.email,
                 taskName: this.taskName,
                 taskDescription: this.taskDescription,
                 taskText: this.taskText,
                 difficulty: difficultly,
                 testInput: this.taskTestInput,
-                expectedOutput: this.taskExpectedOutput
+                expectedOutput: this.taskExpectedOutput,
+                linkedLessons: this.selectedLessons
               };
             }else{
-
               body = {
-                lesson_name: lesson,
+                lang_name: lang,
                 // lessonId: this.reqLessonId,
                 // authorEmail: this.$root.authUser.email,
                 taskId: this.reqTaskId,
@@ -232,7 +292,8 @@
                 taskText: this.taskText,
                 difficulty: difficultly,
                 testInput: this.taskTestInput,
-                expectedOutput: this.taskExpectedOutput
+                expectedOutput: this.taskExpectedOutput,
+                linkedLessons: this.selectedLessons
               };
             }
 
@@ -255,24 +316,28 @@
 
         click() {
           //получение значения селекта
-          const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
-          const item = document.getElementById("lessonSelect").options[selectedIndex].value;
+          const selectedIndex = document.getElementById("langSelect").options.selectedIndex;
+          const item = document.getElementById("langSelect").options[selectedIndex].value;
           alert(selectedIndex + item)
         },
       },
 
       mounted: function () {
+
         if (this.isUpdate) {
           this.taskName = this.reqTaskName;
           this.taskDescription = this.reqTaskDescription;
           this.taskText = this.reqTaskText;
           this.taskTestInput = this.reqTestInput;
           this.taskExpectedOutput = this.reqExpectedOutput;
-          document.getElementById("lessonSelect").value = this.reqLessonName;
+          this.selectedLessons = this.reqLinkedLessons;
+          document.getElementById("langSelect").value = this.reqLangName;
           document.getElementById("difficultlySelect").value = this.reqTaskDiff;
         }
       },
+      updated: function () {
 
+      }
     }
 </script>
 
@@ -329,12 +394,31 @@
     /*background: blue;*/
   }
 
-  .top-block{
+  .middle, .top-block, .lessons-container{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
+  }
 
+  .middle{
+    justify-content: space-between;
+    width: 80vw;
+    margin-bottom: 5px;
+  }
+
+  .lessons-container{
+    justify-content: inherit;
+    width: 35vw;
+  }
+
+  .lessons{
+    padding: 5px 2px 5px 2px;
+    border: solid 1px rgba(0, 0, 0, 0.31);
+    width: 32vw;
+  }
+
+  .top-block{
     height: 13vh;
     width: 80vw;
     align-content: center;
@@ -442,16 +526,16 @@
   }
 
   .article-text-textarea{
-    max-width: 45vw;
+    max-width: 40vw;
     max-height: 30vh;
-    min-width: 45vw;
+    min-width: 40vw;
     min-height: 30vh;
   }
 
   .desc-textarea{
-    max-width: 80vw;
+    max-width: 40vw;
     max-height: 17vh;
-    min-width: 80vw;
+    min-width: 40vw;
     min-height: 17vh;
   }
 
@@ -578,5 +662,57 @@
     transform: translateX(40px);
     visibility: visible;
   }
+  .plus-btn-container{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    width: 3vw;
+    height: 5vh;
 
+    justify-content: center;
+    align-items: center;
+  }
+
+  .plus-btn{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 1.5vw;
+    height: 3vh;
+    border-radius: 50%;
+  }
+
+  .plus-btn:hover{
+    transition: .3s all;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    /*box-shadow: 0 2px 20px 2px rgb(140, 211, 215);*/
+    transform: scale(1.25);
+  }
+  .plus-btn-icon{
+    margin: auto;
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .les{
+    padding: 2px;
+    border-radius: 10px;
+    background: aqua;
+    margin: 0 5px 2px 0;
+  }
+
+  .les:hover{
+    cursor: pointer;
+    transition: .2s;
+
+    transform: scale(2);
+  }
 </style>

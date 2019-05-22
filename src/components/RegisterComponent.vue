@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <header-component></header-component>
+    <!--<header-component></header-component>-->
     <div class="header"></div>
     <div class="form-container" v-if="this.register">
       <form @submit.prevent="signUp" class="form" v-if="this.openForm">

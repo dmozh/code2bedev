@@ -14,7 +14,7 @@
             </div>
             <div v-if="this.postType==='news'"
               class="news-importance-block">
-              <div v-if="this.newsImportance      === 0">Важность новости: Не важно</div>
+              <div v-if="     this.newsImportance === 0">Важность новости: Не важно</div>
               <div v-else-if="this.newsImportance === 1">Важность новости: Важно</div>
               <div v-else-if="this.newsImportance === 2">Важность новости: Очень важно</div>
               <div v-else-if="this.newsImportance === 3">Важность новости: Критически важно</div>
@@ -29,13 +29,13 @@
           <div class="post-description-block">{{this.postDescription}}</div>
           <div class="post-text-block"></div>
           <div v-if="this.postType==='task'">
-            <code-editor-component v-if="this.haveLang"
+            <code-editor-component v-if="this.activeLang !== null"
                                    :place="this.postType"
                                    :lang="this.activeLang"
                                    :theme="this.theme"
-                                   :testInput="testInput"
-                                   :expectedOutput="expectedOutput"
-                                   :taskId = "postId"
+                                   :testInput="this.testInput"
+                                   :expectedOutput="this.expectedOutput"
+                                   :taskId = "this.postId"
             ></code-editor-component>
           </div>
         </div>
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  // import ace from 'ace-builds/src-noconflict/ace.js'
+  import regeneratorRuntime from "regenerator-runtime";
   import axios from 'axios'
   // import "ace-builds/webpack-resolver"
   import CodeEditorComponent from './CodeEditorComponent'
@@ -65,47 +65,34 @@
         CodeEditorComponent
       },
       name: "view-post-component",
-      props: {
-        postId: {
-          type: Number
-        },
-        postName: {
-          type: String
-        },
-        postDescription: {
-          type: String
-        },
-        // postText: {
-        //   type: String
-        // },
-        postType: {
-          type: String
-        },
-        postRate: {
-          type: Number
-        },
-        newsImportance:{
-          type: Number
-        },
-        //for tasks
-        testInput: {
-          type: String
-        },
-        expectedOutput: {
-          type: String
-        },
-      },
       data(){
         return{
           activeLang: null,
           theme: 'eclipse',
-          haveLang: false,
 
           userSeenPost: null,
 
           posts: Object,
 
+
+
+          postType: '',
+          postId: null,
+          postName: '',
+          postDescription: '',
+          postRate: null,
+          postText: '',
           posts_views: '',
+          postsTags: null,
+          postLang: '',
+          author: '',
+
+          newsImportance: null,
+
+          testInput: '',
+          expectedOutput: '',
+          lessonID: '',
+          lessonName: ''
         }
       },
 
@@ -118,19 +105,19 @@
           for(let i = 0; i<arr.length; i++){
             if      (postType==="task"){
               if(arr[i].task_id === postId){
-                return true
+                return arr[i].isSeen
               }
             }else if(postType==="lesson"){
               if(arr[i].lesson_id === postId){
-                return true
+                return arr[i].isSeen
               }
             }else if(postType==="news"){
               if(arr[i].news_id === postId){
-                return true
+                return arr[i].isSeen
               }
             }else if(postType==="article"){
               if(arr[i].article_id === postId){
-                return true
+                return arr[i].isSeen
               }
             }
           }
@@ -189,9 +176,9 @@
             if (!voteIs){
               console.log('mogete');
               if(voteType==='up'){
-                this.$parent.postRate = this.$parent.postRate+1
+                this.postRate = this.postRate+1
               }else{
-                this.$parent.postRate = this.$parent.postRate-1
+                this.postRate = this.postRate-1
               }
               const userId = localStorage.getItem('userID');
               let body = {
@@ -229,14 +216,113 @@
             //TODO кастомное высплывающие окно
             alert('Для голосования необходимо авторизироваться')
           }
+        },
+
+        decodeBase64Params(){
+          const BASE64 = {
+            _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+              encode: function (e) {
+              let t = "";
+              let n, r, i, s, o, u, a;
+              let f = 0;
+              e = BASE64._utf8_encode(e);
+              while (f < e.length) {
+                n = e.charCodeAt(f++);
+                r = e.charCodeAt(f++);
+                i = e.charCodeAt(f++);
+                s = n >> 2;
+                o = (n & 3) << 4 | r >> 4;
+                u = (r & 15) << 2 | i >> 6;
+                a = i & 63;
+                if (isNaN(r)) {
+                  u = a = 64
+                }
+                else if (isNaN(i)) {
+                  a = 64
+                }
+                t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a)
+              } return t
+            },
+            decode: function (e) {
+              let t = "";
+              let n, r, i;
+              let s, o, u, a;
+              let f = 0;
+              // e = e.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+              e = e.replace(/[^A-Za-z0-9+\/=]/g, "");
+              while (f < e.length) {
+                s = this._keyStr.indexOf(e.charAt(f++));
+                o = this._keyStr.indexOf(e.charAt(f++));
+                u = this._keyStr.indexOf(e.charAt(f++));
+                a = this._keyStr.indexOf(e.charAt(f++));
+                n = s << 2 | o >> 4;
+                r = (o & 15) << 4 | u >> 2;
+                i = (u & 3) << 6 | a; t = t + String.fromCharCode(n);
+                if (u !== 64) {
+                  t = t + String.fromCharCode(r)
+                }
+                if (a !== 64) {
+                  t = t + String.fromCharCode(i)
+                }
+              }
+              t = BASE64._utf8_decode(t); return t
+            },
+            _utf8_encode: function (e) {
+              e = e.replace(/\r\n/g, "\n");
+              let t = "";
+              for (let n = 0; n < e.length; n++) {
+                let r = e.charCodeAt(n);
+                if (r < 128) {
+                  t += String.fromCharCode(r)
+                }
+                else if (r > 127 && r < 2048) {
+                  t += String.fromCharCode(r >> 6 | 192);
+                  t += String.fromCharCode(r & 63 | 128)
+                }
+                else {
+                  t += String.fromCharCode(r >> 12 | 224);
+                  t += String.fromCharCode(r >> 6 & 63 | 128);
+                  t += String.fromCharCode(r & 63 | 128)
+                }
+              } return t
+            },
+            _utf8_decode: function (e) {
+              let t = "";
+              let n = 0;
+              let r, c1, c2 = 0;
+              while (n < e.length) {
+                r = e.charCodeAt(n);
+                if (r < 128) {
+                  t += String.fromCharCode(r);
+                  n++
+                }
+                else if (r > 191 && r < 224) {
+                  c2 = e.charCodeAt(n + 1);
+                  t += String.fromCharCode((r & 31) << 6 | c2 & 63);
+                  n += 2
+                }
+                else {
+                  c2 = e.charCodeAt(n + 1);
+                  c3 = e.charCodeAt(n + 2);
+                  t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+                  n += 3
+                }
+              } return t
+            }
+          };
+          let params = JSON.parse(BASE64.decode(this.$route.params.params));
+          return params
         }
       },
 
       mounted: function () {
+        sessionStorage.setItem('currentRoute', this.$route.fullPath);
+        // sessionStorage.setItem('activeRouteOnMain', this.$route.name);
         this.activeLang = sessionStorage.getItem('activeLang');
-        if(this.activeLang !== null){
-          this.haveLang = true;
-        }
+        const params = this.decodeBase64Params();
+        this.postId = params.postId;
+        this.postType = params.postType;
+
 
         let postId = this.postId;
         let postType = this.postType;
@@ -248,9 +334,24 @@
             id: postId,
           };
         const jBody = JSON.stringify(body);
-        axios.post(this.$root.URL+'getPostText', jBody).then((response) => {
+        axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
           this.postText = response.data.post_text;
           this.posts_views = response.data.views;
+          this.postName = response.data.post_name;
+          this.postDescription = response.data.post_description;
+          this.postRate = response.data.post_rate;
+          this.postTags = response.data.post_tags;
+          this.postLang = response.data.post_lang;
+          this.author = response.data.author;
+          if (postType === 'task'){
+            this.testInput = response.data.test_input;
+            this.expectedOutput = response.data.expected_output;
+            this.lessonName = response.data.lesson_name;
+            this.lessonID = response.data.lesson_id;
+          }
+          if (postType === 'news'){
+            this.newsImportance = response.data.news_importance;
+          }
           let parentElem = document.getElementsByClassName('post-text-block');
           parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
           // console.log(parentElem);
@@ -279,7 +380,7 @@
           }
 
           //если не просмотрена, просматриваем
-          console.log(haveIs);
+          console.log('isSeen '+haveIs);
           if (!haveIs) {
             let body = {
               postType: postType,
@@ -290,7 +391,7 @@
             };
             const jBody = JSON.stringify(body);
             axios.post(this.$root.URL+'addSeenPost', jBody).then((response) => {
-              console.log(response);
+              // console.log(response);
               if (postType === "task") {
                 localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
               }
@@ -309,8 +410,14 @@
           }
         }
       },
-
-
+      beforeMount: function(){
+        this.$root.postIsOpen = true;
+        let lastRoute = sessionStorage.getItem('currentRoute');
+        sessionStorage.setItem('lastRoute', lastRoute);
+      },
+      destroyed: function () {
+        this.$root.postIsOpen = false;
+      }
     }
 </script>
 
