@@ -45,7 +45,6 @@
       },
       methods: {
         emitClose() {
-
           this.$parent.selectedLessons = [];
           this.$emit('close');
         },

@@ -100,6 +100,7 @@
 <script>
   import WindowCreateTaskForLesson from '../../ModalWindows/WindowCreateTaskForLesson'
   import CreateErrorModalComponent from '../../ModalWindows/CreateErrorModalComponent';
+  import regeneratorRuntime from "regenerator-runtime";
   import axios from 'axios'
 
   export default {
@@ -141,6 +142,8 @@
       },
       data(){
         return{
+          toastText: '',
+
           modalActive: false,
           errorModalActive: false,
 
@@ -181,7 +184,7 @@
           this.emptyLang = true;
         },
 
-        sendLesson(){
+        async sendLesson(){
           if (this.lessonName.length === 0 || this.lessonDescription.length === 0 || this.lessonText.length === 0){
             if (this.lessonName.length !== 0){
               this.emptyName = false
@@ -202,6 +205,7 @@
             const selectedIndex = document.getElementById("sel1").options.selectedIndex;
             const lang = document.getElementById("sel1").options[selectedIndex].value;
             let body = {};
+            let self = this;
             if(!this.isUpdate){
               body = {
                 lang: lang,
@@ -227,19 +231,36 @@
             const jBody = JSON.stringify(body);
 
             if(!this.isUpdate){
-              axios.post(this.$root.URL+'addLesson', jBody).then((response) => {
-                console.log(response);
+              await axios.post(this.$root.URL+'addLesson', jBody).then((response) => {
+                // console.log(response);
+                let resp = response.data.msg;
+                if (resp === true){
+                  self.toastText = '<span>Урок был успешно добавлен</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Урок не был добавлен.&nbsp;</span>' + resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);});
             }else{
-              axios.post(this.$root.URL+'updateUserLesson', jBody).then((response) => {
-                console.log(response);
+              await axios.post(this.$root.URL+'updateUserLesson', jBody).then((response) => {
+                // console.log(response);
+                let resp = response.data.msg;
+                if (resp === true){
+                  self.toastText = '<span>Урок был успешно обновлен</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Урок не был обновлен.&nbsp;</span>' + resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);})
             }
-
-
-            this.emitReturn()
           }
         },
 

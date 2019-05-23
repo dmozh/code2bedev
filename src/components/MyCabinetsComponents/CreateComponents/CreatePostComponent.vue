@@ -99,6 +99,7 @@
 <script>
   import axios from 'axios'
   import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
+  import regeneratorRuntime from "regenerator-runtime";
 
     export default {
         name: "create-post-component",
@@ -145,8 +146,8 @@
         },
       data() {
         return {
+          toastText: '',
           //response
-          resp: '1',
 
           errorModalActive: false,
           emptyName: true,
@@ -191,7 +192,7 @@
           this.emptyLang = true;
         },
 
-        sendPost() {
+        async sendPost() {
           //debug
           if (this.isArticle) {
             console.log('article')
@@ -269,50 +270,76 @@
               };
             }
             //создаем json
+            let self = this;
             const jBody = JSON.stringify(body);
-            //переменная для тоаста
-            let toastHtml = '';
             //TODO сделать оповещание о том успешно/неуспешно создана/обновлена/удалена пост
             if (this.isArticle && !this.isUpdate) {
-              axios.post(this.$root.URL+'addArticle', jBody).then((response) => {
+              await axios.post(this.$root.URL+'addArticle', jBody).then((response) => {
                 console.log(response);
-                this.resp = response.data.msg;
-                // console.log(this.resp);
-                // console.log(toastHtml)
+                let resp = response.data.msg;
+
+                if (resp === true){
+                  self.toastText = '<span>Статья была успешно добавлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Статья не была добавлена.&nbsp;</span>'+resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
+                // M.toast({html: self.toastText, classes: 'rounded'});
               }).catch((error) => {
                 console.log(error);
               });
             } else if (this.isNews && !this.isUpdate) {
-              axios.post(this.$root.URL+'addNews', jBody).then((response) => {
-                // console.log(response);
+              await axios.post(this.$root.URL+'addNews', jBody).then((response) => {
+                let resp = response.data.msg;
+                console.log(response);
+                if (resp === true){
+                  self.toastText = '<span>Новость была успешно добавлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Новость не была добавлена.&nbsp;</span>'+resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);
               });
             } else if (this.isArticle && this.isUpdate){
-              axios.post(this.$root.URL+'updateUserArticle', jBody).then((response) => {
-                // console.log(response);
+              await axios.post(this.$root.URL+'updateUserArticle', jBody).then((response) => {
+                let resp = response.data.msg;
+                console.log(response);
+                if (resp === true){
+                  self.toastText = '<span>Статья была успешно обновлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Статья не была обновлена.&nbsp;</span>'+resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);
               });
             }else if(this.isNews && this.isUpdate){
-              axios.post(this.$root.URL+'updateUserNews', jBody).then((response) => {
-                // console.log(response);
+              await axios.post(this.$root.URL+'updateUserNews', jBody).then((response) => {
+                let resp = response.data.msg;
+                console.log(response);
+                if (resp === true){
+                  self.toastText = '<span>Новость была успешно обновлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Новость не была обновлена.&nbsp;</span>'+resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);
               });
             }
-
-            // console.log(this.resp.err_code);
-            // if (this.resp === 'article updated'){
-            //   toastHtml = '<span>Статья успешно обновлена</span>';
-            // } else if (this.resp === 'news added'){
-            //   toastHtml = '<span>Новость успешно добавлена</span>';
-            // } else if (this.resp === 'news updated'){
-            //   toastHtml = '<span>Новость успешно обновлена</span>';
-            // }
-            // await console.log(this.resp);
-            // M.toast({html: toastHtml, classes: 'rounded'});
-            this.emitReturn(this.resp)
           }
         },
 

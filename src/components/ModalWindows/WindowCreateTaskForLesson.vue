@@ -24,7 +24,7 @@
                       </option>
                     </select>
                     <div class="quest-mark-icon tooltip">
-                      <img src="/src/assets/png/question_mark.png" class="icon qm">
+                      <img src="../../assets/png/question_mark.png" class="icon qm">
                       <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
                     </div>
                   </div>
@@ -32,10 +32,20 @@
                   <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
                 </div>
                 <div class="right-block">
-                  <div class="splitter">
-
-                  </div>
                   <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
+                  <!--<div class="splitter"></div>-->
+                  <div class="input-output-block">
+                    <textarea v-model="taskTestInput" placeholder="Введите тестовые данные для проверки решения (каждый новый stdin вводится через Enter)
+                      Пример:
+                      1
+                      2
+                      3" id="input-textarea"></textarea>
+                    <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
+                      Пример:
+                      3
+                      6
+                      9" id="output-textarea"></textarea>
+                    </div>
                   <button class="button waves-effect waves-dark">Создать</button>
                 </div>
               </div>
@@ -58,7 +68,8 @@
           taskDescription: '',
           //сама статья/новость
           taskText: '',
-
+          taskTestInput: '',
+          taskExpectedOutput: '',
           //for difficultly (for a while)
           difficultly: [
             {id: 1, diff: 1},
@@ -89,12 +100,11 @@
               taskName: this.taskName,
               taskDifficulty: diffValue,
               taskDescription: this.taskDescription,
-              taskText: this.taskText
+              taskText: this.taskText,
+              taskTestInput: this.taskTestInput,
+              taskExpectedOutput: this.taskExpectedOutput
             }
           );
-
-
-
           this.emitClose()
         }
       }
@@ -102,6 +112,26 @@
 </script>
 
 <style scoped lang="scss">
+  .input-output-block{
+    display: flex;
+    flex-wrap: wrap;
+    width: 40vw;
+    justify-content: space-between;
+  }
+
+  #input-textarea{
+    max-width: 18vw;
+    max-height: 23vh;
+    min-width: 18vw;
+    min-height: 23vh;
+  }
+
+  #output-textarea{
+    max-width: 18vw;
+    max-height: 23vh;
+    min-width: 18vw;
+    min-height: 23vh;
+  }
   label{
     font-size: large;
     margin: 1vh 2px 0 0;
@@ -137,8 +167,8 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 80vh;
-    width: 70vw;
+    height: 90vh;
+    width: 80vw;
     margin: 0 auto;
     /*padding: 20px 30px;*/
     background-color: aliceblue;
@@ -224,7 +254,7 @@
 
     height: auto;
     width: 35vw;
-    align-items: center;
+    /*align-items: center;*/
   }
 
   .right-block{
@@ -269,9 +299,9 @@
 
   .desc-textarea{
     max-width: 23vw;
-    max-height: 45vh;
+    max-height: 40vh;
     min-width: 23vw;
-    min-height: 45vh;
+    min-height: 40vh;
     border-radius: 15px;
   }
 

@@ -110,6 +110,7 @@
   import axios from 'axios'
   import CreateErrorModalComponent from "../../ModalWindows/CreateErrorModalComponent";
   import WindowChooseLessonsForTask from "../../ModalWindows/WindowChooseLessonsForTask";
+  import regeneratorRuntime from "regenerator-runtime";
     export default {
       name: "create-tasks-component",
       components:{
@@ -155,6 +156,8 @@
       },
       data(){
         return{
+          toastText: '',
+
           lessonsChooseActive: false,
 
           errorModalActive: false,
@@ -235,7 +238,7 @@
           this.emptyExpectedOutput = true;
         },
 
-        sendTask() {
+        async sendTask() {
           if (this.taskName.length === 0 || this.taskDescription.length === 0 || this.taskText.length === 0
             || this.taskExpectedOutput.length === 0 || this.taskTestInput.length === 0){
             if (this.taskName.length !== 0){
@@ -253,17 +256,8 @@
             if (this.taskTestInput.length !== 0){
               this.emptyTestInput = false
             }
-            // if (document.getElementById("lessonSelect").options.selectedIndex !== 0){
-            //   this.emptyLang = false
-            // }
-            //show modal with error
             this.errorModalActive = true;
           }else{
-            //определяем значение параметров lesson and difficultly
-            // const selectedIndex = document.getElementById("lessonSelect").options.selectedIndex;
-            // if(this.isUpdate && document.getElementById("lessonSelect").options.selectedIndex === 0){
-            //   document.getElementById("lessonSelect").value = this.reqLessonName;
-            // }
             let lang = document.getElementById("langSelect").value;
             console.log(lang);
             const selectedIndexDifficultlySelect = document.getElementById("difficultlySelect").options.selectedIndex;
@@ -296,21 +290,39 @@
                 linkedLessons: this.selectedLessons
               };
             }
-
+            let self = this;
             const jBody = JSON.stringify(body);
             if(!this.isUpdate){
-              axios.post(this.$root.URL+'addTask', jBody).then((response) => {
-                console.log(response);
+              await axios.post(this.$root.URL+'addTask', jBody).then((response) => {
+                // console.log(response);
+                let resp = response.data.msg;
+                if (resp === true){
+                  self.toastText = '<span>Задача была успешно добавлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Задача не была добавлена.&nbsp;</span>' + resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
               }).catch((error) => {
                 console.log(error);});
             }else{
-              axios.post(this.$root.URL+'updateUserTask', jBody).then((response) => {
-                console.log(response);
+              await axios.post(this.$root.URL+'updateUserTask', jBody).then((response) => {
+                let resp = response.data.msg;
+                if (resp === true){
+                  self.toastText = '<span>Задача была успешно обновлена</span>';
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                  self.emitReturn()
+                } else if (resp.err_code === '23505') {
+                  console.log(resp.err_code);
+                  self.toastText = '<span>Задача не была обновлена.&nbsp;</span>' + resp.err_info;
+                  M.toast({html: self.toastText, classes: 'rounded'});
+                }
+                // console.log(response);
               }).catch((error) => {
                 console.log(error);});
             }
-
-            this.emitReturn()
           }
         },
 
