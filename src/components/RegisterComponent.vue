@@ -81,6 +81,8 @@
       name: "register-component",
       data() {
         return {
+          toastText: '',
+
           name: '',
           email: '',
           password: '',
@@ -161,6 +163,8 @@
           this.$root.signUpOn();
         }
         if (this.$root.authUser){
+          // this.toastText = '<span>Вы уже авторизированы.</span>';
+          // M.toast({html: self.toastText, classes: 'rounded'});
           this.$router.replace('/');
         }
       },

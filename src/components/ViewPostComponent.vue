@@ -86,6 +86,8 @@
           postsTags: null,
           postLang: '',
           author: '',
+          addedTime: '',
+          lastUpdate: '',
 
           newsImportance: null,
 
@@ -343,6 +345,9 @@
           this.postTags = response.data.post_tags;
           this.postLang = response.data.post_lang;
           this.author = response.data.author;
+          this.addedTime = response.data.added_time;
+          this.lastUpdate = response.data.last_update;
+
           if (postType === 'task'){
             this.testInput = response.data.test_input;
             this.expectedOutput = response.data.expected_output;
