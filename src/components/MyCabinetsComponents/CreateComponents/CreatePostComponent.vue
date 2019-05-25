@@ -280,12 +280,12 @@
 
                 if (resp === true){
                   self.toastText = '<span>Статья была успешно добавлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Статья не была добавлена.&nbsp;</span>'+resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
                 }
                 // M.toast({html: self.toastText, classes: 'rounded'});
               }).catch((error) => {
@@ -297,12 +297,12 @@
                 console.log(response);
                 if (resp === true){
                   self.toastText = '<span>Новость была успешно добавлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Новость не была добавлена.&nbsp;</span>'+resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
                 }
               }).catch((error) => {
                 console.log(error);
@@ -313,12 +313,16 @@
                 console.log(response);
                 if (resp === true){
                   self.toastText = '<span>Статья была успешно обновлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Статья не была обновлена.&nbsp;</span>'+resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
+                } else if (resp === 'identical'){
+                  self.toastText = '<span>Статья идентичная</span>';
+                  M.toast({html: self.toastText, classes: 'rounded success'});
+                  self.emitReturn()
                 }
               }).catch((error) => {
                 console.log(error);
@@ -329,12 +333,12 @@
                 console.log(response);
                 if (resp === true){
                   self.toastText = '<span>Новость была успешно обновлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Новость не была обновлена.&nbsp;</span>'+resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
                 }
               }).catch((error) => {
                 console.log(error);

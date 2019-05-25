@@ -298,12 +298,12 @@
                 let resp = response.data.msg;
                 if (resp === true){
                   self.toastText = '<span>Задача была успешно добавлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Задача не была добавлена.&nbsp;</span>' + resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
                 }
               }).catch((error) => {
                 console.log(error);});
@@ -312,12 +312,16 @@
                 let resp = response.data.msg;
                 if (resp === true){
                   self.toastText = '<span>Задача была успешно обновлена</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Задача не была обновлена.&nbsp;</span>' + resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
+                } else if (resp === 'identical'){
+                  self.toastText = '<span>Задача идентичная</span>';
+                  M.toast({html: self.toastText, classes: 'rounded success'});
+                  self.emitReturn();
                 }
                 // console.log(response);
               }).catch((error) => {

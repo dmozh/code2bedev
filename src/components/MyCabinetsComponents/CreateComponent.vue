@@ -130,6 +130,7 @@
       data() {
         return {
           // returnMsg: '',
+          toastText: '',
 
           onHide: true,
           isOpenArticles: false,
@@ -142,38 +143,65 @@
       },
       methods: {
         showCreateComponentArticles() {
-          this.onHide = false;
-          this.isOpenArticles = true;
-          this.isOpenTasks = false;
-          this.isOpenNews = false;
-          this.isOpenLessons = false;
+          if (this.$root.authUser.emailVerified){
+            this.onHide = false;
+            this.isOpenArticles = true;
+            this.isOpenTasks = false;
+            this.isOpenNews = false;
+            this.isOpenLessons = false;
+          }else{
+            this.toastText = '<span>Вы не можете создать статью, пока не авторизируетесь.<br>' +
+              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
+          }
         },
 
         showCreateComponentTasks() {
-          this.onHide = false;
-          this.isOpenArticles = false;
-          this.isOpenTasks = true;
-          this.isOpenNews = false;
-          this.isOpenLessons = false;
+          if (this.$root.authUser.emailVerified){
+            this.onHide = false;
+            this.isOpenArticles = false;
+            this.isOpenTasks = true;
+            this.isOpenNews = false;
+            this.isOpenLessons = false;
+          }else{
+            this.toastText = '<span>Вы не можете создать задачу, пока не авторизируетесь.<br>' +
+              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
+          }
+
         },
 
         showCreateComponentNews() {
-          this.onHide = false;
-          this.isOpenArticles = false;
-          this.isOpenTasks = false;
-          this.isOpenNews = true;
-          this.isOpenLessons = false;
+            if (this.$root.authUser.emailVerified){
+              this.onHide = false;
+              this.isOpenArticles = false;
+              this.isOpenTasks = false;
+              this.isOpenNews = true;
+              this.isOpenLessons = false;
+          }else{
+              this.toastText = '<span>Вы не можете создать новость, пока не авторизируетесь.<br>' +
+                'Письмо с авторизацией было отправлено вам на почту.</span>';
+              M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
+            }
+
         },
 
         showCreateComponentLessons() {
-          this.onHide = false;
-          this.isOpenArticles = false;
-          this.isOpenTasks = false;
-          this.isOpenNews = false;
-          this.isOpenLessons = true;
+          if (this.$root.authUser.emailVerified){
+            this.onHide = false;
+            this.isOpenArticles = false;
+            this.isOpenTasks = false;
+            this.isOpenNews = false;
+            this.isOpenLessons = true;
+          }else{
+            this.toastText = '<span>Вы не можете создать урок, пока не авторизируетесь.<br>' +
+              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
+          }
+
         },
 
-        toReturn(msg) {
+        toReturn() {
           this.onHide = true;
           this.isOpenArticles = false;
           this.isOpenTasks = false;
@@ -360,44 +388,4 @@
     /*opacity: 0;*/
   /*}*/
 
-  .pulse {
-    /*margin:100px;*/
-    /*display: block;*/
-    /*width: 22px;*/
-    /*height: 22px;*/
-    /*border-radius: 50%;*/
-    /*background: #cca92c;*/
-    /*cursor: pointer;*/
-    /*box-shadow: 0 0 0 rgba(204,169,44, 0.4);*/
-    animation: pulse 2s infinite;
-  }
-  .pulse:hover {
-    animation: none;
-  }
-
-  @-webkit-keyframes pulse {
-    0% {
-      -webkit-box-shadow: 0 0 0 0 #f0f8ff;
-    }
-    70% {
-      -webkit-box-shadow: 0 0 0 10px #d6dee5;
-    }
-    100% {
-      -webkit-box-shadow: 0 0 0 0 #93989f;
-    }
-  }
-  @keyframes pulse {
-    0% {
-      -moz-box-shadow: 0 0 0 0 #93989f;
-      box-shadow: 0 0 0 0 #93989f;
-    }
-    70% {
-      -moz-box-shadow: 0 0 0 10px #d6dee5;
-      box-shadow: 0 0 0 10px #d6dee5;
-    }
-    100% {
-      -moz-box-shadow: 0 0 0 0 #f0f8ff;
-      box-shadow: 0 0 0 0 #f0f8ff;
-    }
-  }
 </style>

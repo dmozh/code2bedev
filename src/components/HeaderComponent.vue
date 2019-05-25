@@ -49,6 +49,10 @@
         <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: createTabIsActive}" @click="activeTab('creates')">
           СОЗДАТЬ
         </div>
+        <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: moderTabIsActive}" @click="activeTab('moder')"
+             v-if="this.$root.activeUserRole === '666' || this.$root.activeUserRole ===  '333'">
+          МОДЕРАЦИЯ
+        </div>
       </div>
     </div>
     <div class="right-container">
@@ -99,6 +103,7 @@
           myPostsTabIsActive: false,
           mySeensTabIsActive: false,
           createTabIsActive: false,
+          moderTabIsActive: false,
 
           loggedIn: "logged-in",
           loggedOut: "logged-out",
@@ -184,6 +189,7 @@
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = false;
+              this.moderTabIsActive        = false;
               sessionStorage.setItem('activeTabOnMyCab', tab);
               this.$router.push({name: tab});
             }else if(tab==='myPosts'){
@@ -191,6 +197,7 @@
               this.myPostsTabIsActive      = true;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = false;
+              this.moderTabIsActive        = false;
               sessionStorage.setItem('activeTabOnMyCab', tab);
               this.$router.push({name: tab});
             }else if(tab==='myViews'){
@@ -198,6 +205,7 @@
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = true;
               this.createTabIsActive       = false;
+              this.moderTabIsActive        = false;
               sessionStorage.setItem('activeTabOnMyCab', tab);
               this.$router.push({name: tab});
             }else if(tab==='creates'){
@@ -205,6 +213,15 @@
               this.myPostsTabIsActive      = false;
               this.mySeensTabIsActive      = false;
               this.createTabIsActive       = true;
+              this.moderTabIsActive        = false;
+              sessionStorage.setItem('activeTabOnMyCab', tab);
+              this.$router.push({name: tab});
+            }else if(tab==='moder'){
+              this.myProfileTabIsActive    = false;
+              this.myPostsTabIsActive      = false;
+              this.mySeensTabIsActive      = false;
+              this.createTabIsActive       = false;
+              this.moderTabIsActive        = true;
               sessionStorage.setItem('activeTabOnMyCab', tab);
               this.$router.push({name: tab});
             }
@@ -265,6 +282,7 @@
         if (sessionStorage.getItem('activeLang')){
           this.$root.activeLang = sessionStorage.getItem('activeLang');
         }
+
         this.activeTab(this.$route.params.postsType);
         // console.log(this.$route.params)
       },
@@ -333,7 +351,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    border-radius: 10px 10px 20px 20px;
+    border-radius: 0px 0px 20px 20px;
 
   }
 

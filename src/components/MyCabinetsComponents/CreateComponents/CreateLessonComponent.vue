@@ -236,12 +236,12 @@
                 let resp = response.data.msg;
                 if (resp === true){
                   self.toastText = '<span>Урок был успешно добавлен</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Урок не был добавлен.&nbsp;</span>' + resp.err_info;
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded warning'});
                 }
               }).catch((error) => {
                 console.log(error);});
@@ -251,12 +251,16 @@
                 let resp = response.data.msg;
                 if (resp === true){
                   self.toastText = '<span>Урок был успешно обновлен</span>';
-                  M.toast({html: self.toastText, classes: 'rounded'});
+                  M.toast({html: self.toastText, classes: 'rounded success'});
                   self.emitReturn()
                 } else if (resp.err_code === '23505') {
                   console.log(resp.err_code);
                   self.toastText = '<span>Урок не был обновлен.&nbsp;</span>' + resp.err_info;
                   M.toast({html: self.toastText, classes: 'rounded'});
+                }else if (resp === 'identical'){
+                  self.toastText = '<span>Урок идентичен</span>';
+                  M.toast({html: self.toastText, classes: 'rounded success'});
+                  self.emitReturn()
                 }
               }).catch((error) => {
                 console.log(error);})

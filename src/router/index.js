@@ -14,6 +14,8 @@ import ProfileComponent from '../components/MyCabinetsComponents/ProfileComponen
 import PostsComponent from '../components/MyCabinetsComponents/PostsComponent'
 import CreateComponent from '../components/MyCabinetsComponents/CreateComponent'
 import SeenComponent from '../components/MyCabinetsComponents/SeenComponent'
+import ModeratorComponent from '../components/MyCabinetsComponents/ModeratorComponent'
+
 // import auth from 'firebase/auth'
 
 Vue.use(Router);
@@ -73,6 +75,14 @@ let router = new Router({
       path: '/profile/me',
       name: 'myProfile',
       component: ProfileComponent,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/profile/moderator',
+      name: 'moder',
+      component: ModeratorComponent,
       meta: {
         requiresAuth: true
       }

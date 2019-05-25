@@ -130,7 +130,7 @@
               </div>
             </div>
           </div>
-          <div class="post-block news" v-if="showNews && this.$root.activeUserRole === 666">
+          <div class="post-block news" v-if="showNews && this.$root.activeUserRole === '666' ">
             <div class="post-block-header">
               <h5>НОВОСТИ</h5>
             </div>
