@@ -100,58 +100,83 @@
         regOff(){
           this.register = false;
         },
-
+        chkName(name){
+          if(name.indexOf(' ')>0){
+            return 'space'
+          }else if (name.length > 25) {
+            return 'length'
+          } else {
+            return false
+          }
+        },
         async signUp () {
-          //TO DO сделать проверку на имеющиеся имя в бд, отправку данных бд
-          if (this.password !== this.passwordRepeat){
-            alert('Passwords do not match');
-          }else{
-            if (this.password.length < 7){
-              alert('Password is week')
+          if (this.chkName(this.name)==='space'){
+            let toastText = '<span>Имя не должно содержать пробелы</span>';
+            M.toast({html: toastText, classes: 'rounded warning'});
+          }else if(this.chkName(this.name)==='length'){
+            let toastText = '<span>Длина имени не может превышать 25 символов</span>';
+            M.toast({html: toastText, classes: 'rounded warning'});
+          } else{
+            if (this.email.length===0){
+              let toastText = '<span>Введите email</span>';
+              M.toast({html: toastText, classes: 'rounded warning'});
             }else{
-              //определяем переменные для запроса
-              const userEmail = this.email, userName = this.name;
-              const body = {
-                userEmail: userEmail,
-                userName: userName
-              };
-              const jBody = JSON.stringify(body);
-              console.log(this.$root.URL);
-              let self = this;
-              await axios.post(this.$root.URL+'addUser', jBody).then((response) => {
-                // console.log(response);
-                this.valid = response.data.valid;
-                if(this.valid){
-                  self.openForm = false;
-                  firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(async function (error) {
-                    // Handle Errors here.
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // [START_EXCLUDE]
-                    if (errorCode === 'auth/weak-password') {
-                      alert(errorMessage);
-                    } else if (errorCode === 'auth/email-already-in-use'){
-                      alert (errorMessage);
-                    } else {
-                    }
-                    // console.log(error);
-                    // [END_EXCLUDE]
-                  }).then(async function () {
-                    if (firebase.auth().currentUser.emailVerified === true){
-
-                    }else{
-                      await firebase.auth().currentUser.sendEmailVerification();
-                    }
-                    self.regOff();
-                  });
+              if (this.password !== this.passwordRepeat){
+                let toastText = '<span>Пароли не совпадают</span>';
+                M.toast({html: toastText, classes: 'rounded warning'});
+              }else{
+                if (this.password.length < 7){
+                  let toastText = '<span>Слишком легкий пароль</span>';
+                  M.toast({html: toastText, classes: 'rounded warning'});
                 }else{
-                  alert(response.data.msg)
-                }
-              }).catch((error) => {console.log(error);}).then(function () {
+                  //определяем переменные для запроса
+                  const userEmail = this.email, userName = this.name;
+                  const body = {
+                    userEmail: userEmail,
+                    userName: userName
+                  };
+                  const jBody = JSON.stringify(body);
+                  console.log(this.$root.URL);
+                  let self = this;
+                  await axios.post(this.$root.URL+'addUser', jBody).then((response) => {
+                    // console.log(response);
+                    this.valid = response.data.valid;
+                    if(this.valid){
+                      self.openForm = false;
+                      firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(async function (error) {
+                        // Handle Errors here.
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // [START_EXCLUDE]
+                        if (errorCode === 'auth/weak-password') {
+                          let toastText = '<span>Пароли не совпадают</span>';
+                          M.toast({html: toastText, classes: 'rounded warning'});
+                        } else if (errorCode === 'auth/email-already-in-use'){
+                          let toastText = '<span>Данные email уже используется</span>';
+                          M.toast({html: toastText, classes: 'rounded warning'});
+                        } else {
+                        }
+                        // console.log(error);
+                        // [END_EXCLUDE]
+                      }).then(async function () {
+                        if (firebase.auth().currentUser.emailVerified === true){
 
-              });
+                        }else{
+                          await firebase.auth().currentUser.sendEmailVerification();
+                        }
+                        self.regOff();
+                      });
+                    }else{
+                      let toastText = response.data.msg;
+                      M.toast({html: toastText, classes: 'rounded warning'});
+                    }
+                  }).catch((error) => {console.log(error);}).then(function () {
+
+                  });
+                }
+                // this.regOff()
+              }
             }
-            // this.regOff()
           }
         },
       },

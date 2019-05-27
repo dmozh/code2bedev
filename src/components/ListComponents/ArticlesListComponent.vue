@@ -24,7 +24,8 @@
 
               </div>
               <div class="tags">
-                <span></span>
+                <div>Тэги:&nbsp;</div>
+                <span v-for="(tag, index) in elem.article_tags" :key="index" class="tag">#{{tag}}</span>
               </div>
             </div>
             <div class="post-body">
@@ -172,5 +173,13 @@
 </script>
 
 <style scoped>
-
+  .tag{
+    height: 1.5vh;
+    color: #006dff;
+  }
+  .tags{
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid grey;
+  }
 </style>

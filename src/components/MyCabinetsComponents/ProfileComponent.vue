@@ -1,6 +1,8 @@
 <template>
   <div class="body">
-    Эта вкладка пока не доступна :(
+    <div class="container">
+      Эта вкладка пока не доступна :(
+    </div>
   </div>
 </template>
 
@@ -23,8 +25,7 @@
   .body{
     display: flex;
     width: 100%;
-    height: 93%;
-    background: aliceblue;
+    height: 100%;
 
     font-size: 7vw;
     color: #919191;

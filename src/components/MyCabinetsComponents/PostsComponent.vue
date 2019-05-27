@@ -6,15 +6,16 @@
           <label for="postsType">Выберите какие посты показать: </label>
           <select id="postsType" class="custom-select" @change="change()">
             <!--тут определяются языки программировпния в селекте-->
-            <option v-for="type in postsType" :key="type.id" :value="type.type">{{type.type}}</option>
+            <option v-for="type in postsTypeZ" :key="type.id" :value="type.type">{{type.type}}</option>
+            <option v-if="this.$root.activeUserRole==='666'">Новости</option>
           </select>
         </div>
         <div class="content-container">
           <div class="post-block articles" v-if="showArticles">
-            <div class="post-block-header">
+            <div class="post-block-header" v-if="response.articles.length>0">
               <h5>СТАТЬИ</h5>
             </div>
-            <div class="post-block-content-container">
+            <div class="post-block-content-container" v-if="response.articles.length>0">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -50,12 +51,13 @@
                 </div>
               </div>
             </div>
+            <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать статью.</div>
           </div>
           <div class="post-block lessons" v-if="showLessons">
-            <div class="post-block-header">
+            <div class="post-block-header" v-if="response.lessons.length>0">
               <h5>УРОКИ</h5>
             </div>
-            <div class="post-block-content-container">
+            <div class="post-block-content-container" v-if="response.lessons.length>0">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -91,12 +93,13 @@
                 </div>
               </div>
             </div>
+            <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать урок.</div>
           </div>
           <div class="post-block tasks" v-if="showTasks">
-            <div class="post-block-header">
+            <div class="post-block-header" v-if="response.tasks.length>0">
               <h5>ЗАДАЧИ</h5>
             </div>
-            <div class="post-block-content-container">
+            <div class="post-block-content-container" v-if="response.tasks.length>0">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -133,12 +136,13 @@
                 </div>
               </div>
             </div>
+            <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать задачу.</div>
           </div>
           <div class="post-block news" v-if="showNews && this.$root.activeUserRole === '666' ">
-            <div class="post-block-header">
+            <div class="post-block-header" v-if="response.news.length>0">
               <h5>НОВОСТИ</h5>
             </div>
-            <div class="post-block-content-container">
+            <div class="post-block-content-container" v-if="response.news.length>0">
               <div class="post-block-content-types">
                 <div class="container">
                   <div class="card blue-grey darken-1"
@@ -170,76 +174,80 @@
                 </div>
               </div>
             </div>
+            <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать новость.</div>
           </div>
         </div>
       </div>
     </transition>
-    <transition name="slide-fade">
-      <create-post-component v-bind:is-article="this.isOpenArticles"
-                             v-bind:is-news="this.isOpenNews"
-                             :isUpdate="isUpdate"
-                             :reqPostId="this.postId"
-                             :reqPostName="this.postName"
-                             :reqPostDescription="this.postDescription"
-                             :reqPostText="this.postText"
-                             :reqPostTags="this.postTags"
-                             :reqNextPostTag="this.nextPostTag"
-                             :reqLangId = "this.postLangId"
-                             :reqLangName = "this.postLangName"
-                             v-if="this.isOpenArticles"
-                             @returns="toReturn">
+    <div class="container">
+      <transition name="slide-fade">
 
-      </create-post-component>
-    </transition>
-
-    <transition name="slide-fade">
-      <create-post-component v-bind:is-article="this.isOpenArticles"
-                             v-bind:is-news="this.isOpenNews"
-                             :isUpdate="isUpdate"
-                             :reqPostId="this.postId"
-                             :reqPostName="this.postName"
-                             :reqPostDescription="this.postDescription"
-                             :reqPostText="this.postText"
-                             :reqPostTags="this.postTags"
-                             :reqNextPostTag="this.nextPostTag"
-                             :reqNewsImportance = "this.newsImportance"
-                             v-if="this.isOpenNews"
-                             @returns="toReturn">
-      </create-post-component>
-    </transition>
-
-    <transition name="slide-fade">
-      <create-tasks-component v-if="this.isOpenTasks"
-                              :isUpdate = "this.isUpdate"
-                              :reqTaskId = "this.postId"
-                              :reqTaskName = "this.postName"
-                              :reqTaskDescription = "this.postDescription"
-                              :reqTaskText = "this.postText"
-                              :reqTaskDiff = "this.taskDiff"
-                              :reqLangId = "this.postLangId"
-                              :reqLangName = "this.postLangName"
-                              :reqTestInput = "this.taskTestInput"
-                              :reqExpectedOutput = "this.taskExpectedOutput"
-                              :reqLinkedLessons ="this.linkedLessons"
-                              @returns="toReturn">
-
-      </create-tasks-component>
-    </transition>
-
-    <transition name="slide-fade">
-      <create-lesson-component v-if="this.isOpenLessons"
+        <create-post-component v-bind:is-article="this.isOpenArticles"
+                               v-bind:is-news="this.isOpenNews"
                                :isUpdate="isUpdate"
-                               :reqLessonId="this.postId"
-                               :reqLessonName="this.postName"
-                               :reqLessonDescription="this.postDescription"
-                               :reqLessonText="this.postText"
-                               :reqLessonTags="this.postTags"
-                               :reqNextLessonTag="this.nextPostTag"
+                               :reqPostId="this.postId"
+                               :reqPostName="this.postName"
+                               :reqPostDescription="this.postDescription"
+                               :reqPostText="this.postText"
+                               :reqPostTags="this.postTags"
+                               :reqNextPostTag="this.nextPostTag"
                                :reqLangId = "this.postLangId"
                                :reqLangName = "this.postLangName"
+                               v-if="this.isOpenArticles"
                                @returns="toReturn">
-      </create-lesson-component>
-    </transition>
+
+        </create-post-component>
+      </transition>
+
+      <transition name="slide-fade">
+        <create-post-component v-bind:is-article="this.isOpenArticles"
+                               v-bind:is-news="this.isOpenNews"
+                               :isUpdate="isUpdate"
+                               :reqPostId="this.postId"
+                               :reqPostName="this.postName"
+                               :reqPostDescription="this.postDescription"
+                               :reqPostText="this.postText"
+                               :reqPostTags="this.postTags"
+                               :reqNextPostTag="this.nextPostTag"
+                               :reqNewsImportance = "this.newsImportance"
+                               v-if="this.isOpenNews"
+                               @returns="toReturn">
+        </create-post-component>
+      </transition>
+
+      <transition name="slide-fade">
+        <create-tasks-component v-if="this.isOpenTasks"
+                                :isUpdate = "this.isUpdate"
+                                :reqTaskId = "this.postId"
+                                :reqTaskName = "this.postName"
+                                :reqTaskDescription = "this.postDescription"
+                                :reqTaskText = "this.postText"
+                                :reqTaskDiff = "this.taskDiff"
+                                :reqLangId = "this.postLangId"
+                                :reqLangName = "this.postLangName"
+                                :reqTestInput = "this.taskTestInput"
+                                :reqExpectedOutput = "this.taskExpectedOutput"
+                                :reqLinkedLessons ="this.linkedLessons"
+                                @returns="toReturn">
+
+        </create-tasks-component>
+      </transition>
+
+      <transition name="slide-fade">
+        <create-lesson-component v-if="this.isOpenLessons"
+                                 :isUpdate="isUpdate"
+                                 :reqLessonId="this.postId"
+                                 :reqLessonName="this.postName"
+                                 :reqLessonDescription="this.postDescription"
+                                 :reqLessonText="this.postText"
+                                 :reqLessonTags="this.postTags"
+                                 :reqNextLessonTag="this.nextPostTag"
+                                 :reqLangId = "this.postLangId"
+                                 :reqLangName = "this.postLangName"
+                                 @returns="toReturn">
+        </create-lesson-component>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -264,6 +272,12 @@
             {id: 2, type: 'Уроки'},
             {id: 3, type: 'Задачи'},
             {id: 4, type: 'Новости'}
+          ],
+
+          postsTypeZ: [
+            {id: 1, type: 'Статьи'},
+            {id: 2, type: 'Уроки'},
+            {id: 3, type: 'Задачи'},
           ],
 
           showArticles: false,
@@ -579,6 +593,18 @@
 </script>
 
 <style scoped lang="scss">
+  .note{
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    font-size: 7vw;
+    color: #919191;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
   .hidden{
     display: none;
   }
@@ -665,7 +691,7 @@
     margin: 0 auto;
     width: 100%;
     /*height: 100%;*/
-    background: aliceblue;
+    /*background: aliceblue;*/
   }
 
   .header{

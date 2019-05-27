@@ -1,8 +1,8 @@
 <template>
-  <!--<div class="create-components-form-container">-->
-  <div class="container">
+  <div class="create-components-form-container">
+  <!--<div class="container">-->
     <div class="header">
-      <div class="back-btn waves-effect waves-dark">
+      <div class="back-btn waves-effect waves-dark" v-if="isUpdate">
         <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
       <!--ARTICLES-->
@@ -408,7 +408,7 @@
     display: flex;
     flex-wrap: nowrap;
     height: 5vh;
-    width: 69vw;
+    width: 100%;
     border: solid 1px rgb(169, 169, 169);
     margin-bottom: 0.4px;
     /*background: red;*/
@@ -426,17 +426,17 @@
   }
 
   .article-text-textarea{
-    max-width: 69vw;
+    max-width: 100%;
     /*max-height: 34vh;*/
-    min-width: 69vw;
+    min-width: 100%;
     min-height: 34vh;
     padding: 0.9rem;
   }
 
   .desc-textarea{
-    max-width: 70vw;
+    max-width: 100%;
     /*max-height: 10vh;*/
-    min-width: 70vw;
+    min-width: 100%;
     min-height: 10vh;
     padding: 0.9rem;
   }
@@ -459,7 +459,7 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    /*width: 80vw;*/
+    width: 100%;
     /*height: 80vh;*/
     justify-content: center;
     align-items: center;
@@ -479,7 +479,7 @@
   }
 
   .custom-form{
-
+    width: 100%!important;
   }
 
   .back-btn{
@@ -496,6 +496,7 @@
     transform: rotate(-180deg);
     border-radius: 50%;
     background: #82858c;
+    margin-right: 50px;
   }
 
   .back-btn:hover{
@@ -519,7 +520,7 @@
   }
 
   .header{
-    margin-top: 30px;
+    margin-top: 50px;
     width: 100%;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
@@ -536,8 +537,7 @@
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    margin: 2.5vh 0 0 0;
-    margin-bottom: 30px;
+    margin: 2.5vh 0 30px 0;
   }
 
   .button:hover{
@@ -546,7 +546,7 @@
   }
 
   .custom-input-name-field{
-    width: 80% !important;
+    width: 100% !important;
     height: auto !important;
     font-size: 3vw !important;
   }
@@ -577,7 +577,7 @@
     display: flex;
     flex-wrap: wrap;
 
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
 
     justify-content: flex-start;

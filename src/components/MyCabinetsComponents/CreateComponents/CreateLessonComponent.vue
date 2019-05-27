@@ -1,6 +1,9 @@
 <template>
   <div class="create-components-form-container">
     <div class="header">
+      <div class="back-btn waves-effect waves-dark" v-if="isUpdate">
+        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+      </div>
       <div class="optional-container">
         <!--<p>Выберите язык программирования</p>-->
         <label for="sel1">Выберите язык программирования: </label>
@@ -16,9 +19,6 @@
           <span class="tooltiptext">Этот параметр обязателен.</span>
         </div>
 
-      </div>
-      <div class="back-btn waves-effect waves-dark">
-        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
     </div>
 
@@ -320,19 +320,19 @@
   .create-components-form-container{
     @media (max-width: 1200px) {
       /*width: 1vw;*/
-      height: 60vh;
+      /*height: 60vh;*/
     }
     @media (max-width: 900px) {
       /*width: 19vw;*/
-      height: 50vh;
+      /*height: 50vh;*/
     }
     position: relative;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 80vw;
-    height: 80vh;
+    width: 100%;
+    /*height: 80vh;*/
     justify-content: center;
     align-items: center;
     /*background: aqua;*/
@@ -351,13 +351,14 @@
   }
 
   .header{
+    margin-top: 50px;
     width: 100%;
     height: 5vh;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .button{
@@ -377,7 +378,7 @@
   }
 
   .custom-input-name-field{
-    width: 80vw !important;
+    /*width: 80vw !important;*/
     height: auto !important;
     font-size: 3vw !important;
   }
@@ -402,7 +403,7 @@
     display: flex;
     flex-wrap: wrap;
 
-    width: 77.5vw;
+    /*width: 100%;*/
     height: 100%;
 
     justify-content: flex-start;
@@ -413,7 +414,7 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 70vh;
+    /*height: 70vh;*/
     width: 100%;
     justify-content: center;
   }
@@ -427,14 +428,16 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 5vh;
-    width: 2.5vw;
+    height: 50px;
+    width: 50px;
+    transform: rotate(-180deg);
     border-radius: 50%;
     background: #82858c;
+    margin-right: 50px;
   }
 
   .back-btn:hover{
-    transform: scale(1.15);
+    transform: rotate(-180deg);
     transition: .3s all;
     z-index: 10000000;
     cursor: pointer;
@@ -629,7 +632,6 @@
     flex-wrap: wrap;
 
     width: 25vw;
-
   }
 
   .tasks-container{

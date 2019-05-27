@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="label" v-if="!this.isUnderstand">Эта вкладка позволяет использовать онлайн-компилятор в свободном режиме.
       Если вы хотите решать задачи, то перейдите во вкладку "ЗАДАЧИ"
     </div>
@@ -8,7 +8,9 @@
         свободному использованию</div>
       <div class="btn" @click="goToTasks">Использовать онлайн-компилятор для решения задач</div>
     </div>
-    <div></div>
+    <div class="label" v-if="this.isUnderstand">
+      Свободное использование
+    </div>
     <code-editor-component v-if="this.isUnderstand"
                            :place="this.postType"
                            :lang="this.activeLang"
@@ -50,7 +52,9 @@
             this.isUnderstand = true;
             this.$root.compilerIsOpen = true;
           }else{
-            alert("Не выбран ни один язык программирования. Пожалуйста выберите желаемый язык программирования")
+            let toastText = '<span>Не выбран ни один язык программирования.<br>' +
+              'Пожалуйста выберите желаемый язык программирования</span>';
+            M.toast({html: toastText, classes: 'rounded success'});
           }
         },
         goToTasks(){
@@ -61,7 +65,7 @@
           // this.compilerTabIsActive  = false;
           // this.$emit('changeTab');
           // this.$emit('getTasks');
-          this.$root.changeTab('tasks');
+          this.$root.changeTab('tasks', 'change');
           this.$router.push({name: 'tasks'});
         },
         emitReturn() {

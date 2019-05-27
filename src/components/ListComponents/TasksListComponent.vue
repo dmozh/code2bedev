@@ -24,7 +24,7 @@
 
             </div>
             <div class="tags">
-              <span></span>
+              Сложность: &nbsp;{{elem.task_difficulty}}
             </div>
           </div>
           <div class="post-body">
@@ -57,6 +57,7 @@
       name: "tasks-list-component",
       data () {
         return {
+          lang: '',
           response: '',
         }
       },
@@ -145,7 +146,7 @@
           const jBody = JSON.stringify(body);
           axios.post(this.$root.URL+'getTasks', jBody).then((response) => {
             this.response = response.data.tasks;
-            // console.log(response);
+            console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
@@ -163,5 +164,10 @@
 </script>
 
 <style scoped>
-
+  .tags{
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid grey;
+  }
 </style>

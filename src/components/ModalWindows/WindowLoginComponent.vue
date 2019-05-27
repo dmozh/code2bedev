@@ -69,7 +69,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
           <div class="cen" v-else>
@@ -192,7 +191,7 @@
                 const errorMessage = error.message;
                 // [START_EXCLUDE]
                 if (errorCode === 'auth/user-not-found') {
-                  let toastText = '<span>Текущего пользователя не существует</span>';
+                  let toastText = '<span>Данного пользователя не существует</span>';
                   M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
                   self.openLogCont = true;
                 }else if(errorCode === 'auth/wrong-password'){

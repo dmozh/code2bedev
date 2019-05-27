@@ -1,115 +1,40 @@
 <template>
   <div class="body">
-    <transition name="slide-fade">
-      <div class="col-container" v-if="onHide">
-
-          <div class="column">
-            <div class="col-header">
-              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentArticles">
-              <p>СТАТЬЮ</p>
-            </div>
-            <div class="col-body">
-              <p class="desc">
-                Описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-              </p>
-            </div>
-            <div class="col-footer">
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="col-header">
-              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentLessons">
-              <p>УРОК</p>
-            </div>
-            <div class="col-body">
-              <p class="desc">
-                Описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-              </p>
-            </div>
-            <div class="col-footer">
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="col-header">
-              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentTasks">
-              <p>ЗАДАЧУ</p>
-            </div>
-            <div class="col-body">
-              <p class="desc">
-                Описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-              </p>
-            </div>
-            <div class="col-footer">
-            </div>
-          </div>
-
-          <div class="column" v-if="this.userRole===666">
-            <div class="col-header">
-              <img src="../../assets/png/plus.png" class="icon pulse" @click="showCreateComponentNews">
-              <p>НОВОСТЬ</p>
-            </div>
-            <div class="col-body">
-              <p class="desc">
-                Описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-                описание описание описание описание описание
-              </p>
-            </div>
-            <div class="col-footer">
-            </div>
-          </div>
-
+    <div class="create-header">
+      <div class="label">СОЗДАТЬ</div>
+      <div class="create-tab-container">
+        <div class="create-tab btn" @click="showCreateComponentArticles" v-bind:class="{active_tab: isOpenArticles}">СТАТЬЮ</div>
+        <div class="create-tab btn" @click="showCreateComponentLessons" v-bind:class="{active_tab: isOpenLessons}">УРОК</div>
+        <div class="create-tab btn" @click="showCreateComponentTasks" v-bind:class="{active_tab: isOpenTasks}">ЗАДАЧУ</div>
+        <div class="create-tab btn" @click="showCreateComponentNews" v-bind:class="{active_tab: isOpenNews}" v-if="this.userRole===666">НОВОСТЬ</div>
       </div>
-    </transition>
+    </div>
+    <div class="container">
+      <transition name="slide-fade">
+        <create-post-component v-bind:is-article="this.isOpenArticles"
+                               v-bind:is-news="this.isOpenNews"
+                               v-if="this.isOpenArticles"
+                               @returns="toReturn">
+          <!--v-on:returns:returnMsg="this.returnMsg = toReturn"-->
 
-    <transition name="slide-fade">
-      <create-post-component v-bind:is-article="this.isOpenArticles"
-                             v-bind:is-news="this.isOpenNews"
-                             v-if="this.isOpenArticles"
-                             @returns="toReturn">
-                             <!--v-on:returns:returnMsg="this.returnMsg = toReturn"-->
+        </create-post-component>
+      </transition>
 
-      </create-post-component>
-    </transition>
+      <transition name="slide-fade">
+        <create-tasks-component v-if="this.isOpenTasks" @returns="toReturn"></create-tasks-component>
+      </transition>
 
-    <transition name="slide-fade">
-      <create-tasks-component v-if="this.isOpenTasks" @returns="toReturn"></create-tasks-component>
-    </transition>
+      <transition name="slide-fade">
+        <create-lesson-component v-if="this.isOpenLessons" @returns="toReturn"></create-lesson-component>
+      </transition>
 
-    <transition name="slide-fade">
-      <create-lesson-component v-if="this.isOpenLessons" @returns="toReturn"></create-lesson-component>
-    </transition>
-
-    <transition name="slide-fade">
-      <create-post-component v-bind:is-article="this.isOpenArticles"
-                                 v-bind:is-news="this.isOpenNews"
-                                 v-if="this.isOpenNews" @returns="toReturn">
-      </create-post-component>
-    </transition>
+      <transition name="slide-fade">
+        <create-post-component v-bind:is-article="this.isOpenArticles"
+                               v-bind:is-news="this.isOpenNews"
+                               v-if="this.isOpenNews" @returns="toReturn">
+        </create-post-component>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -233,18 +158,16 @@
     text-align: center;
   }
 
-  .body{
-      display: -webkit-flex;
-      -webkit-flex-wrap: wrap;
-      display: flex;
-      flex-wrap: wrap;
-      width: 100%;
-      height: 90%;
-
-    justify-content: center;
-    align-items: center;
+  .create-header, .create-tab-container, .create-tab, .label{
+    display: flex;
+    flex-wrap: nowrap;
   }
 
+  .body{
+    display: flex;
+    flex-wrap: wrap!important;
+    justify-content: center;
+  }
   .col-container{
 
     @media (max-width: 1200px) {
@@ -267,53 +190,6 @@
     align-items: center;
     /*background: aqua;*/
     /*z-index: 1000;*/
-  }
-
-  .column{
-
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
-    width: 19vw;
-    margin-right: auto;
-    background: rgba(0,0,0,.05);
-    height: 100%;
-  }
-
-  .col-header{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 10vh;
-    border-bottom: 2px solid rgb(163, 157, 165);
-    justify-content: flex-start;
-    align-items: center;
-    font-size: 2.5vw;
-  }
-
-  .col-footer{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 10vh;
-    align-items: center;
-    border-top: 2px solid rgb(163, 157, 165);
-  }
-
-  .col-body{
-    display: -webkit-flex;
-    -webkit-flex-wrap: wrap;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    height: 60%;
-    font-size: 1.2vw;
-    margin: auto;
   }
 
   .icon{
@@ -389,9 +265,51 @@
     opacity: 0;
   }
 
-  /*.slide-fade-leave-to{*/
-    /*transform: translateX(1005px);*/
-    /*opacity: 0;*/
-  /*}*/
+  .label{
+    justify-content: center;
+    align-items: center;
+    color: #93989f;
+    font-size: 2em;
+  }
+
+  .create-header{
+    background: rgba(155, 216, 213, 0.43);
+    justify-content: center;
+    width: 90%;
+    height: 7vh;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .create-tab-container{
+    margin-right: 20px;
+    align-items: center;
+    /*width: 30%;*/
+    justify-content: baseline;
+  }
+
+  .create-tab{
+    margin: 0 10px 0 10px;
+    font-size: 1.5em;
+    align-items: center;
+    height: 60%;
+  }
+
+  .create-tab:hover{
+    transform: scale(1.05);
+    transition: .15s;
+    cursor: pointer;
+  }
+
+  .active_tab{
+    transform: scale(1.1);
+    transition: .2s all;
+    /*z-index: 1000;*/
+    background: rgb(74, 205, 215);
+    /*box-shadow: 0 2px 20px 2px rgb(68, 215, 205);*/
+  }
+
+  .active_tab:hover{
+    transform: scale(1.1);
+  }
 
 </style>

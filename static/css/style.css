@@ -1,9 +1,11 @@
 .warning{
   background: #e67d7d;
+  font-weight: bold;
 }
 
 .success{
   background: #8bffa0;
+  font-weight: bold;
 }
 
 .pulse {

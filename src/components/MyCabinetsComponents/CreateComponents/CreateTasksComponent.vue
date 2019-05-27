@@ -1,7 +1,9 @@
 <template>
   <div class="create-components-form-container">
     <div class="header">
-      <!--ARTICLES-->
+      <div class="back-btn waves-effect waves-dark" v-if="isUpdate">
+        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
+      </div>
       <div class="optional-container">
         <label for="langSelect">Выберите язык программирования</label>
         <select id="langSelect" class="custom-select">
@@ -15,9 +17,6 @@
           <span class="tooltiptext">Этот параметр обязателен</span>
         </div>
         <label v-if="isUpdate">Сейчас задача относится к: {{reqLangName}}</label>
-      </div>
-      <div class="back-btn waves-effect waves-dark">
-        <img src="../../../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
       </div>
     </div>
     <div class="main-content-container">
@@ -54,7 +53,7 @@
                   </div>
                 </div>
                 <div class="lessons">
-                  <!--<label v-if="this.selectedLessons.length===0">Добавьте связанные уроки с этой задачей</label>-->
+                  <label v-if="this.selectedLessons.length===0">Добавьте связанные уроки с этой задачей</label>
                   <div>
                     <span v-for="(lesson, index) in selectedLessons"
                           :key="lesson.lesson_id" class="les"
@@ -366,18 +365,18 @@
   .create-components-form-container{
     @media (max-width: 1200px) {
       /*width: 1vw;*/
-      height: 60vh;
+      /*height: 60vh;*/
     }
     @media (max-width: 900px) {
       /*width: 19vw;*/
-      height: 50vh;
+      /*height: 50vh;*/
     }
     position: relative;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    width: 80vw;
+    width: 100%;
     /*height: 80vh;*/
     height: auto;
     justify-content: center;
@@ -419,24 +418,24 @@
 
   .middle{
     justify-content: space-between;
-    width: 80vw;
+    width: 100%;
     margin-bottom: 5px;
   }
 
   .lessons-container{
     justify-content: inherit;
-    width: 35vw;
+    width: 55.3%;
   }
 
   .lessons{
     padding: 5px 2px 5px 2px;
     border: solid 1px rgba(0, 0, 0, 0.31);
-    width: 32vw;
+    width: 91%;
   }
 
   .top-block{
     height: 13vh;
-    width: 80vw;
+    width: 100%;
     align-content: center;
   }
 
@@ -466,18 +465,20 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 5vh;
-    width: 2.5vw;
+    height: 50px;
+    width: 50px;
+    transform: rotate(-180deg);
     border-radius: 50%;
     background: #82858c;
+    margin-right: 50px;
   }
 
   .back-btn:hover{
-    transform: scale(1.15);
     transition: .3s all;
     z-index: 10000000;
     cursor: pointer;
     background: rgba(126, 215, 118, 0.1);
+    transform: rotate(-180deg);
     box-shadow: 0 2px 20px 2px rgb(140, 211, 215);
   }
 
@@ -493,13 +494,14 @@
   }
 
   .header{
+    margin-top: 50px;
     width: 100%;
     height: 5vh;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .button{
@@ -510,7 +512,7 @@
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    margin: 2.5vh 0 0 0;
+    margin: 2.5vh 0 30px 0;
   }
 
   .button:hover{
@@ -519,7 +521,7 @@
   }
 
   .custom-input-name-field{
-    width: 80vw !important;
+    /*width: 80vw !important;*/
     height: auto !important;
     font-size: 3vw !important;
   }
@@ -532,40 +534,41 @@
   }
 
   .text-block{
-    width: 80vw;
+    width: 100%;
     justify-content: space-between;
   }
 
   .input-output-block{
-    width: 35vw;
-    justify-content: space-evenly;
+    width: 100%;
+    justify-content: flex-end;
   }
 
   .article-text-textarea{
-    max-width: 40vw;
-    max-height: 30vh;
-    min-width: 40vw;
+    max-width: 42%;
+    /*max-height: 30vh;*/
+    min-width: 42%;
     min-height: 30vh;
   }
 
   .desc-textarea{
-    max-width: 40vw;
-    max-height: 17vh;
-    min-width: 40vw;
+    max-width: 42%;
+    /*max-height: 17vh;*/
+    min-width: 42%;
     min-height: 17vh;
   }
 
   #input-textarea{
-    max-width: 15vw;
-    max-height: 30vh;
-    min-width: 15vw;
+    max-width: 42%;
+    /*max-height: 30vh;*/
+    min-width: 42%;
     min-height: 30vh;
+    margin-right: 20px;
   }
 
   #output-textarea{
-    max-width: 15vw;
-    max-height: 30vh;
-    min-width: 15vw;
+    max-width: 42%;
+    /*max-height: 30vh;*/
+    min-width: 42%;
     min-height: 30vh;
   }
 
@@ -589,7 +592,7 @@
     display: flex;
     flex-wrap: wrap;
 
-    width: 77.5vw;
+    /*width: 100%;*/
     height: 100%;
 
     justify-content: flex-start;

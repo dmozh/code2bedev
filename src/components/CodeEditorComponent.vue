@@ -3,21 +3,66 @@
     <div class="main">
       <div class="header-editor-container">
         <div class="btn-container">
-          <img id="exec-btn" @click="execute(false)" src="../assets/png/exec_btn.png"/>
+          <img id="exec-btn" @click="execute(false)" src="../assets/png/exec_btn.png" v-if="!isExecute">
+          <div class="cen" v-else>
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+
+              <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="editor"></div>
       <div class="input-container">
         <textarea class="input-area" placeholder="Введите сюда stdin" v-model="inputData"></textarea>
+        <textarea class="output-area" placeholder="Здесь отобразится stdout" disabled v-model="outputData"></textarea>
       </div>
     </div>
-    <div class="output-container">
-      <div style="width: 21vw; height: 3vh; background: white; display: flex; justify-content: center; align-items: center;" >
-        <button class="button" @click="validCheck" v-if="this.place==='task'">Проверить</button>
-      </div>
-      <textarea class="output-area" placeholder="Здесь отобразится stdout"
-                disabled v-model="outputData"></textarea>
-    </div>
+    <button class="btn s" @click="validCheck" v-if="this.place==='task' && !isExecute">Проверить</button>
+    <!--<div class="output-container">-->
+      <!--<div style="width: 21vw; height: 3vh; background: white; display: flex; justify-content: center; align-items: center;" >-->
+        <!--<button class="button" @click="validCheck" v-if="this.place==='task'">Проверить</button>-->
+      <!--</div>-->
+      <!--<textarea class="output-area" placeholder="Здесь отобразится stdout"-->
+                <!--disabled v-model="outputData"></textarea>-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -25,6 +70,7 @@
   import ace from 'ace-builds/src-noconflict/ace.js'
   import axios from 'axios'
   import "ace-builds/webpack-resolver"
+  import regeneratorRuntime from "regenerator-runtime";
 
   export default {
     name: "code-editor-component",
@@ -61,11 +107,13 @@
         outputData: '',
 
         isExecute: false,
+
+        executing: false,
       }
     },
 
     methods: {
-      execute(isCheck){
+      async execute(isCheck){
         this.outputData = '';
 
         this.isExecute = true;
@@ -91,25 +139,27 @@
             input: this.inputData
           };
         }
-
+        let self = this;
         const jBody = JSON.stringify(body);
         if(!isCheck){
-          axios.post(this.$root.URL+'executeCode', jBody)
-            .then((response) => {
+          await axios.post(this.$root.URL+'executeCode', jBody).then((response) => {
             this.outputData = response.data.output;
+            self.isExecute = false;
             console.log(response)
           }).catch((error) => {
             console.log(error);
           });
         }else{
-          axios.post(this.$root.URL+'checkExecuteCode', jBody)
-            .then((response) => {
+
+          await axios.post(this.$root.URL+'checkExecuteCode', jBody).then((response) => {
             this.outputData = response.data.output;
+            self.isExecute = false;
             if (response.data.isDecided){
-            //TODO создать кастомную модалку
-              alert('Congratulations')
+              let toastText = '<span>Поздравляю, тестовые данные и ожидаемые выходные данные сошлись</span>';
+              M.toast({html: toastText, classes: 'rounded success'});
             }else {
-              alert('Please try again')
+              let toastText = '<span>Сожалею :(<br>Данные не сошлись, попробуйте еще раз</span>';
+              M.toast({html: toastText, classes: 'rounded warning'});
             }
             console.log(response)
           }).catch((error) => {
@@ -187,8 +237,8 @@
   }
 
   .code-editor-container{
-    width: 71vw;
-    height: 60vh;
+    width: 100%;
+    /*height: 60vh;*/
     /*background: red;*/
     align-content: baseline;
     -webkit-flex-wrap: nowrap;
@@ -196,15 +246,15 @@
   }
 
   .header-editor-container{
-    width: 50vw;
-    height: 3vh;
+    width: 100%;
+    height: 50px;
     background: white;
     justify-content: flex-end;
   }
 
   .btn-container{
-    height: 3vh;
-    width: 1.5vw;
+    height: 40px;
+    /*width: 30px;*/
     background: rgba(199, 199, 199, 0.41);
 
     align-items: center;
@@ -222,7 +272,7 @@
   }
 
   .main{
-    width: 50vw;
+    width: 85%;
     align-content: baseline;
   }
 
@@ -230,14 +280,14 @@
     background: white;
     /*margin-left: 40px;*/
     width: 100%;
-    height: 12vh;
+    /*height: 12vh;*/
   }
 
   .input-area{
-    min-width: 100%;
+    min-width: 50%;
     min-height: 12vh;
-    max-width: 100%;
-    max-height: 12vh;
+    max-width: 50%;
+    /*max-height: 12vh;*/
     /*border: none;*/
   }
 
@@ -248,16 +298,16 @@
   }
 
   .output-area{
-    min-width: 21vw;
-    min-height: 57vh;
-    max-width: 21vw;
-    max-height: 57vh;
+    min-width: 50%;
+    min-height: 12vh;
+    max-width: 50%;
+    /*max-height: 12vh;*/
 
 
   }
 
   #editor{
-    width: 50vw;
+    width: 100%;
     height: 45vh;
   }
 
@@ -274,6 +324,15 @@
   .button:hover{
     transition: .5s all;
     background: #a6ffb7;
+  }
+
+  .cen{
+    max-height: 100%;
+    max-width: 100%;
+    > div{
+      width: 29px;
+      height: 29px;
+    }
   }
 
 </style>

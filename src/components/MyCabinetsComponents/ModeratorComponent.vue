@@ -211,7 +211,7 @@
   .mod-tab-container{
     margin-right: 20px;
     align-items: center;
-    width: 30%;
+    /*width: 30%;*/
     justify-content: baseline;
   }
 

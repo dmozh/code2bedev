@@ -3,8 +3,12 @@
     <div class="posts-container">
       <div class="post"
            v-for="elem in response"
-           :key="elem.news_id"
-           @onload="parse(elem.added_time, elem.last_update)">
+           :key="elem.news_id">
+        <!--v-bind:class="[-->
+        <!--{criticalImportant: criticalImportantClass},-->
+        <!--{veryImportant: veryImportantClass},-->
+        <!--{important: importantClass},-->
+        <!--{notImportant: notImportantClass}]">-->
         <div class="post-content">
           <div class="post-header">
             <div class="title">
@@ -24,7 +28,8 @@
 
             </div>
             <div class="tags">
-              <span></span>
+              <div>Тэги:&nbsp;</div>
+              <span v-for="(tag, index) in elem.news_tags" :key="index" class="tag">#{{tag}}</span>
             </div>
           </div>
           <div class="post-body">
@@ -42,7 +47,6 @@
               <p class="info"   v-else>Рейтинг <span class="s">{{elem.news_rate}}</span></p>
               <p class="info">Просмотров {{elem.views}}</p>
             </div>
-
           </div>
         </div>
       </div>
@@ -58,9 +62,28 @@
       data () {
         return {
           response: '',
+
+          criticalImportant: false,
+          veryImportant: false,
+          important: false,
+          notImportant: false,
+
+          criticalImportantClass: 'critical_important',
+          veryImportantClass: 'very_important',
+          importantClass: 'important',
+          notImportantClass: 'not_important',
         }
       },
       methods: {
+        // showImportant: function (importance, event) {
+        //   console.log(document.getElementsByClassName('post'));
+          // let elem = document.getElementsByClassName('post')
+          // console.log(elem);
+          // if(importance===0){
+            // console.log(doc)
+            // doc.classList.add('not_important')
+          // }
+        // },
         parseDateTime: function (dateTime, type) {
           let temp = '';
           let date = new Date();
@@ -142,7 +165,7 @@
 
           axios.get(this.$root.URL+'getNews').then((response) => {
             this.response = response.data.news;
-            // console.log(response);
+            console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
@@ -160,5 +183,30 @@
 </script>
 
 <style scoped>
+  .tag{
+    height: 1.5vh;
+    color: #006dff;
+  }
+  .tags{
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid grey;
+  }
 
+  /*.post{*/
+    /*border: 1px solid grey;*/
+  /*}*/
+
+  .critical_important{
+    background: rgba(255, 171, 172, 0.2);
+  }
+  .very_important{
+    background: rgba(255, 248, 145, 0.23);
+  }
+  .important{
+    background: rgba(155, 255, 155, 0.2);
+  }
+  .not_important{
+    background: rgba(128, 128, 128, 0.51);
+  }
 </style>

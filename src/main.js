@@ -7,6 +7,15 @@ import axios from 'axios'
 import regeneratorRuntime from "regenerator-runtime";
 
 let app ='';
+// let config = {
+//   apiKey: "AIzaSyBOYOK6b8obzZYD9I5TZSz-bC-6PjPpSn0",
+//   authDomain: "code2bedev.firebaseapp.com",
+//   databaseURL: "https://code2bedev.firebaseio.com",
+//   projectId: "code2bedev",
+//   storageBucket: "code2bedev.appspot.com",
+//   messagingSenderId: "598713114594",
+//   appId: "1:598713114594:web:8c3634c5392f2393"
+// };
 const config = {
   apiKey: "AIzaSyBikSr7T1CseO8oLZpCDIGSnkR05u7aax4",
   authDomain: "test-auth-vuejs.firebaseapp.com",
@@ -82,10 +91,15 @@ firebase.auth().onAuthStateChanged(()=>{
           this.myCabIsOn = false;
           this.welcomeIsOn = false;
         },
-        changeTab(tab){
+        changeTab(tab, key){
           //так делать очень-очень плохо
           // console.log(tab);
-          this.$children[0]._vnode.children[0].child.activeTab(tab)
+          if(key==='change'){
+            this.$children[0]._vnode.children[0].child.activeTab(tab, 'tabChange')
+          }
+          else if (key===''){
+            this.$children[0]._vnode.children[0].child.activeTab(tab, '')
+          }
         },
         async getAuthUser(){
           if(this.authUser){

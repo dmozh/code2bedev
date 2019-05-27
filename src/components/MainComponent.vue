@@ -6,11 +6,11 @@
       <div class="content-container ">
         <div class="content-header">
           <div class="top-panel" >
-            <div class="signed-in" v-if="this.$root.authUser">
-              <div v-if="this.$root.activeUserName !== null">Signed in as {{this.$root.activeUserName}}</div>
-              <div v-if="!this.$root.authUser.emailVerified" class="warning">Email verified is {{this.$root.authUser.emailVerified}}</div>
-              <div v-if="this.$root.activeLang !== null">Current lang {{this.$root.activeLang}}</div>
-            </div>
+            <!--<div class="signed-in" v-if="this.$root.authUser">-->
+              <!--<div v-if="this.$root.activeUserName !== null">Signed in as {{this.$root.activeUserName}}</div>-->
+              <!--<div v-if="!this.$root.authUser.emailVerified" class="warning">Email verified is {{this.$root.authUser.emailVerified}}</div>-->
+              <!--<div v-if="this.$root.activeLang !== null">Current lang {{this.$root.activeLang}}</div>-->
+            <!--</div>-->
             <div class="bottom-panel">
 
             </div>

@@ -1,13 +1,23 @@
 <template>
-    <div class="body">
+    <div class="container">
       <div class="content-container">
         <div class="content-header">
+          <!--<div class="back-btn waves-effect waves-dark" v-if="isUpdate">-->
+            <!--<img src="../assets/png/back_arrow2.png" class="icon" @click="emitReturn">-->
+          <!--</div>-->
           <div class="info-block">
             <div class="post-type-block">
               <div v-if="this.postType==='article'">Статья</div>
               <div v-if="this.postType==='news'">Новость</div>
               <div v-if="this.postType==='lesson'">Урок</div>
               <div v-if="this.postType==='task'">Задача</div>
+            </div>
+            <div class="post-rate-block">
+              Рейтинг: {{this.postRate}}
+              <div class="arrows-container">
+                <img src="../assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">
+                <img src="../assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">
+              </div>
             </div>
             <div class="post-seen-block">
               Просмотрено: {{posts_views}} раз
@@ -20,15 +30,12 @@
               <div v-else-if="this.newsImportance === 3">Важность новости: Критически важно</div>
             </div>
           </div>
-          <div class="back-btn waves-effect waves-dark" @click="emitReturn">
-            <img src="../assets/png/back_arrow2.png" class="icon" @click="emitReturn">
-          </div>
         </div>
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
           <div class="post-text-block"></div>
-          <div v-if="this.postType==='task'">
+          <div class="compiler" v-if="this.postType==='task'">
             <code-editor-component v-if="this.activeLang !== null"
                                    :place="this.postType"
                                    :lang="this.activeLang"
@@ -38,14 +45,40 @@
                                    :taskId = "this.postId"
             ></code-editor-component>
           </div>
+          <div class="linked-lesson-container" v-if="this.postType==='task' && linkedLessons.length>0">
+            <div class="head">
+              Уроки которые помогут вам в решении этой задачи
+            </div>
+            <div class="post-list">
+              <div v-for="lesson in linkedLessons"
+                   :key="lesson.lesson_id"
+                   class="post-elem"
+                   @click="goTo('lesson',lesson.lesson_id)">
+                <div class="name">{{lesson.lesson_name}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="linked-lesson-container" v-else-if="this.postType==='lesson' && linkedTasks.length>0">
+            <div class="head">
+              Задачи для закрепления материала
+            </div>
+            <div class="post-list">
+              <div v-for="task in linkedTasks"
+                   :key="task.task_id"
+                   class="post-elem"
+                   @click="goTo('task',task.task_id)">
+                <div class="name">{{task.task_name}}</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="content-footer">
           <div class="post-rate-block">
-            Рейтинг: {{this.postRate}}
-            <div class="arrows-container">
-              <img src="../assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">
-              <img src="../assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">
-            </div>
+            <!--Рейтинг: {{this.postRate}}-->
+            <!--<div class="arrows-container">-->
+              <!--<img src="../assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">-->
+              <!--<img src="../assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">-->
+            <!--</div>-->
           </div>
         </div>
       </div>
@@ -93,14 +126,78 @@
 
           testInput: '',
           expectedOutput: '',
-          lessonID: '',
-          lessonName: ''
+          linkedLessons: null,
+          linkedTasks: null,
         }
       },
 
       methods: {
         emitReturn() {
           this.$emit('returns')
+        },
+
+        goTo(postType, postId){
+          let body = {
+            postId: postId,
+            postType: postType,
+          };
+          const jBody = JSON.stringify(body);
+          const base64 = Buffer.from(jBody).toString("base64");
+          if(this.postType==='task'){
+            this.$root.changeTab('lessons', '');
+            this.$router.push({name: 'post',
+              params:{postsType: 'lessons', type: postType, params: base64}});
+            this.postType = 'lesson';
+            this.getInfos(postType, postId);
+          }else if(this.postType==='lesson'){
+            this.$root.changeTab('tasks', '');
+            this.$router.push({name: 'post',
+              params:{postsType: 'tasks', type: postType, params: base64}});
+            this.postType = 'task';
+            this.getInfos(postType, postId);
+          }
+        },
+
+        getInfos(postType, postId){
+          let body = {
+            type: postType,
+            id: postId,
+          };
+          const jBody = JSON.stringify(body);
+          axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
+            this.postText = response.data.post_text;
+            this.posts_views = response.data.views;
+            this.postName = response.data.post_name;
+            this.postDescription = response.data.post_description;
+            this.postRate = response.data.post_rate;
+            this.postTags = response.data.post_tags;
+            this.postLang = response.data.post_lang;
+            if(this.activeLang===null){
+              this.activeLang = this.postLang;
+            }
+            this.author = response.data.author;
+            this.addedTime = response.data.added_time;
+            this.lastUpdate = response.data.last_update;
+
+            if (postType === 'task'){
+              this.testInput = response.data.test_input;
+              this.expectedOutput = response.data.expected_output;
+              this.linkedLessons = response.data.linked_lessons;
+            }
+
+            if (postType === 'lesson'){
+              this.linkedTasks = response.data.linked_tasks;
+            }
+            if (postType === 'news'){
+              this.newsImportance = response.data.news_importance;
+            }
+            let parentElem = document.getElementsByClassName('post-text-block');
+            parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
+            // console.log(parentElem);
+            console.log(response);
+          }).catch((error) => {
+            console.log(error);
+          });
         },
 
         haveIs(arr, postId, postType){
@@ -324,52 +421,21 @@
       },
 
       mounted: function () {
+        // sessionStorage.setItem('activeViewPost', true);
         sessionStorage.setItem('currentRoute', this.$route.fullPath);
         // sessionStorage.setItem('activeRouteOnMain', this.$route.name);
-        this.activeLang = sessionStorage.getItem('activeLang');
+        if(sessionStorage.getItem('activeLang')){
+          this.activeLang = sessionStorage.getItem('activeLang');
+        }
         const params = this.decodeBase64Params();
         this.postId = params.postId;
         this.postType = params.postType;
 
-
         let postId = this.postId;
         let postType = this.postType;
 
-
+        this.getInfos(postType,postId);
         // console.log(this.postType);
-        let body = {
-            type: postType,
-            id: postId,
-          };
-        const jBody = JSON.stringify(body);
-        axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
-          this.postText = response.data.post_text;
-          this.posts_views = response.data.views;
-          this.postName = response.data.post_name;
-          this.postDescription = response.data.post_description;
-          this.postRate = response.data.post_rate;
-          this.postTags = response.data.post_tags;
-          this.postLang = response.data.post_lang;
-          this.author = response.data.author;
-          this.addedTime = response.data.added_time;
-          this.lastUpdate = response.data.last_update;
-
-          if (postType === 'task'){
-            this.testInput = response.data.test_input;
-            this.expectedOutput = response.data.expected_output;
-            this.lessonName = response.data.lesson_name;
-            this.lessonID = response.data.lesson_id;
-          }
-          if (postType === 'news'){
-            this.newsImportance = response.data.news_importance;
-          }
-          let parentElem = document.getElementsByClassName('post-text-block');
-          parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
-          // console.log(parentElem);
-          console.log(response);
-          }).catch((error) => {
-            console.log(error);
-        });
 
         if (this.$root.authUser !== null) {
           const userId = localStorage.getItem('userID');
@@ -427,6 +493,7 @@
         sessionStorage.setItem('lastRoute', lastRoute);
       },
       destroyed: function () {
+        // sessionStorage.setItem('activeViewPost', false);
         this.$root.postIsOpen = false;
       }
     }
@@ -449,11 +516,51 @@
 
   .body, .content-container, .content-header, .content-body, .content-footer,
   .info-block, .post-seen-block, .post-rate-block, .news-importance-block, .post-name-block, .post-text-block,
-  .post-description-block, .code-editor-container, .left-panel, .line-number, .main-editor, .editor, .arrows-container{
+  .post-description-block, .code-editor-container, .left-panel, .line-number, .main-editor, .editor, .arrows-container,
+  .linked-lesson-container, .head, .post-list, .post-elem, .name{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
+  }
+
+  .linked-lesson-container{
+    margin-top: 50px;
+    width: 100%;
+  }
+
+  .head{
+    width: 100%;
+    color: #93989f;
+    font-size: 2rem;
+  }
+
+  .post-list{
+    width: 100%;
+    justify-content: baseline;
+    align-items: center;
+  }
+
+  .post-elem{
+    margin: 5px 5px 5px 5px;
+    padding: 10px 10px 10px 10px;
+    /*margin: auto;*/
+    justify-content: center;
+    /*width: 25%;*/
+    background: #e1e1e1;
+    border-radius: 10px;
+  }
+
+  .post-elem:hover{
+    transform: scale(1.05);
+    transition: .2s;
+    cursor: pointer;
+  }
+
+  .name{
+    justify-content: center;
+    width: 100%;
+    font-size: 1.5rem;
   }
 
   .body{
@@ -465,12 +572,15 @@
 
   .content-container{
     /*height: 90vh;*/
-    width: 85vw;
+    width: 100%;
+    background: aliceblue;
     align-content: baseline;
+    justify-content: center;
+
   }
 
   .content-header{
-    width: 83vw;
+    width: 100%;
     height: 8vh;
     justify-content: flex-end;
     align-items: center;
@@ -512,7 +622,7 @@
   }
 
   .info-block{
-    width: 80vw;
+    width: 95%;
     justify-content: space-between;
   }
 
@@ -537,8 +647,8 @@
   }
 
   .content-body{
-    width: 85vw;
-    min-height: 90vh;
+    width: 95%;
+    min-height: 90%;
     height: auto;
     /*height: 100%;*/
     /*justify-content: center;*/
@@ -546,7 +656,7 @@
   }
 
   .post-name-block{
-    width: 80vw;
+    width: 100%;
     /*height: 2em;*/
     font-size: 4rem;
     /*background: rgba(191, 191, 191, 0.27);*/
@@ -559,7 +669,7 @@
     margin-top: 1vh;
     padding-right: 0.5vw;
     padding-left: 0.5vw;
-    width: 71vw;
+    width: 95%;
     /*height: 15vh;*/
     font-size: 0.9em;
     /*border-bottom: solid 10px #bfbfbf;*/
@@ -575,7 +685,7 @@
     margin-top: 1vh;
     padding-right: 0.5vw;
     padding-left: 0.5vw;
-    width: 71vw;
+    width: 90%;
     height: auto;
     font-size: 0.9rem;
     /*background: rgba(191, 191, 191, 0.27);*/
@@ -634,7 +744,9 @@
   }
 
   .content-footer{
-    width: 85vw;
+    margin-top: 30px;
+    /*width: 85vw;*/
+    width: 100%;
   }
 
   .test{
@@ -646,11 +758,17 @@
   .code-editor-container{
     margin-top: 10px;
     width: 71vw;
-    height: 60vh;
+    /*height: 60vh;*/
     /*background: white;*/
 
     -webkit-flex-wrap: nowrap;
     flex-wrap: nowrap;
     /*overflow-y: auto;*/
+  }
+
+  .compiler{
+    display: flex;
+    height: auto;
+    width: 100%;
   }
 </style>
