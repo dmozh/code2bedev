@@ -96,6 +96,10 @@ firebase.auth().onAuthStateChanged(()=>{
           return this.authUser;
         },
 
+        getRole(){
+          return this.activeUserRole;
+        },
+
         async getUserName(){
           await this.getAuthUser();
           //если пользователь авторизован, получаем из бд его данные

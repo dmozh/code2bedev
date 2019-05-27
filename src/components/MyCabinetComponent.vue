@@ -69,12 +69,15 @@
       mounted: function() {
         sessionStorage.setItem('currentRoute', this.$router.currentRoute.name);
 
-        if (this.$root.getAuthUser() === null){
-          this.$router.replace('/')
-        }
-        this.$root.myCabOn();
-        if (this.$router.currentRoute.name === 'profile'){
+        if (this.$root.getAuthUser === null){
+          let toastText = '<span>Пожалуйста авторизируйтесь</span>';
+          M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+          this.$router.go(-1)
+        }else {
           this.$root.myCabOn();
+          if (this.$router.currentRoute.name === 'profile') {
+            this.$root.myCabOn();
+          }
         }
 
         //TODO при добавление нового урока нужно чтобы массив обновлялся,

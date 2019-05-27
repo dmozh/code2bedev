@@ -212,8 +212,14 @@
       },
 
       mounted: function () {
-        this.$root.myCabOn();
-        this.userRole = Number(localStorage.getItem('userRole'));
+        if (this.$root.getAuthUser === null ){
+          let toastText = '<span>Пожалуйста авторизируйтесь</span>';
+          M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+          this.$router.go(-1)
+        }else{
+          this.$root.myCabOn();
+          this.userRole = Number(localStorage.getItem('userRole'));
+        }
       }
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <transition name="slide-fade">
-      <div class="inner-container" v-if="onHide">
+      <div class="container" v-if="onHide">
         <div class="header">
           <label for="postsType">Выберите какие посты показать: </label>
           <select id="postsType" class="custom-select" @change="change()">
@@ -19,30 +19,31 @@
                    v-for="(item) in progLanguages"
                    :key="item.id">
                 <div class="post-block-content-types-header">{{item.lang}}</div>
-                <div class="posts-container">
-                  <div class="wrapper-container">
-                    <div class="post-card"
-                         v-for="elem in response.articles"
-                         :key="elem.article_id"
-                         v-if="elem.lang_name === item.lang">
-                      <div class="left-container-post-card">
-                        <div class="post-logo">Картинки нет</div>
-                        <div class="btns-container">
-                          <div class="functional-btn update-btn"
-                               @click="showCreateComponentArticles(elem.article_id, elem.article_name, elem.article_description,
+                <div class="container">
+                  <div class="card blue-grey darken-1"
+                       v-for="elem in response.articles"
+                       :key="elem.article_id"
+                       v-if="elem.lang_name === item.lang">
+                    <div class="card-content white-text">
+                      <span class="card-title">Название статьи: {{elem.article_name}}</span>
+                      <p class="txt">Описание статьи: {{elem.article_description}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Текст статьи: {{elem.article_text}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Тэги: {{elem.article_tags}}</p>
+                      <div class="splitter"></div>
+                    </div>
+                    <div class="card-action">
+                      <div class="update-btn btn"
+                           @click="showCreateComponentArticles(elem.article_id, elem.article_name, elem.article_description,
                                                             elem.article_text, elem.article_tags, elem.lang_id, elem.lang_name)">
-                            <img src="../../assets/png/change_button.png" class="icon">
-                          </div>
-                          <div class="functional-btn delete-btn"
-                               @click="deleteArticle(elem.article_id, $event)">
-                            <img src="../../assets/png/delete_button.png" class="icon">
-                          </div>
-                        </div>
+                        <p>Редактировать</p>
+                        <img src="../../assets/png/change_button.png" class="icon">
                       </div>
-                      <div class="right-container-post-card">
-                        <div class="right-container-post-card-header">{{elem.article_name}}</div>
-                        <div class="right-container-post-card-body">{{elem.article_description}}</div>
-                        <div class="right-container-post-card-footer">Рейтинг статьи: {{elem.article_rate}}</div>
+                      <div class="delete-btn btn"
+                           @click="deleteArticle(elem.article_id, $event)">
+                        <p>Удалить</p>
+                        <img src="../../assets/png/delete_button.png" class="icon">
                       </div>
                     </div>
                   </div>
@@ -59,30 +60,31 @@
                    v-for="(item) in progLanguages"
                    :key="item.id">
                 <div class="post-block-content-types-header">{{item.lang}}</div>
-                <div class="posts-container">
-                  <div class="wrapper-container">
-                    <div class="post-card"
-                         v-for="elem in response.lessons"
-                         :key="elem.lesson_id"
-                         v-if="elem.lang_name === item.lang">
-                      <div class="left-container-post-card">
-                        <div class="post-logo">Картинки нет</div>
-                        <div class="btns-container">
-                          <div class="functional-btn update-btn"
-                               @click="showCreateComponentLessons(elem.lesson_id, elem.lesson_name, elem.lesson_description,
-                                                                  elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name)">
-                            <img src="../../assets/png/change_button.png" class="icon">
-                          </div>
-                          <div class="functional-btn delete-btn"
-                               @click="deleteLesson(elem.lesson_id, $event)">
-                            <img src="../../assets/png/delete_button.png" class="icon">
-                          </div>
-                        </div>
+                <div class="container">
+                  <div class="card blue-grey darken-1"
+                       v-for="elem in response.lessons"
+                       :key="elem.lesson_id"
+                       v-if="elem.lang_name === item.lang">
+                    <div class="card-content white-text">
+                      <span class="card-title">Название урока: {{elem.lesson_name}}</span>
+                      <p class="txt">Описание урока: {{elem.lesson_description}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Текст урока: {{elem.lesson_text}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Тэги: {{elem.lesson_tags}}</p>
+                      <div class="splitter"></div>
+                    </div>
+                    <div class="card-action">
+                      <div class="update-btn btn"
+                           @click="showCreateComponentLessons(elem.lesson_id, elem.lesson_name, elem.lesson_description,
+                                                elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name)">
+                        <p>Редактировать</p>
+                        <img src="../../assets/png/change_button.png" class="icon">
                       </div>
-                      <div class="right-container-post-card">
-                        <div class="right-container-post-card-header">{{elem.lesson_name}}</div>
-                        <div class="right-container-post-card-body">{{elem.lesson_description}}</div>
-                        <div class="right-container-post-card-footer">Рейтинг урока: {{elem.lesson_rate}}</div>
+                      <div class="delete-btn btn"
+                           @click="deleteLesson(elem.lesson_id, $event)">
+                        <p>Удалить</p>
+                        <img src="../../assets/png/delete_button.png" class="icon">
                       </div>
                     </div>
                   </div>
@@ -99,30 +101,32 @@
                    v-for="(item) in progLanguages"
                    :key="item.id">
                 <div class="post-block-content-types-header">{{item.lang}}</div>
-                <div class="posts-container">
-                  <div class="wrapper-container">
-                    <div class="post-card"
-                         v-for="elem in response.tasks"
-                         :key="elem.task_id"
-                         v-if="elem.lang_name === item.lang">
-                      <div class="left-container-post-card">
-                        <div class="post-logo">Картинки нет</div>
-                        <div class="btns-container">
-                          <div class="functional-btn update-btn"
-                               @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
-                                            elem.task_text, elem.lang_id, elem.lang_name, elem.task_difficulty, elem.test_input, elem.expected_output, elem.lessons)">
-                            <img src="../../assets/png/change_button.png" class="icon">
-                          </div>
-                          <div class="functional-btn delete-btn"
-                               @click="deleteTask(elem.task_id, $event)">
-                            <img src="../../assets/png/delete_button.png" class="icon">
-                          </div>
-                        </div>
+                <div class="container">
+                  <div class="card blue-grey darken-1"
+                       v-for="elem in response.tasks"
+                       :key="elem.task_id"
+                       v-if="elem.lang_name === item.lang">
+                    <div class="card-content white-text">
+                      <span class="card-title">Название задачи: {{elem.task_name}}</span>
+                      <p class="txt">Описание задачи: {{elem.task_description}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Текст задачи: {{elem.task_text}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Сложность: {{elem.task_difficulty}}</p>
+                      <div class="splitter"></div>
+                    </div>
+                    <div class="card-action">
+                      <div class="update-btn btn"
+                           @click="showCreateComponentTasks(elem.task_id, elem.task_name, elem.task_description,
+                                                elem.task_text, elem.lang_id, elem.lang_name, elem.task_difficulty,
+                                                elem.test_input, elem.expected_output, elem.lessons)">
+                        <p>Редактировать</p>
+                        <img src="../../assets/png/change_button.png" class="icon">
                       </div>
-                      <div class="right-container-post-card">
-                        <div class="right-container-post-card-header">{{elem.task_name}}</div>
-                        <div class="right-container-post-card-body">{{elem.task_description}}</div>
-                        <div class="right-container-post-card-footer">Рейтинг задачи: {{elem.task_rate}}</div>
+                      <div class="delete-btn btn"
+                           @click="deleteTask(elem.task_id, $event)">
+                        <p>Удалить</p>
+                        <img src="../../assets/png/delete_button.png" class="icon">
                       </div>
                     </div>
                   </div>
@@ -136,36 +140,30 @@
             </div>
             <div class="post-block-content-container">
               <div class="post-block-content-types">
-                <div class="posts-container">
-                  <div class="wrapper-container">
-                    <div class="post-card"
-                         v-for="elem in response.news"
-                         :key="elem.news_id">
-                      <div class="left-container-post-card">
-                        <div class="post-logo">Картинки нет</div>
-                        <div class="btns-container">
-                          <div class="functional-btn update-btn"
-                               @click="showCreateComponentNews(elem.news_id, elem.news_name, elem.news_description,
-                                                     elem.news_text, elem.news_tags, elem.news_importance)">
-                            <img src="../../assets/png/change_button.png" class="icon">
-                          </div>
-                          <div class="functional-btn delete-btn"
-                               @click="deleteNews(elem.news_id, $event)">
-                            <img src="../../assets/png/delete_button.png" class="icon">
-                          </div>
-                        </div>
+                <div class="container">
+                  <div class="card blue-grey darken-1"
+                       v-for="elem in response.news"
+                       :key="elem.news_id">
+                    <div class="card-content white-text">
+                      <span class="card-title">Название новости: {{elem.news_name}}</span>
+                      <p class="txt">Описание новости: {{elem.news_description}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Текст новости: {{elem.news_text}}</p>
+                      <div class="splitter"></div>
+                      <p class="txt">Тэги: {{elem.news_tags}}</p>
+                      <div class="splitter"></div>
+                    </div>
+                    <div class="card-action">
+                      <div class="update-btn btn"
+                           @click="showCreateComponentNews(elem.news_id, elem.news_name, elem.news_description,
+                                                elem.news_text, elem.news_tags, elem.news_importance)">
+                        <p>Редактировать</p>
+                        <img src="../../assets/png/change_button.png" class="icon">
                       </div>
-                      <div class="right-container-post-card">
-                        <div class="right-container-post-card-header">{{elem.news_name}}</div>
-                        <div class="right-container-post-card-body">{{elem.news_description}}</div>
-                        <div class="right-container-post-card-footer">
-                          <div v-if="elem.news_importance === 0">Важность новости: Не важно</div>
-                          <div v-else-if="elem.news_importance === 1">Важность новости: Важно</div>
-                          <div v-else-if="elem.news_importance === 2">Важность новости: Очень важно</div>
-                          <div v-else-if="elem.news_importance === 3">Важность новости: Критически важно</div>
-                          <div class="splitter-footer-card"></div>
-                          <div>Рейтинг новости: {{elem.news_rate}}</div>
-                        </div>
+                      <div class="delete-btn btn"
+                           @click="deleteTask(elem.news_id, $event)">
+                        <p>Удалить</p>
+                        <img src="../../assets/png/delete_button.png" class="icon">
                       </div>
                     </div>
                   </div>
@@ -498,16 +496,11 @@
 
         deleteArticle: function(articleId, event){
           // получаем элемент для удаления
-          let elem = event.target.parentElement.parentElement.parentElement.parentElement;
           // если элемент совпадает с классом удаляем
-          if (elem.className==="post-card"){
-            elem.parentNode.removeChild(elem);
-            //если клик пользователь был не рядом с нужным элементом, берем на класс ниже
-          }else if (elem.className === "wrapper-container"){
-            elem = event.target.parentElement.parentElement.parentElement;
-            elem.parentNode.removeChild(elem);
+          let elem = event.target.parentElement.parentElement.parentElement;
+          if (elem.className==="card blue-grey darken-1"){
+            elem.classList.add('hidden')
           }
-
           let body = {
             articleId: articleId,
             authorName: localStorage.getItem('userName')
@@ -520,14 +513,10 @@
         },
 
         deleteNews: function(newsId, event){
-          let elem = event.target.parentElement.parentElement.parentElement.parentElement;
-          if (elem.className==="post-card"){
-            elem.parentNode.removeChild(elem);
-          }else if (elem.className === "wrapper-container"){
-            elem = event.target.parentElement.parentElement.parentElement;
-            elem.parentNode.removeChild(elem);
+          let elem = event.target.parentElement.parentElement.parentElement;
+          if (elem.className==="card blue-grey darken-1"){
+            elem.classList.add('hidden')
           }
-
           let body = {
             newsId: newsId,
             authorName: localStorage.getItem('userName')
@@ -539,12 +528,9 @@
             console.log(error);});
         },
         deleteTask: function(taskId, event){
-          let elem = event.target.parentElement.parentElement.parentElement.parentElement;
-          if (elem.className==="post-card"){
-            elem.parentNode.removeChild(elem);
-          }else if (elem.className === "wrapper-container"){
-            elem = event.target.parentElement.parentElement.parentElement;
-            elem.parentNode.removeChild(elem);
+          let elem = event.target.parentElement.parentElement.parentElement;
+          if (elem.className==="card blue-grey darken-1"){
+            elem.classList.add('hidden')
           }
 
           let body = {
@@ -558,14 +544,11 @@
             console.log(error);});
         },
         deleteLesson: function(lessonId, event){
-          let elem = event.target.parentElement.parentElement.parentElement.parentElement;
-          if (elem.className==="post-card"){
-            elem.parentNode.removeChild(elem);
-          }else if (elem.className === "wrapper-container"){
-            elem = event.target.parentElement.parentElement.parentElement;
-            elem.parentNode.removeChild(elem);
+          let elem = event.target.parentElement.parentElement.parentElement;
+          if (elem.className==="card blue-grey darken-1"){
+            elem.classList.add('hidden')
           }
-
+          //
           let body = {
             lessonId: lessonId,
             authorName: localStorage.getItem('userName')
@@ -579,17 +562,35 @@
       },
 
       mounted(){
-        this.$root.myCabOn();
-        if(sessionStorage.getItem('activeIndexOnPostsSelect')){
-          document.getElementById("postsType").options[sessionStorage.getItem('activeIndexOnPostsSelect')].selected=true;
+        if (this.$root.getAuthUser === null){
+          let toastText = '<span>Пожалуйста авторизируйтесь</span>';
+          M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+          this.$router.go(-1)
+        }else {
+          this.$root.myCabOn();
+          if (sessionStorage.getItem('activeIndexOnPostsSelect')) {
+            document.getElementById("postsType").options[sessionStorage.getItem('activeIndexOnPostsSelect')].selected = true;
+          }
+          this.change();
+          this.getUserAllPosts()
         }
-        this.change();
-        this.getUserAllPosts()
       }
     }
 </script>
 
 <style scoped lang="scss">
+  .hidden{
+    display: none;
+  }
+  p{
+    display: inline-flex;
+  }
+
+  .txt{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 
   .articles{
     background: rgba(255, 171, 172, 0.2);
@@ -663,14 +664,12 @@
   .body, .inner-container{
     margin: 0 auto;
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
     background: aliceblue;
   }
 
   .header{
-
     width: 100%;
-    height: 10%;
     align-items: center;
 
   }
@@ -694,62 +693,22 @@
   .content-container {
 
     width: 100%;
-    height: 90%;
+    /*height: 100%;*/
 
-  }
-
-  .post-block{
-    /*background: aliceblue;*/
-    width: 100vw;
-    height: 100%;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  .post-block-header{
-
-    width: 100vw;
-    height: 10vh;
-    align-items: center;
-    /*margin-bottom: vh;*/
-  }
-  .post-block-content-container{
-
-    width: 100vw;
-    height: 80vh;
   }
 
   .post-block-content-types{
-    width: 100vw;
-    height: 40vh;
+    /*height: 40vh;*/
     font-size: 2.5vw;
     color: #b8b8b8;
     align-items: center;
 
   }
   .posts-container{
-    width: 100vw;
-    height: 30vh;
+    /*height: 30vh;*/
     align-items: center;
 
     overflow-y: auto;
-  }
-
-  .wrapper-container{
-    display: -webkit-flex;
-    -webkit-flex-wrap: nowrap;
-    display: flex;
-    flex-wrap: nowrap;
-
-    width: 85vw;
-
-    align-items: center;
-
-    overflow-y: hidden;
-    overflow-x: auto;
-
-    height: 30vh;
-
   }
 
   .post-card{
@@ -761,14 +720,6 @@
     background: rgba(193, 196, 202, 0.63);
     border-radius: 15px;
   }
-
-  /*.post-card:hover{*/
-    /*transform: scale(1.05);*/
-    /*transition: .2s all;*/
-    /*z-index: 10000000;*/
-    /*cursor: pointer;*/
-    /*box-shadow: 0 2px 20px 2px rgba(0, 0, 0, 0.2);*/
-  /*}*/
 
   .left-container-post-card{
     width: 33%;
@@ -789,18 +740,17 @@
 
     align-items: center;
 
-    width: 100%;
+    /*width: 100%;*/
     /*background: white;*/
     height: 20%;
   }
 
   .functional-btn, .update-btn, .delete-btn{
     margin-left: 1vw;
-    width: 20%;
-    height: 80%;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%
+    /*border-radius: 50%*/
   }
 
   .update-btn{
@@ -830,8 +780,9 @@
   }
 
   .icon{
-    max-width: 70%;
-    max-height: 70%;
+    margin-left: 10px;
+    max-width: 55%;
+    max-height: 55%;
   }
 
   .right-container-post-card{

@@ -47,3 +47,170 @@
   }
 }
 
+
+.s{
+  margin-left: 5px;
+}
+.minus-rate{
+  color: #ff706f;
+  font-weight: bold;
+}
+.plus-rate{
+  color: #83ff86;
+  font-weight: bold;
+}
+#arrow-to-main{
+  max-width: 30%;
+  max-height: 60%;
+}
+#title{
+  font-size: 3.5rem;
+  margin-right: 10px;
+}
+
+.posts-container, .post, .post-content, .post-header, .post-body, .title, .tags, .info-container {
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+}
+/*TODO Сделать уникальный дизайн*/
+.posts-container{
+  width: 100%;
+  height: 90%;
+  align-content: center;
+  justify-content: center;
+  /*justify-content: space-evenly;*/
+
+  overflow-y: auto;
+}
+
+.post{
+  padding: 10px 10px 0 10px;
+  width: 95%;
+  /*height: 22vh;*/
+
+  margin: 1vh 0.5vw 1vh 0.5vw;
+  /*background: rgba(193, 196, 202, 0.63);*/
+  background: white;
+  border-radius: 2px;
+}
+
+.post-content{
+  width: 100%;
+}
+
+.post-header{
+  width: 100%;
+
+  /*font-size: 1.5rem;*/
+  padding-left: 5px;
+  border-bottom: 1px solid #93989f;
+}
+
+.info-container{
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.cnt{
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end
+}
+
+.ft{
+  justify-content: space-between!important;
+}
+
+.title{
+  width: 99%;
+}
+
+.tags{
+  width: 100%;
+}
+
+.post-body{
+  width: 100%;
+  /*height: 10vh;*/
+  font-size: 1rem;
+  /*margin: 0 auto;*/
+  padding-left: 5px;
+  /*word-break: break-all;*/
+  /*overflow: hidden;*/
+  border-bottom: 1px solid #93989f;
+}
+
+.txt{
+  font-size: 1.05rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.post-footer{
+  margin-top: 20px;
+  width: 100%;
+  /*height: 6vh;*/
+  align-items: center;
+  justify-content: space-around;
+  font-size: 0.6rem;
+}
+
+
+.lists-btn{
+  color: white;
+}
+.button{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: nowrap;
+  font-size: 15px;
+  /*width: 40%;*/
+  /*height: 100%;*/
+  box-shadow: 2px 2px 7px 0 rgba(0, 0, 0, 0.49);
+  height: 40px;
+  width: 150px;
+  background: #26a69a;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button:hover{
+  transition: .5s all;
+  background: #29c9bd;
+  transform: scale(1.01);
+  /*box-shadow: 3px 3px 7px 0 rgba(0, 0, 0, 0.49);*/
+  /*background: rgb(179, 255, 198);*/
+  /*color: #000;*/
+}
+
+.articles-list{
+  background: rgba(255, 171, 172, 0.2);
+}
+.tasks-list{
+  background: rgba(155, 255, 155, 0.2);
+}
+.lessons-list{
+  background: rgba(85, 202, 215, 0.18);
+}
+
+.news-list{
+  background: rgba(255, 248, 145, 0.23);
+}
+
+
+.info{
+  font-size: 1rem;
+  justify-content: flex-end;
+  align-items: flex-end;
+  display: flex;
+  color: #93989f;
+  /* margin: auto; */
+}
+

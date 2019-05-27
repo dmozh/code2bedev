@@ -168,15 +168,20 @@
 
           async return(){
             await this.getUserName();
-            this.$emit('close');
-            this.$router.push({path: '/'})
+            this.emitClose()
+            // this.$router.push({path: '/'})
           },
           emitClose () {
-            this.getUserName();
+            this.isLogIn = true;
+            this.openLogCont = true;
+            this.isSent = false;
+            this.sendingResPass = false;
+            // this.getUserName();
             this.$emit('close');
           },
           logIn() {
             this.openLogCont = false;
+
             let self = this;
 
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(function (){
@@ -187,8 +192,15 @@
                 const errorMessage = error.message;
                 // [START_EXCLUDE]
                 if (errorCode === 'auth/user-not-found') {
-                  alert(errorMessage);
-                }});
+                  let toastText = '<span>Текущего пользователя не существует</span>';
+                  M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+                  self.openLogCont = true;
+                }else if(errorCode === 'auth/wrong-password'){
+                  let toastText = '<span>Пароль введен не верно, повторите попытку.</span>';
+                  M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+                  self.openLogCont = true;
+                }
+            });
           },
 
           async getUserName(){
@@ -202,15 +214,15 @@
               this.$root.activeUserName = response.data.user.user_name;
               this.$root.activeUserRole = response.data.user.role_id;
               this.$root.activeUserRate = response.data.user.user_rate;
+              // console.log(this.$root.activeUserRole);
+              // this.$parent.userName = response.data.user.user_name;
+              // console.log(this.$parent.userName);
+              // this.$parent.userRole = response.data.user.role_id;
+              // this.$parent.userRate = response.data.user.user_rate;
 
-              this.$parent.userName = response.data.user.user_name;
-              console.log(this.$parent.userName);
-              this.$parent.userRole = response.data.user.role_id;
-              this.$parent.userRate = response.data.user.user_rate;
-
-              localStorage.setItem('userName', this.$parent.userName);
-              localStorage.setItem('userRole', String(this.$parent.userRole));
-              localStorage.setItem('userRate', String(this.$parent.userRate));
+              localStorage.setItem('userName', this.$root.activeUserName);
+              localStorage.setItem('userRole', String(this.$root.activeUserRole));
+              localStorage.setItem('userRate', String(this.$root.activeUserRate));
               localStorage.setItem('userID', response.data.user.id);
 
               localStorage.setItem('seenTasks', JSON.stringify(response.data.user.seenPosts.tasks));
@@ -317,6 +329,7 @@
     cursor: pointer;
     border-radius: 50px;
     margin: 50px 0 0 0;
+    color: black!important;
   }
 
   .button:hover{

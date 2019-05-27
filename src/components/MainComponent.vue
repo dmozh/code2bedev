@@ -84,6 +84,7 @@
           this.taskTestInput = '';
           this.taskExpectedOutput = '';
         },
+
       },
 
       mounted: function () {
@@ -111,17 +112,6 @@
       },
 
       updated: function () {
-        // if (this.$route.name==='posts'){
-        //   if(this.$route.params.postsType==='articles'){
-        //     this.getArticles();
-        //   }else if(this.$route.params.postsType==='lessons'){
-        //     this.getLessons();
-        //   }else if(this.$route.params.postsType==='tasks'){
-        //     this.getTasks();
-        //   }else if(this.$route.params.postsType==='news'){
-        //     this.getNews();
-        //   }
-        // }
       }
     }
 </script>

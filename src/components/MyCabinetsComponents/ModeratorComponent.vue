@@ -15,13 +15,13 @@
              :key="elem.lesson_id">
           <div class="card-content white-text">
             <span class="card-title">Название урока: {{elem.lesson_name}}</span>
-            <p>Описание урока: {{elem.lesson_description}}</p>
+            <p class="txt">Описание урока: {{elem.lesson_description}}</p>
             <div class="splitter"></div>
-            <p>Текст урока: {{elem.lesson_text}}</p>
+            <p class="txt">Текст урока: {{elem.lesson_text}}</p>
             <div class="splitter"></div>
-            <p>Тэги: {{elem.lesson_tags}}</p>
+            <p class="txt">Тэги: {{elem.lesson_tags}}</p>
             <div class="splitter"></div>
-            <p>Автор: {{elem.author}}</p>
+            <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
             <div class="btn" @click="isModerated(true, elem.lesson_id, elem.author_id, 'lesson', $event)">ОДОБРИТь</div>
@@ -34,13 +34,14 @@
              :key="elem.article_id">
           <div class="card-content white-text">
             <span class="card-title">Название статьи: {{elem.article_name}}</span>
-            <p>Описание статьи: {{elem.article_description}}</p>
             <div class="splitter"></div>
-            <p>Текст статьи: {{elem.article_text}}</p>
+            <p class="txt">Описание статьи: {{elem.article_description}}</p>
             <div class="splitter"></div>
-            <p>Тэги: {{elem.article_tags}}</p>
+            <p class="txt">Текст статьи: {{elem.article_text}}</p>
             <div class="splitter"></div>
-            <p>Автор: {{elem.author}}</p>
+            <p class="txt">Тэги: {{elem.article_tags}}</p>
+            <div class="splitter"></div>
+            <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
             <div class="btn" @click="isModerated(true, elem.article_id, elem.author_id, 'article', $event)">ОДОБРИТь</div>
@@ -53,13 +54,13 @@
              :key="elem.task_id">
           <div class="card-content white-text">
             <span class="card-title">Название задачи: {{elem.task_name}}</span>
-            <p>Описание задачи: {{elem.task_description}}</p>
+            <p class="txt">Описание задачи: {{elem.task_description}}</p>
             <div class="splitter"></div>
-            <p>Текст задачи: {{elem.task_text}}</p>
+            <p class="txt">Текст задачи: {{elem.task_text}}</p>
             <div class="splitter"></div>
-            <p>Сложноть задачи: {{elem.task_difficulty}}</p>
+            <p class="txt">Сложноть задачи: {{elem.task_difficulty}}</p>
             <div class="splitter"></div>
-            <p>Автор: {{elem.author}}</p>
+            <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
             <div class="btn" @click="isModerated(true, elem.task_id, elem.author_id, 'task', $event)">ОДОБРИТь</div>
@@ -163,13 +164,19 @@
         },
       },
       mounted: function () {
-        this.$root.myCabOn();
-        if((localStorage.getItem('userRole') === '666') || (localStorage.getItem('userRole') === '333')){
+        if (this.$root.getAuthUser === null){
+          let toastText = '<span>Пожалуйста авторизируйтесь</span>';
+          M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
+          this.$router.go(-1)
+        }else {
+          this.$root.myCabOn();
+          if ((localStorage.getItem('userRole') === '666') || (localStorage.getItem('userRole') === '333')) {
 
-        }else{
-          let toastText = '<span>Нет доступа</span>';
-          M.toast({html: toastText, classes: 'rounded warning'});
-          this.$router.replace('/profile/me');
+          } else {
+            let toastText = '<span>Нет доступа</span>';
+            M.toast({html: toastText, classes: 'rounded warning'});
+            this.$router.replace('/profile/me');
+          }
         }
       }
     }
@@ -239,5 +246,11 @@
 
   .hidden{
     display: none;
+  }
+
+  .txt{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 </style>

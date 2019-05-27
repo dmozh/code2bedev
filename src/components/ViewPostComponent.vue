@@ -174,49 +174,55 @@
 
         postVote(voteType){
           if (this.$root.authUser !== null) {
-            let voteIs = this.isVote(voteType, this.posts, this.postId, this.postType);
-            if (!voteIs){
-              console.log('mogete');
-              if(voteType==='up'){
-                this.postRate = this.postRate+1
-              }else{
-                this.postRate = this.postRate-1
+            if(this.$root.authUser.emailVerified) {
+              let voteIs = this.isVote(voteType, this.posts, this.postId, this.postType);
+              if (!voteIs) {
+                console.log('mogete');
+                if (voteType === 'up') {
+                  this.postRate = this.postRate + 1
+                } else {
+                  this.postRate = this.postRate - 1
+                }
+                const userId = localStorage.getItem('userID');
+                let body = {
+                  postType: this.postType,
+                  postId: this.postId,
+                  userId: userId,
+                  voteType: voteType,
+                };
+                const jBody = JSON.stringify(body);
+                axios.post(this.$root.URL + 'updatePostRate', jBody).then((response) => {
+                  console.log(response);
+                  if (this.postType === "task") {
+                    this.posts = response.data.tasks;
+                    localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
+                  }
+                  else if (this.postType === "lesson") {
+                    this.posts = response.data.lessons;
+                    localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
+                  }
+                  else if (this.postType === "article") {
+                    this.posts = response.data.articles;
+                    localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
+                  }
+                  else if (this.postType === "news") {
+                    this.posts = response.data.news;
+                    localStorage.setItem('seenNews', JSON.stringify(response.data.news))
+                  }
+                }).catch((error) => {
+                  console.log(error);
+                });
+              } else {
+                let toastText = '<span>Накручивать не хорошо :)</span>';
+                M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
               }
-              const userId = localStorage.getItem('userID');
-              let body = {
-                postType: this.postType,
-                postId: this.postId,
-                userId: userId,
-                voteType: voteType,
-              };
-              const jBody = JSON.stringify(body);
-              axios.post(this.$root.URL+'updatePostRate', jBody).then((response) => {
-                console.log(response);
-                if      (this.postType === "task") {
-                  this.posts = response.data.tasks;
-                  localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
-                }
-                else if (this.postType === "lesson") {
-                  this.posts = response.data.lessons;
-                  localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
-                }
-                else if (this.postType === "article") {
-                  this.posts = response.data.articles;
-                  localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
-                }
-                else if (this.postType === "news") {
-                  this.posts = response.data.news;
-                  localStorage.setItem('seenNews', JSON.stringify(response.data.news))
-                }
-              }).catch((error) => {
-                console.log(error);
-              });
             }else{
-              alert('Накручивать не хорошо :)')
+              let toastText = '<span>Для голосования необходимо подтвердить email</span>';
+              M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
             }
           }else{
-            //TODO кастомное высплывающие окно
-            alert('Для голосования необходимо авторизироваться')
+            let toastText = '<span>Голосовать могут только авторизированные пользователи</span>';
+            M.toast({html: toastText, classes: 'rounded warning', displayLength: 6000});
           }
         },
 

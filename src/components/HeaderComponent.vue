@@ -50,7 +50,7 @@
           СОЗДАТЬ
         </div>
         <div class="tab m waves-effect waves-dark" v-bind:class="{active_tab: moderTabIsActive}" @click="activeTab('moder')"
-             v-if="this.$root.activeUserRole === '666' || this.$root.activeUserRole ===  '333'">
+             v-if="this.userRole === '666' || this.userRole ===  '333'">
           МОДЕРАЦИЯ
         </div>
       </div>
@@ -86,6 +86,7 @@
 <script>
   import ChooseLangWindow from '../components/ModalWindows/WindowChooseLangComponent'
   import LoginWindow from '../components/ModalWindows/WindowLoginComponent'
+  import regeneratorRuntime from "regenerator-runtime";
     export default {
       name: "header-component",
       components: {
@@ -94,6 +95,8 @@
       },
       data () {
         return {
+          userRole: '',
+
           articleTabIsActive: false,
           lessonTabIsActive: false,
           taskTabIsActive: false,
@@ -245,7 +248,9 @@
           delete localStorage["seenNews"];
           delete localStorage["seenLessons"];
           delete localStorage["seenTasks"];
-          this.$router.push('/')
+          if(this.$root.myCabIsOn){
+            this.$router.push('/')
+          }
           // delete localStorage["seenPosts"]
         },
 
@@ -276,18 +281,30 @@
             this.$router.push({name: 'profile'})
           }
         },
+        async setUserRole(){
+          this.userRole = await this.$root.getRole();
+        }
       },
 
       mounted: function () {
         if (sessionStorage.getItem('activeLang')){
           this.$root.activeLang = sessionStorage.getItem('activeLang');
         }
-
         this.activeTab(this.$route.params.postsType);
         // console.log(this.$route.params)
       },
 
+      beforeMount: function () {
+        if(this.$root.getAuthUser() !== null){
+          console.log('fjfjfjfj');
+          this.setUserRole();
+        }
+      },
+
       updated: function () {
+        if(this.$root.getAuthUser() !== null){
+          this.setUserRole();
+        }
         console.log('upd head');
         let route = this.$route.name;
         console.log(route);
@@ -304,7 +321,7 @@
         } else if (route === 'main'){
           this.activeTab(route)
         }
-      }
+      },
     }
 </script>
 
