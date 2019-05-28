@@ -1,55 +1,64 @@
 <template>
   <div class="container news-list">
+    <div class="head">
+      <div class="container head">
+        <div>Поиск </div>
+        <input v-model="search" class="form-control" placeholder="">
+        <button class="btn waves-effect waves-dark" @click="switchKey(sortKey)">{{sortKey}}</button>
+      </div>
+    </div>
     <div class="posts-container">
-      <div class="post"
-           v-for="elem in response"
-           :key="elem.news_id">
-        <!--v-bind:class="[-->
-        <!--{criticalImportant: criticalImportantClass},-->
-        <!--{veryImportant: veryImportantClass},-->
-        <!--{important: importantClass},-->
-        <!--{notImportant: notImportantClass}]">-->
-        <div class="post-content">
-          <div class="post-header">
-            <div class="title">
-              <div class="info-container">
-                <div class="info">Автор {{elem.author}}</div>
-                <div class="cnt">
-                  <span class="info">Добавлена&nbsp;{{parseDateTime(elem.added_time, 'date')}}</span>
-                  <span class="info">&nbsp;в {{parseDateTime(elem.added_time, 'time')}}</span>
+      <transition-group name="fade-list" tag="div">
+        <div class="post fade-list-item"
+             v-for="elem in filtered"
+             :key="elem.news_id">
+          <!--v-bind:class="[-->
+          <!--{criticalImportant: criticalImportantClass},-->
+          <!--{veryImportant: veryImportantClass},-->
+          <!--{important: importantClass},-->
+          <!--{notImportant: notImportantClass}]">-->
+          <div class="post-content">
+            <div class="post-header">
+              <div class="title">
+                <div class="info-container">
+                  <div class="info">Автор {{elem.author}}</div>
+                  <div class="cnt">
+                    <span class="info">Добавлена&nbsp;{{parseDateTime(elem.added_time, 'date')}}</span>
+                    <span class="info">&nbsp;в {{parseDateTime(elem.added_time, 'time')}}</span>
+                  </div>
+                  <div class="cnt">
+                    <span class="info">Последнее обновление&nbsp;{{parseDateTime(elem.last_update, 'date')}}</span>
+                    <span class="info">&nbsp;в {{parseDateTime(elem.last_update, 'time')}}</span>
+                  </div>
+
                 </div>
-                <div class="cnt">
-                  <span class="info">Последнее обновление&nbsp;{{parseDateTime(elem.last_update, 'date')}}</span>
-                  <span class="info">&nbsp;в {{parseDateTime(elem.last_update, 'time')}}</span>
-                </div>
+                <div id="title">{{elem.news_name}}</div>
 
               </div>
-              <div id="title">{{elem.news_name}}</div>
-
+              <div class="tags">
+                <div>Тэги:&nbsp;</div>
+                <span v-for="(tag, index) in elem.news_tags" :key="index" class="tag" @click="setSortKey(tag)">#{{tag}}</span>
+              </div>
             </div>
-            <div class="tags">
-              <div>Тэги:&nbsp;</div>
-              <span v-for="(tag, index) in elem.news_tags" :key="index" class="tag">#{{tag}}</span>
+            <div class="post-body">
+              <p class="txt">{{elem.news_description}}</p>
             </div>
-          </div>
-          <div class="post-body">
-            <p class="txt">{{elem.news_description}}</p>
-          </div>
-          <div class="post-footer">
-            <div class="button lists-btn"
-                 @click="openPost('news', elem.news_id)">
-              <p>В ПОЛНУЮ</p>
-              <img src="../../assets/png/arrow_to_main.png" id="arrow-to-main">
-            </div>
-            <div class="cnt ft">
-              <p class="info" v-if="elem.news_rate < 0">Рейтинг <span class="s minus-rate">{{elem.news_rate}}</span></p>
-              <p class="info p" v-else-if="elem.news_rate > 0">Рейтинг <span class="s plus-rate">{{elem.news_rate}}</span></p>
-              <p class="info"   v-else>Рейтинг <span class="s">{{elem.news_rate}}</span></p>
-              <p class="info">Просмотров {{elem.views}}</p>
+            <div class="post-footer">
+              <div class="button lists-btn"
+                   @click="openPost('news', elem.news_id)">
+                <p>В ПОЛНУЮ</p>
+                <img src="../../assets/png/arrow_to_main.png" id="arrow-to-main">
+              </div>
+              <div class="cnt ft">
+                <p class="info" v-if="elem.news_rate < 0">Рейтинг <span class="s minus-rate">{{elem.news_rate}}</span></p>
+                <p class="info p" v-else-if="elem.news_rate > 0">Рейтинг <span class="s plus-rate">{{elem.news_rate}}</span></p>
+                <p class="info"   v-else>Рейтинг <span class="s">{{elem.news_rate}}</span></p>
+                <p class="info">Просмотров {{elem.views}}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -63,6 +72,10 @@
         return {
           response: '',
 
+          sortKey: 'Название',
+          keys: ['Название', 'Тэги'],
+          search: '',
+
           criticalImportant: false,
           veryImportant: false,
           important: false,
@@ -74,7 +87,35 @@
           notImportantClass: 'not_important',
         }
       },
+      computed: {
+        filtered: function () {
+          if(this.response) {
+            return this.response.filter(
+              function (news) {
+                if(this.sortKey==='Название'){
+                  return news.news_name.indexOf(this.search) !== -1
+                }else if(this.sortKey==='Тэги'){
+                  return news.news_tags.indexOf(this.search) !== -1
+                }
+
+              }.bind(this))
+          }
+        }
+      },
       methods: {
+        setSortKey(tag){
+          this.switchKey('Название');
+          this.search = tag
+        },
+
+        switchKey(key){
+          if(this.keys.length > this.keys.indexOf(key)+1){
+            this.sortKey = this.keys[this.keys.indexOf(key)+1]
+          }else{
+            this.sortKey = this.keys[this.keys.length-this.keys.indexOf(key)-1]
+          }
+        },
+
         // showImportant: function (importance, event) {
         //   console.log(document.getElementsByClassName('post'));
           // let elem = document.getElementsByClassName('post')
@@ -165,7 +206,7 @@
 
           axios.get(this.$root.URL+'getNews').then((response) => {
             this.response = response.data.news;
-            console.log(response);
+            // console.log(response);
           }).catch((error) => {
             console.log(error);});
         },
@@ -182,7 +223,28 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  .head {
+    width: 100%;
+    display: flex;
+    >div{
+      margin-left: 10px;
+      margin-right: 10px;
+      color: #93989f;
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+    }
+    >input{
+      width: 80%;
+    }
+    >button{
+      margin-left: 5px;
+    }
+  }
+  .tag:hover{
+    cursor: pointer;
+  }
   .tag{
     height: 1.5vh;
     color: #006dff;
@@ -208,5 +270,14 @@
   }
   .not_important{
     background: rgba(128, 128, 128, 0.51);
+  }
+  .fade-list-item {
+  }
+  .fade-list-enter-active, .fade-list-leave-active {
+    transition: all 1s;
+  }
+  .fade-list-enter, .fade-list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+    opacity: 0;
+    transform: translateX(-300px);
   }
 </style>

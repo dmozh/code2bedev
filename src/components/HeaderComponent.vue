@@ -374,6 +374,7 @@
 
   .logo{
     margin: 0 auto;
+    z-index: 10001;
     width: 70%;
     height: 90%;
   }
@@ -439,7 +440,7 @@
   }
 
   .right-container, .left-container{
-    width: 25%;
+    width: 20%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -455,7 +456,7 @@
   }
 
   .middle-container{
-    width: 50%;
+    width: 60%;
     height: 100%;
     align-items: center;
     justify-items: center;

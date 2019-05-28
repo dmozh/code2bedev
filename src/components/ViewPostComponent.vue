@@ -34,7 +34,7 @@
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
-          <div class="post-text-block"></div>
+          <div class="post-text-block">{{this.postText}}</div>
           <div class="compiler" v-if="this.postType==='task'">
             <code-editor-component v-if="this.activeLang !== null"
                                    :place="this.postType"
@@ -45,7 +45,7 @@
                                    :taskId = "this.postId"
             ></code-editor-component>
           </div>
-          <div class="linked-lesson-container" v-if="this.postType==='task' && linkedLessons.length>0">
+          <div class="linked-lesson-container" v-if="this.postType==='task' && linkedLessons!==null">
             <div class="head">
               Уроки которые помогут вам в решении этой задачи
             </div>
@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div class="linked-lesson-container" v-else-if="this.postType==='lesson' && linkedTasks.length>0">
+          <div class="linked-lesson-container" v-else-if="this.postType==='lesson' && linkedTasks!==null">
             <div class="head">
               Задачи для закрепления материала
             </div>
@@ -158,13 +158,13 @@
           }
         },
 
-        getInfos(postType, postId){
+        async getInfos(postType, postId){
           let body = {
             type: postType,
             id: postId,
           };
           const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
+          await axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
             this.postText = response.data.post_text;
             this.posts_views = response.data.views;
             this.postName = response.data.post_name;
@@ -191,13 +191,65 @@
             if (postType === 'news'){
               this.newsImportance = response.data.news_importance;
             }
-            let parentElem = document.getElementsByClassName('post-text-block');
-            parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
+            // let parentElem = document.getElementsByClassName('post-text-block');
+            // parentElem[0].insertAdjacentHTML('afterbegin', this.postText);
             // console.log(parentElem);
             console.log(response);
           }).catch((error) => {
             console.log(error);
           });
+
+          if (this.$root.authUser !== null) {
+            const userId = localStorage.getItem('userID');
+            // let posts = Object;
+            let haveIs = Boolean;
+
+            if(postType==="task"){
+              this.posts = JSON.parse(localStorage.getItem('seenTasks'));
+              haveIs = this.haveIs(this.posts, postId, postType);
+            }else if(postType==="lesson"){
+              this.posts = JSON.parse(localStorage.getItem('seenLessons'));
+              haveIs = this.haveIs(this.posts, postId, postType);
+            }else if(postType==="article"){
+              this.posts = JSON.parse(localStorage.getItem('seenArticles'));
+              haveIs = this.haveIs(this.posts, postId, postType);
+            }else if(postType==="news"){
+              this.posts = JSON.parse(localStorage.getItem('seenNews'));
+              haveIs = this.haveIs(this.posts, postId, postType);
+            }
+
+            //если не просмотрена, просматриваем
+            console.log('isSeen '+haveIs);
+            if (!haveIs) {
+              let body = {
+                postType: postType,
+                postId: postId,
+                userId: userId,
+                isSeen: true,
+                isDecided: false
+              };
+              const jBody = JSON.stringify(body);
+              await axios.post(this.$root.URL+'addSeenPost', jBody).then(async (response) => {
+                // console.log(response);
+                if (postType === "task") {
+                  await localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
+                }
+                else if(postType === "lesson") {
+                  await localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
+                }
+                else if(postType === "article") {
+                  await localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
+                }
+                else if(postType === "news") {
+                  await localStorage.setItem('seenNews', JSON.stringify(response.data.news))
+                }
+              }).catch((error) => {
+                console.log(error);
+              });
+              this.postId = postId;
+              this.postType = postType;
+            }
+          }
         },
 
         haveIs(arr, postId, postType){
@@ -269,7 +321,7 @@
           }
         },
 
-        postVote(voteType){
+        async postVote(voteType){
           if (this.$root.authUser !== null) {
             if(this.$root.authUser.emailVerified) {
               let voteIs = this.isVote(voteType, this.posts, this.postId, this.postType);
@@ -288,23 +340,23 @@
                   voteType: voteType,
                 };
                 const jBody = JSON.stringify(body);
-                axios.post(this.$root.URL + 'updatePostRate', jBody).then((response) => {
+                await axios.post(this.$root.URL + 'updatePostRate', jBody).then(async (response) => {
                   console.log(response);
                   if (this.postType === "task") {
                     this.posts = response.data.tasks;
-                    localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
+                    await localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
                   }
                   else if (this.postType === "lesson") {
                     this.posts = response.data.lessons;
-                    localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
+                    await localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
                   }
                   else if (this.postType === "article") {
                     this.posts = response.data.articles;
-                    localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
+                    await localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
                   }
                   else if (this.postType === "news") {
                     this.posts = response.data.news;
-                    localStorage.setItem('seenNews', JSON.stringify(response.data.news))
+                    await localStorage.setItem('seenNews', JSON.stringify(response.data.news))
                   }
                 }).catch((error) => {
                   console.log(error);
@@ -436,56 +488,6 @@
 
         this.getInfos(postType,postId);
         // console.log(this.postType);
-
-        if (this.$root.authUser !== null) {
-          const userId = localStorage.getItem('userID');
-          // let posts = Object;
-          let haveIs = Boolean;
-
-          if(postType==="task"){
-            this.posts = JSON.parse(localStorage.getItem('seenTasks'));
-            haveIs = this.haveIs(this.posts, postId, postType);
-          }else if(postType==="lesson"){
-            this.posts = JSON.parse(localStorage.getItem('seenLessons'));
-            haveIs = this.haveIs(this.posts, postId, postType);
-          }else if(postType==="article"){
-            this.posts = JSON.parse(localStorage.getItem('seenArticles'));
-            haveIs = this.haveIs(this.posts, postId, postType);
-          }else if(postType==="news"){
-            this.posts = JSON.parse(localStorage.getItem('seenNews'));
-            haveIs = this.haveIs(this.posts, postId, postType);
-          }
-
-          //если не просмотрена, просматриваем
-          console.log('isSeen '+haveIs);
-          if (!haveIs) {
-            let body = {
-              postType: postType,
-              postId: postId,
-              userId: userId,
-              isSeen: true,
-              isDecided: false
-            };
-            const jBody = JSON.stringify(body);
-            axios.post(this.$root.URL+'addSeenPost', jBody).then((response) => {
-              // console.log(response);
-              if (postType === "task") {
-                localStorage.setItem('seenTasks', JSON.stringify(response.data.tasks))
-              }
-              else if(postType === "lesson") {
-                localStorage.setItem('seenLessons', JSON.stringify(response.data.lessons))
-              }
-              else if(postType === "article") {
-                localStorage.setItem('seenArticles', JSON.stringify(response.data.articles))
-              }
-              else if(postType === "news") {
-                localStorage.setItem('seenNews', JSON.stringify(response.data.news))
-              }
-            }).catch((error) => {
-              console.log(error);
-            });
-          }
-        }
       },
       beforeMount: function(){
         this.$root.postIsOpen = true;

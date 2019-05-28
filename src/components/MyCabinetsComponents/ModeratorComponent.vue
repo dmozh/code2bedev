@@ -24,8 +24,8 @@
             <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
-            <div class="btn" @click="isModerated(true, elem.lesson_id, elem.author_id, 'lesson', $event)">ОДОБРИТь</div>
-            <div class="btn" @click="isModerated(false,  elem.lesson_id, elem.author_id, 'lesson', $event)">Отказать</div>
+            <div class="btn" @click="isModerated(true,true,false, elem.lesson_id, elem.author_id, 'lesson', $event)">ОДОБРИТь</div>
+            <div class="btn" @click="isModerated(true,false,true,  elem.lesson_id, elem.author_id, 'lesson', $event)">Отказать</div>
           </div>
         </div>
         <div class="card blue-grey darken-1"
@@ -44,8 +44,8 @@
             <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
-            <div class="btn" @click="isModerated(true, elem.article_id, elem.author_id, 'article', $event)">ОДОБРИТь</div>
-            <div class="btn" @click="isModerated(false,  elem.article_id, elem.author_id, 'article', $event)">Отказать</div>
+            <div class="btn" @click="isModerated(true,true,false, elem.article_id, elem.author_id, 'article', $event)">ОДОБРИТь</div>
+            <div class="btn" @click="isModerated(true,false,true,  elem.article_id, elem.author_id, 'article', $event)">Отказать</div>
           </div>
         </div>
         <div class="card blue-grey darken-1"
@@ -63,8 +63,8 @@
             <p class="txt">Автор: {{elem.author}}</p>
           </div>
           <div class="card-action">
-            <div class="btn" @click="isModerated(true, elem.task_id, elem.author_id, 'task', $event)">ОДОБРИТь</div>
-            <div class="btn" @click="isModerated(false,  elem.task_id, elem.author_id, 'task', $event)">Отказать</div>
+            <div class="btn" @click="isModerated(true,true,false, elem.task_id, elem.author_id, 'task', $event)">ОДОБРИТь</div>
+            <div class="btn" @click="isModerated(true,false,true, elem.task_id, elem.author_id, 'task', $event)">Отказать</div>
           </div>
         </div>
       </div>
@@ -90,9 +90,11 @@
         }
       },
       methods: {
-        async isModerated(moder, postId, authorId, postType, event){
+        async isModerated(moder,approved,denied, postId, authorId, postType, event){
           let body = {
-            moder: moder,
+            moder: true,
+            denied: denied,
+            approved: approved,
             postId: postId,
             authorId: authorId,
             postType: postType
@@ -100,10 +102,10 @@
           const jBody = JSON.stringify(body);
           await axios.post(this.$root.URL+'updateIsModerated', jBody).then((response) => {
             console.log(response);
-            if(response.data.msg===true && moder){
+            if(response.data.msg===true && approved){
               let toastText = '<span>Одобрено</span>';
               M.toast({html: toastText, classes: 'rounded success'});
-            }else if(response.data.msg===true && !moder){
+            }else if(response.data.msg===true && denied){
               let toastText = '<span>Отказано</span>';
               M.toast({html: toastText, classes: 'rounded success'});
             }
