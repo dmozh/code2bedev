@@ -101,6 +101,7 @@
           this.register = false;
         },
         chkName(name){
+          console.log(name.indexOf(' ')>0);
           if(name.indexOf(' ')>0){
             return 'space'
           }else if (name.length > 25) {
@@ -139,7 +140,7 @@
                   console.log(this.$root.URL);
                   let self = this;
                   await axios.post(this.$root.URL+'addUser', jBody).then((response) => {
-                    // console.log(response);
+                    console.log(response);
                     this.valid = response.data.valid;
                     if(this.valid){
                       self.openForm = false;
@@ -247,7 +248,7 @@
   }
 
   .form{
-    width: 22vw;
+    max-width: 400px;
     margin: 0 auto;
     height: 100%;
   }
@@ -304,7 +305,7 @@
     flex-wrap: wrap;
     width: 100%;
     height: 100%;
-    background: aliceblue;
+    /*background: aliceblue;*/
     justify-content: center;
     align-content: baseline;
 

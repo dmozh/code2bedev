@@ -16,9 +16,9 @@
                      @click="selectLesson(lesson.id, lesson.lesson_name, $event)">
                   {{lesson.lesson_name}}
                 </div>
-                <div class="btn-container">
-                  <button class="button" @click="selected">Выбрать</button>
-                </div>
+              </div>
+              <div class="btn-container">
+                <button class="button" @click="selected">Выбрать</button>
               </div>
             </div>
           </div>
@@ -45,7 +45,7 @@
       },
       methods: {
         emitClose() {
-          this.$parent.selectedLessons = [];
+          // this.$parent.selectedLessons = [];
           this.$emit('close');
         },
         selected(){
@@ -202,6 +202,7 @@
     width: 100%;
     /*background: aqua;*/
     flex-wrap: wrap;
+    overflow: auto;
   }
 
   .right-container{
@@ -211,9 +212,11 @@
 
   .lesson-block, .inner{
     display: flex;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    min-width: 100px;
+    min-height: 130px;
+    /*width: 100px;*/
+    /*height: 100px;*/
+    border-radius: 15px;
     align-items: center;
     justify-content: center;
     background: aliceblue;

@@ -42,6 +42,7 @@
     <div class="main-content-container">
       <form @submit.prevent="sendPost" class="custom-form">
         <!--Names-->
+        <label v-if="isUpdate">Введите название</label>
         <input type="text" v-if="isArticle" v-model="postName" placeholder="Введите название статьи" class="custom-input-name-field">
         <input type="text" v-else v-model="postName" placeholder="Введите название новости" class="custom-input-name-field">
 
@@ -64,6 +65,7 @@
         <!--Contents-->
         <div class="limiter">
           <div class="desc-textarea-container">
+            <label v-if="isUpdate">Введите описание</label>
             <textarea v-if="isArticle" v-model="postDescription" placeholder="Введите описание статьи" class="desc-textarea"></textarea>
             <textarea v-else v-model="postDescription" placeholder="Введите описание новости" class="desc-textarea"></textarea>
           </div>
@@ -72,6 +74,7 @@
             <div class="article-text-textarea-container-header">
 
             </div>
+            <label v-if="isUpdate">Введите текст</label>
             <textarea v-if="isArticle" v-model="postText" placeholder="Введите текст вашей статьи" class="article-text-textarea"></textarea>
             <textarea v-else v-model="postText" placeholder="Введите текст вашей новости" class="article-text-textarea"></textarea>
           </div>

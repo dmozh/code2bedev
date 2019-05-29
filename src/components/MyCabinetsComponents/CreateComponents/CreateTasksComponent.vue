@@ -22,6 +22,7 @@
     <div class="main-content-container">
       <form @submit.prevent="sendTask" class="custom-form">
         <!--Names-->
+        <label v-if="isUpdate">Введите название</label>
         <input type="text" v-model="taskName" placeholder="Введите название задачи" class="custom-input-name-field">
         <!--Contents-->
         <div class="contents">
@@ -44,6 +45,7 @@
           </div>
           <div class="bottom-block">
             <!--<div class="splitter"></div>-->
+            <label v-if="isUpdate">Введите описание</label>
             <div class="middle">
               <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
               <div class="lessons-container">
@@ -62,22 +64,29 @@
                 </div>
               </div>
             </div>
+
+
             <div class="text-block">
+              <label v-if="isUpdate">Введите текст</label>
               <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
-              <div class="input-output-block">
+            </div>
+
+
+            <div class="input-output-block">
+              <label v-if="isUpdate">Введите входные данные</label>
                 <textarea v-model="taskTestInput" placeholder="Введите тестовые данные для проверки решения (каждый новый stdin вводится через Enter)
                 Пример:
                 1
                 2
                 3"
                           id="input-textarea"></textarea>
-                <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
+              <label v-if="isUpdate">Введите выходные данные</label>
+              <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
                 Пример:
                 3
                 6
                 9"
-                          id="output-textarea"></textarea>
-              </div>
+                        id="output-textarea"></textarea>
             </div>
 
 
@@ -212,8 +221,10 @@
             lang: lang
           };
           //создаем json
+          let api = 'getLangLessonsName';
+          // let api = 'getUserLessonsName';
           const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'getUserLessonsName', jBody).then((response) => {
+          axios.post(this.$root.URL+api, jBody).then((response) => {
             console.log(response.data);
             this.lessons = response.data.lessons;
           }).catch((error) => {
@@ -425,6 +436,7 @@
   .lessons-container{
     justify-content: inherit;
     width: 55.3%;
+    flex-wrap: nowrap;
   }
 
   .lessons{
@@ -448,7 +460,7 @@
     height: auto;
 
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
   }
 
   .splitter{
@@ -496,7 +508,6 @@
   .header{
     margin-top: 50px;
     width: 100%;
-    height: 5vh;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -535,18 +546,20 @@
 
   .text-block{
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap!important;
+    /*justify-content: space-between;*/
   }
 
   .input-output-block{
+    margin-top: 10px;
     width: 100%;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
 
   .article-text-textarea{
-    max-width: 42%;
+    max-width: 100%;
     /*max-height: 30vh;*/
-    min-width: 42%;
+    width: 100%;
     min-height: 30vh;
   }
 

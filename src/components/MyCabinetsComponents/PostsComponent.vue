@@ -12,10 +12,10 @@
         </div>
         <div class="content-container">
           <div class="post-block articles" v-if="showArticles">
-            <div class="post-block-header" v-if="response.articles.length>0">
+            <div class="post-block-header" v-if="response.articles!==null">
               <h5>СТАТЬИ</h5>
             </div>
-            <div class="post-block-content-container" v-if="response.articles.length>0">
+            <div class="post-block-content-container" v-if="response.articles!==null">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -54,10 +54,10 @@
             <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать статью.</div>
           </div>
           <div class="post-block lessons" v-if="showLessons">
-            <div class="post-block-header" v-if="response.lessons.length>0">
+            <div class="post-block-header" v-if="response.lessons!==null">
               <h5>УРОКИ</h5>
             </div>
-            <div class="post-block-content-container" v-if="response.lessons.length>0">
+            <div class="post-block-content-container" v-if="response.lessons!==null">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -79,7 +79,7 @@
                     <div class="card-action">
                       <div class="update-btn btn"
                            @click="showCreateComponentLessons(elem.lesson_id, elem.lesson_name, elem.lesson_description,
-                                                elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name)">
+                                                elem.lesson_text, elem.lesson_tags, elem.lang_id, elem.lang_name, elem.tasks)">
                         <p>Редактировать</p>
                         <img src="../../assets/png/change_button.png" class="icon">
                       </div>
@@ -96,10 +96,10 @@
             <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать урок.</div>
           </div>
           <div class="post-block tasks" v-if="showTasks">
-            <div class="post-block-header" v-if="response.tasks.length>0">
+            <div class="post-block-header" v-if="response.tasks!==null">
               <h5>ЗАДАЧИ</h5>
             </div>
-            <div class="post-block-content-container" v-if="response.tasks.length>0">
+            <div class="post-block-content-container" v-if="response.tasks!==null">
               <div class="post-block-content-types"
                    v-for="(item) in progLanguages"
                    :key="item.id">
@@ -139,10 +139,10 @@
             <div v-else class="note">Здесь пока ничего нет. Перейдите во вкладку "СОЗДАТЬ" чтобы создать задачу.</div>
           </div>
           <div class="post-block news" v-if="showNews && this.$root.activeUserRole === '666' ">
-            <div class="post-block-header" v-if="response.news.length>0">
+            <div class="post-block-header" v-if="response.news!==null">
               <h5>НОВОСТИ</h5>
             </div>
-            <div class="post-block-content-container" v-if="response.news.length>0">
+            <div class="post-block-content-container" v-if="response.news!==null">
               <div class="post-block-content-types">
                 <div class="container">
                   <div class="card blue-grey darken-1"
@@ -165,7 +165,7 @@
                         <img src="../../assets/png/change_button.png" class="icon">
                       </div>
                       <div class="delete-btn btn"
-                           @click="deleteTask(elem.news_id, $event)">
+                           @click="deleteNews(elem.news_id, $event)">
                         <p>Удалить</p>
                         <img src="../../assets/png/delete_button.png" class="icon">
                       </div>
@@ -244,6 +244,7 @@
                                  :reqNextLessonTag="this.nextPostTag"
                                  :reqLangId = "this.postLangId"
                                  :reqLangName = "this.postLangName"
+                                 :reqLessonTasks = "this.linkedTasks"
                                  @returns="toReturn">
         </create-lesson-component>
       </transition>
@@ -253,7 +254,7 @@
 
 <script>
   import axios from 'axios'
-
+  import regeneratorRuntime from "regenerator-runtime";
   import CreatePostComponent from '../MyCabinetsComponents/CreateComponents/CreatePostComponent'
   import CreateLessonComponent from '../MyCabinetsComponents/CreateComponents/CreateLessonComponent'
   import CreateTasksComponent from '../MyCabinetsComponents/CreateComponents/CreateTasksComponent'
@@ -307,6 +308,7 @@
           taskTestInput: '',
           taskExpectedOutput: '',
           linkedLessons: null,
+          linkedTasks: null,
 
           newsImportance: null,
 
@@ -410,6 +412,7 @@
           this.linkedLessons = lessons;
         },
 
+
         showCreateComponentArticles(id, name, desc, text, tags, langId, langName) {
           this.pushParamsForPosts(id, name, desc, text, tags);
           this.pushLangParams(langId, langName);
@@ -443,8 +446,13 @@
           this.isOpenLessons = false;
         },
 
-        showCreateComponentLessons(id, name, desc, text, tags, langId, langName) {
+        pushParamsForLessons(id, name, desc, text, tags, tasks){
           this.pushParamsForPosts(id, name, desc, text, tags);
+          this.linkedTasks = tasks
+        },
+
+        showCreateComponentLessons(id, name, desc, text, tags, langId, langName, tasks) {
+          this.pushParamsForLessons(id, name, desc, text, tags, tasks);
           this.pushLangParams(langId, langName);
 
           this.onHide = false;
@@ -464,7 +472,7 @@
             this.response = response.data.posts;
             this.tasks = this.response.tasks;
             // console.log(response.data.posts.articles);
-            console.log(response.data.posts.tasks);
+            console.log(response.data.posts.lessons);
 
             for(let i=0; i < response.data.posts.lessons.length; i++){
               if (this.contains(this.progLanguages, response.data.posts.lessons[i].lang_name, "lang") === true){
@@ -508,70 +516,94 @@
           this.isOpenLessons = false;
         },
 
-        deleteArticle: function(articleId, event){
+        deleteArticle: async function(articleId, event){
           // получаем элемент для удаления
           // если элемент совпадает с классом удаляем
-          let elem = event.target.parentElement.parentElement.parentElement;
-          if (elem.className==="card blue-grey darken-1"){
-            elem.classList.add('hidden')
-          }
-          let body = {
-            articleId: articleId,
-            authorName: localStorage.getItem('userName')
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'deleteUserArticle', jBody).then((response) => {
-            console.log(response);
-          }).catch((error) => {
-            console.log(error);});
-        },
+          let isConfirm = confirm('Вы точно хотите удалить статью?');
 
-        deleteNews: function(newsId, event){
-          let elem = event.target.parentElement.parentElement.parentElement;
-          if (elem.className==="card blue-grey darken-1"){
-            elem.classList.add('hidden')
+          if (isConfirm){
+            let elem = event.target.parentElement.parentElement.parentElement;
+            if (elem.className==="card blue-grey darken-1"){
+              elem.classList.add('hidden')
+            }
+            let body = {
+              articleId: articleId,
+              authorName: localStorage.getItem('userName')
+            };
+            const jBody = JSON.stringify(body);
+            axios.post(this.$root.URL+'deleteUserArticle', jBody).then((response) => {
+              let toastText = '<span>Статья удалена</span>';
+              M.toast({html: toastText, classes: 'rounded success', displayLength: 6000});
+            }).catch((error) => {
+              console.log(error);});
           }
-          let body = {
-            newsId: newsId,
-            authorName: localStorage.getItem('userName')
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'deleteUserNews', jBody).then((response) => {
-            console.log(response);
-          }).catch((error) => {
-            console.log(error);});
         },
-        deleteTask: function(taskId, event){
-          let elem = event.target.parentElement.parentElement.parentElement;
-          if (elem.className==="card blue-grey darken-1"){
-            elem.classList.add('hidden')
+        deleteNews: async function(newsId, event){
+          let isConfirm = confirm('Вы точно хотите удалить новость?');
+
+          if (isConfirm){
+            let elem = event.target.parentElement.parentElement.parentElement;
+            console.log()
+            if (elem.className==="card blue-grey darken-1"){
+              elem.classList.add('hidden')
+            }
+            let body = {
+              newsId: newsId,
+              authorName: localStorage.getItem('userName')
+            };
+            const jBody = JSON.stringify(body);
+            axios.post(this.$root.URL+'deleteUserNews', jBody).then((response) => {
+              let toastText = '<span>Новость удалена</span>';
+              M.toast({html: toastText, classes: 'rounded success', displayLength: 6000});
+            }).catch((error) => {
+              console.log(error);});
           }
 
-          let body = {
-            taskId: taskId,
-            authorName: localStorage.getItem('userName')
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'deleteUserTask', jBody).then((response) => {
-            console.log(response);
-          }).catch((error) => {
-            console.log(error);});
         },
-        deleteLesson: function(lessonId, event){
-          let elem = event.target.parentElement.parentElement.parentElement;
-          if (elem.className==="card blue-grey darken-1"){
-            elem.classList.add('hidden')
+        deleteTask: async function(taskId, event){
+          let isConfirm = confirm('Вы точно хотите удалить задачу?');
+
+          if (isConfirm){
+            let elem = event.target.parentElement.parentElement.parentElement;
+            if (elem.className==="card blue-grey darken-1"){
+              elem.classList.add('hidden')
+            }
+
+            let body = {
+              taskId: taskId,
+              authorName: localStorage.getItem('userName')
+            };
+            const jBody = JSON.stringify(body);
+            axios.post(this.$root.URL+'deleteUserTask', jBody).then((response) => {
+              let toastText = '<span>Задача удалена</span>';
+              M.toast({html: toastText, classes: 'rounded success', displayLength: 6000});
+            }).catch((error) => {
+              console.log(error);});
           }
-          //
-          let body = {
-            lessonId: lessonId,
-            authorName: localStorage.getItem('userName')
-          };
-          const jBody = JSON.stringify(body);
-          axios.post(this.$root.URL+'deleteUserLesson', jBody).then((response) => {
-            console.log(response);
-          }).catch((error) => {
-            console.log(error);});
+
+        },
+        deleteLesson: async function(lessonId, event){
+          let isConfirm = confirm('Вы точно хотите удалить урок?');
+
+          if (isConfirm){
+            let elem = event.target.parentElement.parentElement.parentElement;
+            if (elem.className==="card blue-grey darken-1"){
+              elem.classList.add('hidden')
+            }
+            //
+            let body = {
+              lessonId: lessonId,
+              authorName: localStorage.getItem('userName')
+            };
+            const jBody = JSON.stringify(body);
+            axios.post(this.$root.URL+'deleteUserLesson', jBody).then((response) => {
+              console.log(response);
+              let toastText = '<span>Урок удален</span>';
+              M.toast({html: toastText, classes: 'rounded success', displayLength: 6000});
+            }).catch((error) => {
+              console.log(error);});
+          }
+
         }
       },
 

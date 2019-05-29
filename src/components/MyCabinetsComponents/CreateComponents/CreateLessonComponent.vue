@@ -25,6 +25,7 @@
     <div class="main-content-container">
       <form @submit.prevent="sendLesson" class="custom-form">
         <!--Names-->
+        <label v-if="isUpdate">Введите название</label>
         <input type="text" v-model="lessonName" placeholder="Введите название урока" class="custom-input-name-field">
 
         <!--tags-->
@@ -39,7 +40,7 @@
             <label v-if="postTags.length === 0">Добавьте сюда свои тэги</label>
             <span v-for="(tag, index) in postTags"
                  :key="tag.id" class="tag"
-                 v-on:click="postTags.splice(index, 1)">{{'#'+tag.name}}&nbsp;
+                  v-on:click="postTags.splice(index, 1)">{{'#'+tag.name}}&nbsp;
             </span>
           </div>
         </div>
@@ -47,8 +48,11 @@
         <!--Contents-->
         <div class="limiter">
           <div class="left-content">
-            <textarea v-model="lessonDescription" placeholder="Введите описание урока" class="desc-textarea"></textarea>
-            <div class="tasks-container" v-if="!isUpdate">
+            <label v-if="isUpdate">Введите описание</label>
+            <textarea v-model="lessonDescription" placeholder="Введите описание урока" class="desc-textarea"
+              v-bind:class="{upd: isUpdate}"
+            ></textarea>
+            <div class="tasks-container"  v-if="!isUpdate">
               <div class="list-container">
                 <div class="list-header">
                   <div class="list-header-id-block">  ID</div>
@@ -60,11 +64,17 @@
                   <div class="list-item list-item-light"
                        v-for="(task, index) in lessonTasks"
                        :key="task.taskId"
-                       v-on:click="lessonTasks.splice(index, 1)"
+                       @click="openTask(task.taskId, task.taskName, task.taskDescription,
+                       task.taskText, task.taskDifficulty, task.taskTestInput, task.taskExpectedOutput, index)"
                     >
                     <div class="list-item-id">{{task.taskId}}</div>
                     <div class="list-item-name">{{task.taskName}}</div>
                     <div class="list-item-diff">{{task.taskDifficulty}}</div>
+                    <div class="list-item-remove">
+                      <!--<div class="rem-btn" v-on:click="remTask(index)">-->
+                        <!--<img src="../../../assets/png/plus.png" class="plus-btn-icon"/>-->
+                      <!--</div>-->
+                    </div>
                   </div>
                 </div>
               </div>
@@ -77,14 +87,25 @@
             </div>
           </div>
           <div class="right-content">
-            <textarea v-model="lessonText" placeholder="Введите текст вашей урока" class="article-text-textarea"></textarea>
+            <label v-if="isUpdate">Введите текст</label>
+            <textarea v-model="lessonText" placeholder="Введите текст вашего урока" class="article-text-textarea"></textarea>
             <button class="button waves-effect waves-dark" v-if="!isUpdate">Создать</button>
             <button class="button waves-effect waves-dark" v-else-if="isUpdate">Обновить</button>
           </div>
         </div>
       </form>
     </div>
-    <window-create-task-for-lesson :modalActive="modalActive" @close="closeCreateTaskWindow"></window-create-task-for-lesson>
+    <window-create-task-for-lesson :modalActive="modalActive"
+                                   :isEdit = "isEdit"
+                                   :curTaskId = "curTaskId"
+                                   :curTaskName = "curTaskName"
+                                   :curTaskDiff = "curTaskDiff"
+                                   :curTaskDesc = "curTaskDesc"
+                                   :curTaskTxt = "curTaskTxt"
+                                   :curTaskInp = "curTaskInp"
+                                   :curTaskOut = "curTaskOut"
+                                   :index = "index"
+                                   @close="closeCreateTaskWindow"></window-create-task-for-lesson>
     <create-error-modal-component
                                   :namePost="emptyName"
                                   :descPost="emptyDesc"
@@ -133,6 +154,10 @@
 
         },
 
+        reqLessonTasks: {
+          type: Array
+        },
+
         reqLangId:{
           type: Number
         },
@@ -152,7 +177,15 @@
           emptyText: true,
           emptyLang: true,
 
-
+          isEdit: false,
+          curTaskId: null,
+          curTaskName: '',
+          curTaskDesc: '',
+          curTaskDiff: null,
+          curTaskTxt: '',
+          curTaskInp: '',
+          curTaskOut: '',
+          index: null,
           //переменные для тэгов
           tag: '',
           nextTag: '',
@@ -166,13 +199,27 @@
         }
       },
       methods: {
+        openTask(id, name, desc, txt, diff, inp, out, index){
+          this.curTaskId=id;
+          this.curTaskName=name;
+          this.curTaskDesc=desc;
+          this.curTaskTxt=txt;
+          this.curTaskDiff = diff;
+          this.curTaskInp=inp;
+          this.curTaskOut=out;
+          this.index = index;
+          this.isEdit = true;
+          this.modalActive = true;
+        },
         emitReturn () {
           this.$emit('returns')
         },
         closeCreateTaskWindow(){
+          this.isEdit = false;
           this.modalActive = false;
         },
         openCreateTaskWindow(){
+          this.isEdit = false;
           this.modalActive = true;
         },
 
@@ -225,6 +272,7 @@
                 lessonDescription: this.lessonDescription,
                 lessonText: this.lessonText,
                 lessonTags: this.postTags,
+                // lessonTasks: this.lessonTasks,
               };
             }
 
@@ -305,6 +353,7 @@
           this.lessonText = this.reqLessonText;
           this.postTags = this.reqLessonTags;
           this.nextTag = this.reqNextLessonTag+1;
+          this.lessonTasks = this.reqLessonTasks;
           document.getElementById("sel1").value = this.reqLangName;
         }
       }
@@ -353,7 +402,6 @@
   .header{
     margin-top: 50px;
     width: 100%;
-    height: 5vh;
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -369,7 +417,7 @@
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    margin: 2.5vh 0 0 0;
+    margin: 2.5vh 0 40px 0;
   }
 
   .button:hover{
@@ -546,7 +594,7 @@
     align-items: center;
   }
 
-  .plus-btn{
+  .plus-btn, .rem-btn{
     display: -webkit-flex;
     -webkit-flex-wrap: wrap;
     display: flex;
@@ -602,17 +650,22 @@
 
   .article-text-textarea{
     max-width: 38vw;;
-    max-height: 45vh;
+    /*max-height: 45vh;*/
     min-width: 38vw;
-    min-height: 45vh;
+    height: 100%;
   }
 
   .desc-textarea{
     max-width: 25vw;
-    max-height: 24vh;
+    /*max-height: 24vh;*/
     min-width: 25vw;
-    min-height: 24vh;
+    height: 50%;
+    /*min-height: 24vh;*/
     margin-bottom: 1vh;
+  }
+
+  .upd{
+    height: 92%;
   }
 
   .limiter{
@@ -682,6 +735,38 @@
     border-bottom: 0.1px solid #c1c4ca;
   }
 
+  .list-item:hover{
+    background: #78d7d1;
+    transition: .2s;
+  }
+
+  .list-item-remove{
+    display: -webkit-flex;
+    -webkit-flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    /*border-radius: 50%;*/
+
+  }
+
+  .rem-btn{
+    z-index: 1000;
+    transform: rotate(45deg);
+  }
+
+  .rem-btn:hover{
+    background: #e67d7d;
+    transform: rotate(45deg);
+  }
+
+  .list-item-remove:hover{
+    cursor: pointer;
+    /*background: #e67d7d;*/
+    transform: scale(1.15);
+  }
+
   .list-header-id-block, .list-item-id{
     width: 3vw;
     border-right: 0.1px solid #c1c4ca;
@@ -692,6 +777,7 @@
   }
   .list-header-diff-block, .list-item-diff{
     width: 5vw;
+    /*border-right: 0.1px solid #c1c4ca;*/
   }
 
   .list-header-id-block, .list-header-name-block, .list-header-diff-block{
@@ -735,7 +821,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 45vw;
-    margin-left: 30px;
-    justify-content: center;
+    margin-left: 50px;
+    justify-content: baseline;
   }
 </style>

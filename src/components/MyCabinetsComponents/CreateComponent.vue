@@ -75,8 +75,8 @@
             this.isOpenNews = false;
             this.isOpenLessons = false;
           }else{
-            this.toastText = '<span>Вы не можете создать статью, пока не авторизируетесь.<br>' +
-              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            this.toastText = '<span>Вы не можете создать статью, пока не подтвердите регистрацию.<br>' +
+              'Письмо с подтверждением было отправлено вам на почту.</span>';
             M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
           }
         },
@@ -89,8 +89,8 @@
             this.isOpenNews = false;
             this.isOpenLessons = false;
           }else{
-            this.toastText = '<span>Вы не можете создать задачу, пока не авторизируетесь.<br>' +
-              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            this.toastText = '<span>Вы не можете создать статью, пока не подтвердите регистрацию.<br>' +
+              'Письмо с подтверждением было отправлено вам на почту.</span>';
             M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
           }
 
@@ -104,8 +104,8 @@
               this.isOpenNews = true;
               this.isOpenLessons = false;
           }else{
-              this.toastText = '<span>Вы не можете создать новость, пока не авторизируетесь.<br>' +
-                'Письмо с авторизацией было отправлено вам на почту.</span>';
+              this.toastText = '<span>Вы не можете создать статью, пока не подтвердите регистрацию.<br>' +
+                'Письмо с подтверждением было отправлено вам на почту.</span>';
               M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
             }
 
@@ -119,8 +119,8 @@
             this.isOpenNews = false;
             this.isOpenLessons = true;
           }else{
-            this.toastText = '<span>Вы не можете создать урок, пока не авторизируетесь.<br>' +
-              'Письмо с авторизацией было отправлено вам на почту.</span>';
+            this.toastText = '<span>Вы не можете создать статью, пока не подтвердите регистрацию.<br>' +
+              'Письмо с подтверждением было отправлено вам на почту.</span>';
             M.toast({html: this.toastText, classes: 'rounded warning', displayLength: 4000});
           }
 

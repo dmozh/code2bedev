@@ -12,6 +12,7 @@
               <div v-if="this.postType==='lesson'">Урок</div>
               <div v-if="this.postType==='task'">Задача</div>
             </div>
+
             <div class="post-rate-block">
               Рейтинг: {{this.postRate}}
               <div class="arrows-container">
@@ -22,6 +23,14 @@
             <div class="post-seen-block">
               Просмотрено: {{posts_views}} раз
             </div>
+            <div class="cnt">
+              <span class="info">Добавлена&nbsp;{{parseDateTime(this.addedTime, 'date')}}</span>
+              <span class="info">&nbsp;в {{parseDateTime(this.addedTime, 'time')}}</span>
+            </div>
+            <div class="cnt">
+              <span class="info">Последнее обновление&nbsp;{{parseDateTime(this.lastUpdate, 'date')}}</span>
+              <span class="info">&nbsp;в {{parseDateTime(this.lastUpdate, 'time')}}</span>
+            </div>
             <div v-if="this.postType==='news'"
               class="news-importance-block">
               <div v-if="     this.newsImportance === 0">Важность новости: Не важно</div>
@@ -29,7 +38,6 @@
               <div v-else-if="this.newsImportance === 2">Важность новости: Очень важно</div>
               <div v-else-if="this.newsImportance === 3">Важность новости: Критически важно</div>
             </div>
-          </div>
         </div>
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
@@ -73,13 +81,7 @@
           </div>
         </div>
         <div class="content-footer">
-          <div class="post-rate-block">
-            <!--Рейтинг: {{this.postRate}}-->
-            <!--<div class="arrows-container">-->
-              <!--<img src="../assets/png/rate_vote_arrow.png" class="rate-btn" @click="postVote('up')">-->
-              <!--<img src="../assets/png/rate_vote_arrow.png" class="rate-btn rate-btn-reverse" @click="postVote('down')">-->
-            <!--</div>-->
-          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -135,6 +137,73 @@
         emitReturn() {
           this.$emit('returns')
         },
+        parseDateTime: function (dateTime, type) {
+          let temp = '';
+          let date = new Date();
+          // console.log(date.getDate())
+          // console.log(date.getMonth())
+          // console.log(date.getFullYear())
+          if(type==='date'){
+            temp = dateTime.slice(0, dateTime.indexOf(' '));
+            let splitDate = temp.split('.');
+            if(date.getFullYear()===parseInt(splitDate[2])){
+              let tempM1 = date.getDate();
+              let tempM2 = parseInt(splitDate[0]);
+              if(tempM1-tempM2 === 1){
+                temp = 'вчера'
+              }else if (tempM1-tempM2 === 0){
+                temp = 'сегодня'
+              }else{
+                let month = parseInt(splitDate[1]);
+                let strMonth= '';
+                if(month===1){
+                  strMonth = 'января'
+                }else if(month===2){
+                  strMonth = 'февраля'
+                }else if(month===3){
+                  strMonth = 'марта'
+                }else if(month===4){
+                  strMonth = 'апреля'
+                }else if(month===5){
+                  strMonth = 'мая'
+                }else if(month===6){
+                  strMonth = 'июня'
+                }else if(month===7){
+                  strMonth = 'июля'
+                }else if(month===8){
+                  strMonth = 'августа'
+                }else if(month===9){
+                  strMonth = 'сентября'
+                }else if(month===10){
+                  strMonth = 'октября'
+                }else if(month===11){
+                  strMonth = 'ноября'
+                }else if(month===12){
+                  strMonth = 'декабря'
+                }
+                temp = splitDate[0]+' '+strMonth+' '+splitDate[2]+' года'
+              }
+            }else{
+              // let difference = date.getFullYear() - parseInt(splitDate[2]);
+              // if(difference.toString().slice(-1) === '1'){
+              //   if(difference===11){
+              //     temp = difference.toString() + ' ' + 'лет назад'
+              //   }else{
+              //     temp = difference.toString() + ' ' + 'год назад'
+              //   }
+              // }else if(difference.toString().slice(-1) === '0'){
+              //   temp = difference.toString() + ' ' + 'лет назад'
+              // }else{
+              //   temp = difference.toString() + ' ' + 'года назад'
+              // }
+            }
+          } else if (type === 'time'){
+            temp = dateTime.slice(dateTime.indexOf(' '), dateTime.length);
+          }
+          // console.log(temp)
+
+          return temp
+        },
 
         goTo(postType, postId){
           let body = {
@@ -165,6 +234,7 @@
           };
           const jBody = JSON.stringify(body);
           await axios.post(this.$root.URL+'getPostInfo', jBody).then((response) => {
+            console.log(response)
             this.postText = response.data.post_text;
             this.posts_views = response.data.views;
             this.postName = response.data.post_name;
@@ -748,7 +818,7 @@
   .content-footer{
     margin-top: 30px;
     /*width: 85vw;*/
-    width: 100%;
+    width: 95%;
   }
 
   .test{
@@ -772,5 +842,23 @@
     display: flex;
     height: auto;
     width: 100%;
+  }
+
+  .tag{
+    font-size: 1.5em;
+    height: 1.5vh;
+    color: #006dff;
+  }
+
+  .tags{
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: baseline;
+    font-size: 1.5em;
+  }
+
+  .tag:hover{
+    cursor: pointer;
   }
 </style>

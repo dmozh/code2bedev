@@ -9,7 +9,7 @@
       <div class="btn" @click="goToTasks">Использовать онлайн-компилятор для решения задач</div>
     </div>
     <div class="label" v-if="this.isUnderstand">
-      Свободное использование
+      Свободное использование {{this.$root.activeLang}}
     </div>
     <code-editor-component v-if="this.isUnderstand"
                            :place="this.postType"

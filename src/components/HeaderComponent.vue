@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="left-container">
       <div class="version">
-        alpha-version v.0-0-3
+        alpha-version v.0-0-3.5
       </div>
       <div class="logo-container" v-if="this.$root.mainIsOn">
         <img src="../assets/png/logo.png" class="logo">

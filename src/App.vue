@@ -33,6 +33,9 @@
 </script>
 
 <style scoped lang="scss">
+  #app{
+    background: aliceblue;
+  }
   .content{
     max-width: 100%;
     min-height: 93vh;

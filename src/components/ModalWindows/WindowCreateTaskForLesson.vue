@@ -9,7 +9,7 @@
             </div>
           </div>
           <div class="main-content-container">
-            <form @submit.prevent="addTask" class="custom-form">
+            <form @submit.prevent="addTask('add')" class="custom-form" v-if="!isEdit">
               <!--Names-->
               <input type="text" v-model="taskName" placeholder="Введите название задачи" class="custom-input-name-field">
               <!--Contents-->
@@ -39,17 +39,61 @@
                       Пример:
                       1
                       2
-                      3" id="input-textarea"></textarea>
+                      3" class="input-textarea"></textarea>
                     <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
                       Пример:
                       3
                       6
-                      9" id="output-textarea"></textarea>
+                      9" class="output-textarea"></textarea>
                     </div>
                   <button class="button waves-effect waves-dark">Создать</button>
+                  <button class="button waves-effect waves-dark" v-if="isEdit">Обновить</button>
+                  <button class="button waves-effect waves-dark" v-if="isEdit">Удалить</button>
                 </div>
               </div>
             </form>
+            <form @submit.prevent="addTask('upd')" class="custom-form" v-else>
+              <!--Names-->
+              <input type="text" v-model="taskName" placeholder="Введите название задачи" class="custom-input-name-field">
+              <!--Contents-->
+              <div class="contents">
+                <div class="left-block">
+                  <div class="optional-container in-contents">
+                    <label for="difficultlySelect2">Укажите уровень сложность задачи:</label>
+                    <select id="difficultlySelect2" class="custom-select">
+                      <!--тут определяются языки программировпния в селекте-->
+                      <option v-for="item in difficultly" :key="item.id" :value="item.diff">
+                        {{item.diff}}
+                      </option>
+                    </select>
+                    <div class="quest-mark-icon tooltip">
+                      <img src="../../assets/png/question_mark.png" class="icon qm">
+                      <span class="tooltiptext diff">Этот параметр показывает уровень сложности задачи в блоке задач</span>
+                    </div>
+                  </div>
+
+                  <textarea v-model="taskDescription" placeholder="Введите описание задачи" class="desc-textarea"></textarea>
+                </div>
+                <div class="right-block">
+                  <textarea v-model="taskText" placeholder="Введите текст вашей задачи" class="article-text-textarea"></textarea>
+                  <!--<div class="splitter"></div>-->
+                  <div class="input-output-block">
+                    <textarea v-model="taskTestInput" placeholder="Введите тестовые данные для проверки решения (каждый новый stdin вводится через Enter)
+                      Пример:
+                      1
+                      2
+                      3" class="input-textarea"></textarea>
+                    <textarea v-model="taskExpectedOutput" placeholder="Введите данные ожидаеммые после выполнения (каждый новый stdout вводится через Enter)
+                      Пример:
+                      3
+                      6
+                      9" class="output-textarea"></textarea>
+                  </div>
+                  <button class="button waves-effect waves-dark" v-if="isEdit">Обновить</button>
+                </div>
+              </div>
+            </form>
+            <button class="button waves-effect waves-dark" v-if="isEdit" @click="remTask">Удалить</button>
           </div>
         </div>
       </div>
@@ -70,6 +114,7 @@
           taskText: '',
           taskTestInput: '',
           taskExpectedOutput: '',
+          taskIndex: null,
           //for difficultly (for a while)
           difficultly: [
             {id: 1, diff: 1},
@@ -77,23 +122,81 @@
             {id: 3, diff: 3},
             {id: 4, diff: 4},
           ],
+          seq: 0,
         }
       },
       props: {
         modalActive: {
           type: Boolean
         },
+        isEdit: {
+          type: Boolean
+        },
+        curTaskId: {
+          type: Number
+        },
+        curTaskName: {
+          type: String
+        },
+        curTaskDesc: {
+          type: String
+        },
+        curTaskTxt: {
+          type: String
+        },
+        curTaskInp: {
+          type: String
+        },
+        curTaskOut: {
+          type: String
+        },
+        index:{
+          type: Number
+        }
       },
       methods: {
+        remTask(){
+          let isConfirm = confirm('Вы точно хотите удалить задачу из списка?');
+          if (isConfirm) {
+            this.$parent.lessonTasks.splice(this.taskIndex, 1);
+            this.taskName = '';
+            this.taskDescription = '';
+            this.taskText = '';
+            this.taskTestInput = '';
+            this.taskExpectedOutput = '';
+            this.taskIndex = null;
+            this.$emit('close')
+          }
+        },
+
         emitClose() {
           this.$emit('close')
         },
 
-        addTask(){
-          const curTaskId = this.$parent.lessonTasks.length+1;
-          const selectedIndex = document.getElementById("difficultlySelect").options.selectedIndex;
-          const diffValue = document.getElementById("difficultlySelect").options[selectedIndex].value;
+        emReturn(){
+          this.taskName = '';
+          this.taskDescription = '';
+          this.taskText = '';
+          this.taskTestInput = '';
+          this.taskExpectedOutput = '';
+          this.seq=0;
+          this.$emit('close')
+        },
 
+        addTask(key){
+          let curTaskId = null;
+          let selectedIndex = null;
+          let diffValue = null;
+          if (key==='add'){
+            curTaskId = this.$parent.lessonTasks.length+1;
+            selectedIndex = document.getElementById("difficultlySelect").options.selectedIndex;
+            diffValue = document.getElementById("difficultlySelect").options[selectedIndex].value;
+          }else{
+            curTaskId = this.curTaskId;
+            selectedIndex = document.getElementById("difficultlySelect2").options.selectedIndex;
+            diffValue = document.getElementById("difficultlySelect2").options[selectedIndex].value;
+            this.$parent.lessonTasks.splice(this.taskIndex, 1);
+          }
           this.$parent.lessonTasks.push(
             {
               taskId: curTaskId,
@@ -105,9 +208,26 @@
               taskExpectedOutput: this.taskExpectedOutput
             }
           );
-          this.emitClose()
+          console.log(this.$parent.lessonTasks);
+          this.emReturn()
         }
-      }
+      },
+      mounted: function () {
+        console.log('mount')
+      },
+      updated: function () {
+        console.log('upd'+this.index )
+        if(this.isEdit && this.seq===0){
+          this.taskName = this.curTaskName;
+          this.taskDescription = this.curTaskDesc;
+          this.taskText = this.curTaskTxt;
+          this.taskTestInput = this.curTaskInp;
+          this.taskExpectedOutput = this.curTaskOut;
+          this.taskName = this.curTaskName;
+          this.taskIndex = this.index;
+          this.seq += 1
+        }
+      },
     }
 </script>
 
@@ -119,14 +239,14 @@
     justify-content: space-between;
   }
 
-  #input-textarea{
+  .input-textarea{
     max-width: 18vw;
     max-height: 23vh;
     min-width: 18vw;
     min-height: 23vh;
   }
 
-  #output-textarea{
+  .output-textarea{
     max-width: 18vw;
     max-height: 23vh;
     min-width: 18vw;
@@ -228,7 +348,6 @@
     -webkit-flex-wrap: wrap;
     display: flex;
     flex-wrap: wrap;
-    height: 70vh;
     width: 100%;
     justify-content: center;
   }

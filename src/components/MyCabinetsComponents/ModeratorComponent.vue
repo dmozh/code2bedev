@@ -91,34 +91,43 @@
       },
       methods: {
         async isModerated(moder,approved,denied, postId, authorId, postType, event){
-          let body = {
-            moder: true,
-            denied: denied,
-            approved: approved,
-            postId: postId,
-            authorId: authorId,
-            postType: postType
-          };
-          const jBody = JSON.stringify(body);
-          await axios.post(this.$root.URL+'updateIsModerated', jBody).then((response) => {
-            console.log(response);
-            if(response.data.msg===true && approved){
-              let toastText = '<span>Одобрено</span>';
-              M.toast({html: toastText, classes: 'rounded success'});
-            }else if(response.data.msg===true && denied){
-              let toastText = '<span>Отказано</span>';
-              M.toast({html: toastText, classes: 'rounded success'});
-            }
-          }).catch((error) => {
-            console.log(error);});
+          let isConfirm = null;
+          if (approved){
+            isConfirm = confirm('Вы точно хотите одобрить этот пост?');
+          }
+          if (denied){
+            isConfirm = confirm('Вы точно хотите отказаться от публикации этого поста?');
+          }
+          if (isConfirm){
+            let body = {
+              moder: true,
+              denied: denied,
+              approved: approved,
+              postId: postId,
+              authorId: authorId,
+              postType: postType
+            };
+            const jBody = JSON.stringify(body);
+            await axios.post(this.$root.URL+'updateIsModerated', jBody).then((response) => {
+              console.log(response);
+              if(response.data.msg===true && approved){
+                let toastText = '<span>Одобрено</span>';
+                M.toast({html: toastText, classes: 'rounded success'});
+              }else if(response.data.msg===true && denied){
+                let toastText = '<span>Отказано</span>';
+                M.toast({html: toastText, classes: 'rounded success'});
+              }
+            }).catch((error) => {
+              console.log(error);});
 
-          // получаем элемент для удаления
-          // console.log(event.target.parentElement.parentElement);
-          let elem = event.target.parentElement.parentElement;
-          // если элемент совпадает с классом удаляем
-          if (elem.className==="card blue-grey darken-1"){
-            elem.classList.add('hidden')
-           }
+            // получаем элемент для удаления
+            // console.log(event.target.parentElement.parentElement);
+            let elem = event.target.parentElement.parentElement;
+            // если элемент совпадает с классом удаляем
+            if (elem.className==="card blue-grey darken-1"){
+              elem.classList.add('hidden')
+            }
+          }
         },
 
         showArticles(){
