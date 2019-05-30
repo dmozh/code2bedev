@@ -203,6 +203,7 @@
     /*background: aqua;*/
     flex-wrap: wrap;
     overflow: auto;
+    align-items: baseline;
   }
 
   .right-container{

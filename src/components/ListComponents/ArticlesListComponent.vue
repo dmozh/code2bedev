@@ -63,6 +63,7 @@
 <script>
   import axios from 'axios'
   import regeneratorRuntime from "regenerator-runtime";
+  import parseDateTime from "../../utils.js";
     export default {
       name: "articles-list-component",
       data () {
@@ -107,6 +108,8 @@
         },
 
         parseDateTime: function (dateTime, type) {
+          // return parseDateTime(dateTime, type)
+
           let temp = '';
           let date = new Date();
           // console.log(date.getDate())

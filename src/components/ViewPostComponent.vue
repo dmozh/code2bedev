@@ -42,7 +42,7 @@
         <div class="content-body">
           <div class="post-name-block">{{this.postName}}</div>
           <div class="post-description-block">{{this.postDescription}}</div>
-          <div class="post-text-block">{{this.postText}}</div>
+          <div class="post-text-block" v-html="this.postText"></div>
           <div class="compiler" v-if="this.postType==='task'">
             <code-editor-component v-if="this.activeLang !== null"
                                    :place="this.postType"
@@ -762,6 +762,7 @@
     font-size: 0.9rem;
     /*background: rgba(191, 191, 191, 0.27);*/
     background: white;
+    flex-wrap: wrap;
   }
 
   .content-footer{
